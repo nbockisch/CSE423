@@ -10,8 +10,15 @@
 
 int main(int argc, char **argv) {
 
-        Scanner *scanner = new Scanner();
-        
+        Scanner *scanner = new Scanner(argv[1]);
+
+        int size;
+        char *charstream = scanner->removeWhitespace(size);
+
+        printf("Size: %d\n", size);
+        printf("Charstream:\n");
+        printf("'%s'\n", charstream);
         
         delete scanner;
+        free(charstream);
 }
