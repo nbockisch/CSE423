@@ -35,7 +35,8 @@ Scanner::~Scanner() {
  * @param len The size of stream in bytes.
  * @returns File contents with no whitespace as a character stream
  */
-char* Scanner::removeWhitespace(int &len) {
+char* Scanner::removeWhitespace(int &len) 
+{
 
         len = 0;
 
@@ -75,4 +76,20 @@ char* Scanner::removeWhitespace(int &len) {
         stream[len] = '\0';
                 
         return stream;
+}
+
+token_t* Scanner::tokenize(char* code, int len) 
+{
+	int i;
+	char tmp;
+
+	char** keywords = {"auto", "break", "case", "char", "const", "continue", 
+		"default", "do", "double", "else", "enum", "extern", "float", "for",
+		"goto", "if", "int", "long", "register", "return", "short", "signed",
+		"sizeof", "static", "struct", "switch", "typedef", "union", "unsigned",
+		"void", "volatile", "while"};
+
+	for (i = 0; i < len; i++;) {
+		
+	}
 }
