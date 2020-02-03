@@ -3,15 +3,15 @@
  * @brief Main driver for compiler
  */
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <vector>
 #include "Scanner.h"
 
 int main(int argc, char **argv) {
 
         Scanner *scanner = new Scanner(argv[1]);
-	struct token_t *tokens = NULL;
 
         int size;
         char *charstream = scanner->removeWhitespace(size);
@@ -20,9 +20,10 @@ int main(int argc, char **argv) {
         printf("Charstream:\n");
         printf("'%s'\n", charstream); */
 
-	tokens = scanner->tokenize(charstream, size);
+	std::vector<token_t> tokens = scanner->tokenize(charstream, size);
+
+	std::cout << tokens.front().contents << '\n';
         
         delete scanner;
         free(charstream);
-	free(tokens);
 }

@@ -80,33 +80,36 @@ char* Scanner::removeWhitespace(int &len)
         return stream;
 }
 
-token_t* Scanner::tokenize(char* code, int len) 
+std::vector<token_t> Scanner::tokenize(char* code, int len) 
 {
 	std::string tmp(code);
 	int num_tok, j;
 
 	// Comment matching regex from https://stackoverflow.com/questions/16160190/regular-expression-to-find-c-style-block-comments
 	// TODO, rewrite to make regex more readible, set token types in struct
-	std::regex token_regex("(\\/\\*(\\*(?!\\/)|[^*])*\\*\\/)+|(\\w+)|((\")[^\"]*(\"))|((\')[^\']*(\'))|(==|<=|>=|!=|&&|\\+=|\\-=|\\+\\+|\\-\\-)|[%+\\-/*=^]|[#,<.>{}()[\\]\\|;:]|(\\/\\/(\\s*\\w*)*)"); // Quote matching
+	std::regex token_regex("(\\/\\*(\\*(?!\\/)|[^*])*\\*\\/)+|(\\w+)|((\")[^\"]*(\"))|((\')[^\']*(\'))|(==|<=|>=|!=|&&|\\+=|\\-=|\\+\\+|\\-\\-)|[%+\\-/*=^]|[#,<.>{}()[\\]\\|;:]|(\\/\\/(\\s*\\w*)*)");
 
 	// Collect tokens from regex
 	auto token_start = std::sregex_iterator(tmp.begin(), tmp.end(), token_regex);
 	auto token_stop = std::sregex_iterator();
 	num_tok = std::distance(token_start, token_stop);
 
-	struct token_t *tokens = (struct token_t *)  malloc(sizeof(struct token_t *) * (num_tok + 1));
+	std::vector<token_t> tokens;
+	//struct token_t *tokens = (struct token_t *)  malloc(sizeof(struct token_t *) * (num_tok + 1));
 	j = 0;
 
-	assert(tokens);
+	//assert(tokens);
 
 	for (std::sregex_iterator i = token_start; i != token_stop; ++i) {
 		std::smatch match = *i;
+		token_t tok;
+		tok.contents.assign(match.str());
+		tokens.push_back(tok);
 		//std::string match_tok = match.str();
-		tokens[j].contents.assign(match.str());
-		j++;
+		//tokens[j].contents.assign(match.str());
+		//j++;
 		//std::cout << match_tok << '\n';
 	}
 
-	return tokens;
-	
+	return tokens;	
 }

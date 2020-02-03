@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string>
+#include <vector>
 
 // Types of tokens
 enum types {
@@ -30,7 +31,7 @@ public:
         ~Scanner();
 
         char* removeWhitespace(int &len);
-	token_t* tokenize(char* code, int len);
+	std::vector<token_t> tokenize(char* code, int len);
 
 private:
         FILE *fp;
