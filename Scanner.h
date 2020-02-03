@@ -6,19 +6,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string>
 
 // Types of tokens
-#define KEYWORD 0
-#define IDENTIFIER 1
-#define CONSTANT 2
-#define STRING 3
-#define SPECIAL 4
-#define OPERATOR 5
+enum types {
+	keyword,
+	identifier,
+	constant,
+	string,
+	special,
+	op
+};
 
 // Data structure for manipulating tokens
 struct token_t {
-	char* contents;
-	int type;
+	std::string contents;
+	enum types type;
 };
 
 class Scanner {

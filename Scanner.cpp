@@ -1,5 +1,7 @@
+#include <iostream>
 #include <ctype.h>
-
+#include <regex>
+#include <string>
 #include "Scanner.h"
 
 /**
@@ -49,16 +51,16 @@ char* Scanner::removeWhitespace(int &len)
         while( (cur = fgetc(fp)) != -1) {
                 // NOTE: this wont work if something has an apostrophe in the string..
                 //  I will fix this in the future..
-                if(cur == '"' || cur == 39) {
+                /*if(cur == '"' || cur == 39) {
                         isString = !isString;
-                }
+                }*/
 
                 // Skip any whitespace only if we are not looking at a user defined string.
-                if(!isString) {
+                /*if(!isString) {
                         if(isspace(cur)) {
                                 continue;
                         }
-                }
+                }*/
 
                 // Debugging
                 //printf("%c", cur);
@@ -80,16 +82,31 @@ char* Scanner::removeWhitespace(int &len)
 
 token_t* Scanner::tokenize(char* code, int len) 
 {
-	int i;
-	char tmp;
+	std::string tmp(code);
+	int num_tok, j;
 
-	char** keywords = {"auto", "break", "case", "char", "const", "continue", 
-		"default", "do", "double", "else", "enum", "extern", "float", "for",
-		"goto", "if", "int", "long", "register", "return", "short", "signed",
-		"sizeof", "static", "struct", "switch", "typedef", "union", "unsigned",
-		"void", "volatile", "while"};
+	// Comment matching regex from https://stackoverflow.com/questions/16160190/regular-expression-to-find-c-style-block-comments
+	// TODO, rewrite to make regex more readible, set token types in struct
+	std::regex token_regex("(\\/\\*(\\*(?!\\/)|[^*])*\\*\\/)+|(\\w+)|((\")[^\"]*(\"))|((\')[^\']*(\'))|(==|<=|>=|!=|&&|\\+=|\\-=|\\+\\+|\\-\\-)|[%+\\-/*=^]|[#,<.>{}()[\\]\\|;:]|(\\/\\/(\\s*\\w*)*)"); // Quote matching
 
-	for (i = 0; i < len; i++;) {
-		
+	// Collect tokens from regex
+	auto token_start = std::sregex_iterator(tmp.begin(), tmp.end(), token_regex);
+	auto token_stop = std::sregex_iterator();
+	num_tok = std::distance(token_start, token_stop);
+
+	struct token_t *tokens = (struct token_t *)  malloc(sizeof(struct token_t *) * (num_tok + 1));
+	j = 0;
+
+	assert(tokens);
+
+	for (std::sregex_iterator i = token_start; i != token_stop; ++i) {
+		std::smatch match = *i;
+		//std::string match_tok = match.str();
+		tokens[j].contents.assign(match.str());
+		j++;
+		//std::cout << match_tok << '\n';
 	}
+
+	return tokens;
+	
 }

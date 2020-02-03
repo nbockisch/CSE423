@@ -1,4 +1,5 @@
 int main()
 {
+  "Lol test"
   return 1;
 }
