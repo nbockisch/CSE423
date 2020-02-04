@@ -1,0 +1,6 @@
+# This defines a simple grammar for the subset of C
+
+program = declarationList
+declarationList = declarationList declaration | declaration
+declaration = varDeclaration | funDeclaration
+

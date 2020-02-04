@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/eva/CSE423/Scanner.h
+stdio.h
+-
+stdlib.h
+-
+assert.h
+-
+
+/home/eva/CSE423/main.cpp
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+Scanner.h
+/home/eva/CSE423/Scanner.h
+unistd.h
+-
+
