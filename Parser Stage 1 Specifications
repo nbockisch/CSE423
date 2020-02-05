@@ -1,0 +1,21 @@
+Main Contributer: Brandon Bicknell
+
+Overview:
+The objectives of the Stage 1 Parser:
+-Take the Grammer and Tokens and determine the correctness of the two
+-Convert Tokens into a format that is easily convertable to a parse tree
+-Pass data for parse tree function that will be completed elsewhere
+
+Inputs: Tokens, Vector/ Grammer, Vector of Conversion Structures
+
+Actions: Verify Grammer on Tokens, store in 2 Vectors
+
+Exit Conditions: Error for Tokens failing, unrecoverable. Successful creation of Vectors
+
+Returns: 2 Vectors, one the non-operator tokens. The other a vector of a structure, containing the operator token, it's terminating
+token (i.e. ) for ( and ; for return) and its priority level, 0 being the root, continuing on to the highest level in the Grammer.
+  
+notes: when creating the parse tree, a possible solution is to have a walkback counter, and whenever an operator is invoked,
+look forward to the next operator, and if it is higher priority, add to the walkback counter, and move one forward in both vectors,
+when a equal or lower priority operator is reached, evaluate the current operator, insert its generated subtree to the first vector,
+then walkback to the original operator.
