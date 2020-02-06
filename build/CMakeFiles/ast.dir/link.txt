@@ -1,0 +1,1 @@
+/usr/bin/c++  -Wall -g -O3  -rdynamic CMakeFiles/ast.dir/AST_main.cpp.o  -o ast libcompiler.a 

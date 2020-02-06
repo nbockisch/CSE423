@@ -4,9 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/eva/CSE423/AST.cpp" "/home/eva/CSE423/build/CMakeFiles/compiler.dir/AST.cpp.o"
-  "/home/eva/CSE423/Parser.cpp" "/home/eva/CSE423/build/CMakeFiles/compiler.dir/Parser.cpp.o"
-  "/home/eva/CSE423/Scanner.cpp" "/home/eva/CSE423/build/CMakeFiles/compiler.dir/Scanner.cpp.o"
+  "/home/eva/CSE423/AST_main.cpp" "/home/eva/CSE423/build/CMakeFiles/ast.dir/AST_main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -16,6 +14,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
+  "/home/eva/CSE423/build/CMakeFiles/compiler.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

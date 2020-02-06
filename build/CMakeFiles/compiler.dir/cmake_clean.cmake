@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/compiler.dir/Scanner.cpp.o"
   "CMakeFiles/compiler.dir/Parser.cpp.o"
+  "CMakeFiles/compiler.dir/AST.cpp.o"
   "libcompiler.pdb"
   "libcompiler.a"
 )
