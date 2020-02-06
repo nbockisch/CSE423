@@ -12,18 +12,9 @@
 int main(int argc, char **argv) {
 
         Scanner *scanner = new Scanner(argv[1]);
+	int size;
 
-        int size;
-        char *charstream = scanner->removeWhitespace(size);
-
-        /* printf("Size: %d\n", size);
-        printf("Charstream:\n");
-        printf("'%s'\n", charstream); */
-
-	std::vector<token_t> tokens = scanner->tokenize(charstream, size);
-
-	std::cout << tokens.front().contents << '\n';
-        
+	std::vector<token_t> tokens = scanner->tokenize(scanner->readFile(size));
+ 
         delete scanner;
-        free(charstream);
 }

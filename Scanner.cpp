@@ -30,18 +30,14 @@ Scanner::~Scanner() {
 
 
 /**
- * Scans the file removing any whitespace characters not within any quotes.
- * Does not handle parsing of comments, which should be done before this as 
- *  this function will strip out newlines, making it hard to parse single line
- *  code comments.
+ * Reads in a C source file and returns its contents as a string
  * @param len The size of stream in bytes.
- * @returns File contents with no whitespace as a character stream
+ * @returns File contents in a string
  */
-char* Scanner::removeWhitespace(int &len) 
+std::string Scanner::readFile(int &len) 
 {
 
         len = 0;
-
         int size = 128;
         char * stream = (char*)malloc(sizeof(char)*size);
         assert(stream);
@@ -49,21 +45,6 @@ char* Scanner::removeWhitespace(int &len)
         int cur = -1;
         int isString = 0;
         while( (cur = fgetc(fp)) != -1) {
-                // NOTE: this wont work if something has an apostrophe in the string..
-                //  I will fix this in the future..
-                /*if(cur == '"' || cur == 39) {
-                        isString = !isString;
-                }*/
-
-                // Skip any whitespace only if we are not looking at a user defined string.
-                /*if(!isString) {
-                        if(isspace(cur)) {
-                                continue;
-                        }
-                }*/
-
-                // Debugging
-                //printf("%c", cur);
                 
                 if(len > size-1) {
                         size *= 2;
@@ -76,39 +57,51 @@ char* Scanner::removeWhitespace(int &len)
         }
 
         stream[len] = '\0';
-                
-        return stream;
+	        
+        return std::string(stream);
 }
 
-std::vector<token_t> Scanner::tokenize(char* code, int len) 
+/**
+ * Splits a string of C code into valid tokens
+ * @param code a string with C code
+ * @return A vector of token structs with valid tokens
+ **/
+std::vector<token_t> Scanner::tokenize(std::string code) 
 {
 	std::string tmp(code);
 	int num_tok, j;
 
 	// Comment matching regex from https://stackoverflow.com/questions/16160190/regular-expression-to-find-c-style-block-comments
-	// TODO, rewrite to make regex more readible, set token types in struct
-	std::regex token_regex("(\\/\\*(\\*(?!\\/)|[^*])*\\*\\/)+|(\\w+)|((\")[^\"]*(\"))|((\')[^\']*(\'))|(==|<=|>=|!=|&&|\\+=|\\-=|\\+\\+|\\-\\-)|[%+\\-/*=^]|[#,<.>{}()[\\]\\|;:]|(\\/\\/(\\s*\\w*)*)");
+	std::string splitter = "(?:\\/\\*[^*]*\\*+(?:[^\\/*][^*]*\\*+)*\\/)"; // elimenate multi-line comments
+	splitter.append("|(?:\\/\\/(\\s*\\w*)*)"); // elimenate single-line comments
+	splitter.append("|(\\w+)"); // keywords, identifiers, and other words
+	splitter.append("|((\")[^\"]*(\"))"); // double quotes
+	splitter.append("|((\')[^\']*(\'))"); // single quotes
+	splitter.append("|(==|<=|>=|!=|&&|\\+=|\\-=|\\+\\+|\\-\\-)"); // two character operators
+	splitter.append("|[%+\\-/*=^]"); // single character operators
+	splitter.append("|[#,<.>{}()[\\]\\|;:]"); // special characters
+
+	std::regex token_splitter(splitter.c_str());
 
 	// Collect tokens from regex
-	auto token_start = std::sregex_iterator(tmp.begin(), tmp.end(), token_regex);
+	auto token_start = std::sregex_iterator(tmp.begin(), tmp.end(), token_splitter);
 	auto token_stop = std::sregex_iterator();
 	num_tok = std::distance(token_start, token_stop);
 
 	std::vector<token_t> tokens;
-	//struct token_t *tokens = (struct token_t *)  malloc(sizeof(struct token_t *) * (num_tok + 1));
-	j = 0;
-
-	//assert(tokens);
 
 	for (std::sregex_iterator i = token_start; i != token_stop; ++i) {
 		std::smatch match = *i;
 		token_t tok;
 		tok.contents.assign(match.str());
 		tokens.push_back(tok);
-		//std::string match_tok = match.str();
-		//tokens[j].contents.assign(match.str());
-		//j++;
-		//std::cout << match_tok << '\n';
+	}
+
+	// Assign type to tokens
+	for (std::size_t test=0; test < tokens.size(); ++test) {
+		std::cout << tokens[test].contents << ' ' << test << '\n';
+
+
 	}
 
 	return tokens;	

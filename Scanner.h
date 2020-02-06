@@ -30,8 +30,8 @@ public:
         Scanner(const char *fname);
         ~Scanner();
 
-        char* removeWhitespace(int &len);
-	std::vector<token_t> tokenize(char* code, int len);
+	std::string readFile(int &len);
+	std::vector<token_t> tokenize(std::string code);
 
 private:
         FILE *fp;
