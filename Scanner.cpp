@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <regex>
 #include <string>
+#include <set>
 #include "Scanner.h"
 
 /**
@@ -68,12 +69,21 @@ std::string Scanner::readFile(int &len)
  **/
 std::vector<token_t> Scanner::tokenize(std::string code) 
 {
+	std::set<std::string> c_keywords = {"auto", "break", "case", "char", "const",
+		                            "continue", "default", "do", "double",
+			                    "else", "enum", "extern", "float", "for",
+					    "goto", "if", "int", "long", "register",
+			                    "return", "short", "signed", "sizeof",
+                                            "static", "struct", "switch", "typedef",
+					    "union", "unsigned", "void", "volatile",
+					    "while"};
+
 	std::string tmp(code);
 	int num_tok, j;
 
 	// Comment matching regex from https://stackoverflow.com/questions/16160190/regular-expression-to-find-c-style-block-comments
-	std::string splitter = "(?:\\/\\*[^*]*\\*+(?:[^\\/*][^*]*\\*+)*\\/)"; // elimenate multi-line comments
-	splitter.append("|(?:\\/\\/(\\s*\\w*)*)"); // elimenate single-line comments
+	std::string splitter = "(?:\\/\\*[^*]*\\*+(?:[^\\/*][^*]*\\*+)*\\/)"; // multi-line comments
+	splitter.append("|(?:\\/\\/(\\s*\\w*)*)"); // single-line comments
 	splitter.append("|(\\w+)"); // keywords, identifiers, and other words
 	splitter.append("|((\")[^\"]*(\"))"); // double quotes
 	splitter.append("|((\')[^\']*(\'))"); // single quotes
@@ -98,11 +108,33 @@ std::vector<token_t> Scanner::tokenize(std::string code)
 	}
 
 	// Assign type to tokens
-	for (std::size_t test=0; test < tokens.size(); ++test) {
-		std::cout << tokens[test].contents << ' ' << test << '\n';
-
-
+	std::vector<token_t>::iterator cur = tokens.begin();
+	while (cur != tokens.end()) {
+		if (std::regex_match((*cur).contents, std::regex("(?:\\/\\*[^*]*\\*+(?:[^\\/*][^*]*\\*+)*\\/)|(?:\\/\\/(\\s*\\w*)*)"))) {
+			// Remove comments
+			cur = tokens.erase(cur);
+		} else if (std::regex_match((*cur).contents, std::regex("(((\")[^\"]*(\")))|((\')[^\']*(\'))"))) {
+			(*cur).type = string;
+			++cur;
+		} else if (std::regex_match((*cur).contents, std::regex("(==|<=|>=|!=|&&|\\+=|\\-=|\\+\\+|\\-\\-)|[%+\\-/*=^]"))) {
+			(*cur).type = op;
+			++cur;
+		} else if (std::regex_match((*cur).contents, std::regex("[#,<.>{}()[\\]\\|;:]"))) {
+			(*cur).type = special;
+			++cur;
+		} else if (std::regex_match((*cur).contents, std::regex("(\\w+)"))) {
+			// Check if keyword
+			std::set<std::string>::iterator key_it = c_keywords.find((*cur).contents);
+			if (key_it != c_keywords.end()) {
+				(*cur).type = keyword;
+			} else {
+				(*cur).type = identifier;
+			}
+			++cur;
+		} else {
+			++cur;
+		}
 	}
-
+	
 	return tokens;	
 }

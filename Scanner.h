@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string>
+#include <set>
 #include <vector>
 
 // Types of tokens
@@ -24,6 +25,7 @@ struct token_t {
 	std::string contents;
 	enum types type;
 };
+
 
 class Scanner {
 public:
