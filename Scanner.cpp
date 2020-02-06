@@ -1,3 +1,8 @@
+/**
+ * @file Scanner.cpp
+ * @brief Contains code for the Scanner class that reads in a file and generates tokens
+ **/
+
 #include <iostream>
 #include <ctype.h>
 #include <regex>
@@ -44,7 +49,6 @@ std::string Scanner::readFile(int &len)
         assert(stream);
         
         int cur = -1;
-        int isString = 0;
         while( (cur = fgetc(fp)) != -1) {
                 
                 if(len > size-1) {
@@ -79,7 +83,6 @@ std::vector<token_t> Scanner::tokenize(std::string code)
 					    "while"};
 
 	std::string tmp(code);
-	int num_tok, j;
 
 	// Comment matching regex from https://stackoverflow.com/questions/16160190/regular-expression-to-find-c-style-block-comments
 	std::string splitter = "(?:\\/\\*[^*]*\\*+(?:[^\\/*][^*]*\\*+)*\\/)"; // multi-line comments
@@ -96,7 +99,6 @@ std::vector<token_t> Scanner::tokenize(std::string code)
 	// Collect tokens from regex
 	auto token_start = std::sregex_iterator(tmp.begin(), tmp.end(), token_splitter);
 	auto token_stop = std::sregex_iterator();
-	num_tok = std::distance(token_start, token_stop);
 
 	std::vector<token_t> tokens;
 

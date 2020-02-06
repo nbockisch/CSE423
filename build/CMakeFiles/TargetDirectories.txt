@@ -1,6 +1,6 @@
-/home/eva/CSE423/build/CMakeFiles/rebuild_cache.dir
-/home/eva/CSE423/build/CMakeFiles/edit_cache.dir
-/home/eva/CSE423/build/CMakeFiles/compiler.dir
-/home/eva/CSE423/build/CMakeFiles/ast.dir
-/home/eva/CSE423/build/CMakeFiles/parser.dir
-/home/eva/CSE423/build/CMakeFiles/scanner.dir
+/home/nathan/school/CSE423/test_repo/build/CMakeFiles/rebuild_cache.dir
+/home/nathan/school/CSE423/test_repo/build/CMakeFiles/scanner.dir
+/home/nathan/school/CSE423/test_repo/build/CMakeFiles/compiler.dir
+/home/nathan/school/CSE423/test_repo/build/CMakeFiles/parser.dir
+/home/nathan/school/CSE423/test_repo/build/CMakeFiles/ast.dir
+/home/nathan/school/CSE423/test_repo/build/CMakeFiles/edit_cache.dir

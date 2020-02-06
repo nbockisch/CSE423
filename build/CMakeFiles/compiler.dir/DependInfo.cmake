@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/eva/CSE423/AST.cpp" "/home/eva/CSE423/build/CMakeFiles/compiler.dir/AST.cpp.o"
-  "/home/eva/CSE423/Parser.cpp" "/home/eva/CSE423/build/CMakeFiles/compiler.dir/Parser.cpp.o"
-  "/home/eva/CSE423/Scanner.cpp" "/home/eva/CSE423/build/CMakeFiles/compiler.dir/Scanner.cpp.o"
+  "/home/nathan/school/CSE423/test_repo/AST.cpp" "/home/nathan/school/CSE423/test_repo/build/CMakeFiles/compiler.dir/AST.cpp.o"
+  "/home/nathan/school/CSE423/test_repo/Parser.cpp" "/home/nathan/school/CSE423/test_repo/build/CMakeFiles/compiler.dir/Parser.cpp.o"
+  "/home/nathan/school/CSE423/test_repo/Scanner.cpp" "/home/nathan/school/CSE423/test_repo/build/CMakeFiles/compiler.dir/Scanner.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
