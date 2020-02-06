@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "-Wall -g -O3")
 #include_directories(${PROJECT_SOURCE_DIR}/lib)
 
 ## A list of all source files in the project that should be compiled
-set (SOURCES Scanner.cpp Parser.cpp)
+set (SOURCES Scanner.cpp Parser.cpp AST.cpp)
 
 # Taken from: https://stackoverflow.com/questions/16485546/how-to-check-in-cmake-whether-a-given-header-file-is-available-for-c-project
 # Macro makes it easy to enforce a required include file
@@ -43,6 +43,7 @@ add_library(compiler ${SOURCES})
 ## Creates an executable 'scanner' with all sources in ${SOURCES} and main.cpp
 add_executable(scanner main.cpp)
 add_executable(parser parser_main.cpp)
+add_executable(ast AST_main.cpp)
 
 #add_executable(scanner ${SOURCES} main.cpp)
 #add_executable(parser ${SOURCES} parser_main.cpp)
@@ -51,4 +52,5 @@ add_executable(parser parser_main.cpp)
 #target_link_libraries(scanner compiler ${COMPILE_LIBS})
 target_link_libraries(scanner compiler)
 target_link_libraries(parser compiler)
+target_link_libraries(ast compiler)
 

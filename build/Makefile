@@ -124,6 +124,19 @@ compiler/fast:
 .PHONY : compiler/fast
 
 #=============================================================================
+# Target rules for targets named ast
+
+# Build rule for target.
+ast: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ast
+.PHONY : ast
+
+# fast build rule for target.
+ast/fast:
+	$(MAKE) -f CMakeFiles/ast.dir/build.make CMakeFiles/ast.dir/build
+.PHONY : ast/fast
+
+#=============================================================================
 # Target rules for targets named parser
 
 # Build rule for target.
@@ -148,6 +161,60 @@ scanner: cmake_check_build_system
 scanner/fast:
 	$(MAKE) -f CMakeFiles/scanner.dir/build.make CMakeFiles/scanner.dir/build
 .PHONY : scanner/fast
+
+AST.o: AST.cpp.o
+
+.PHONY : AST.o
+
+# target to build an object file
+AST.cpp.o:
+	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/AST.cpp.o
+.PHONY : AST.cpp.o
+
+AST.i: AST.cpp.i
+
+.PHONY : AST.i
+
+# target to preprocess a source file
+AST.cpp.i:
+	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/AST.cpp.i
+.PHONY : AST.cpp.i
+
+AST.s: AST.cpp.s
+
+.PHONY : AST.s
+
+# target to generate assembly for a file
+AST.cpp.s:
+	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/AST.cpp.s
+.PHONY : AST.cpp.s
+
+AST_main.o: AST_main.cpp.o
+
+.PHONY : AST_main.o
+
+# target to build an object file
+AST_main.cpp.o:
+	$(MAKE) -f CMakeFiles/ast.dir/build.make CMakeFiles/ast.dir/AST_main.cpp.o
+.PHONY : AST_main.cpp.o
+
+AST_main.i: AST_main.cpp.i
+
+.PHONY : AST_main.i
+
+# target to preprocess a source file
+AST_main.cpp.i:
+	$(MAKE) -f CMakeFiles/ast.dir/build.make CMakeFiles/ast.dir/AST_main.cpp.i
+.PHONY : AST_main.cpp.i
+
+AST_main.s: AST_main.cpp.s
+
+.PHONY : AST_main.s
+
+# target to generate assembly for a file
+AST_main.cpp.s:
+	$(MAKE) -f CMakeFiles/ast.dir/build.make CMakeFiles/ast.dir/AST_main.cpp.s
+.PHONY : AST_main.cpp.s
 
 Parser.o: Parser.cpp.o
 
@@ -266,8 +333,15 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... compiler"
+	@echo "... ast"
 	@echo "... parser"
 	@echo "... scanner"
+	@echo "... AST.o"
+	@echo "... AST.i"
+	@echo "... AST.s"
+	@echo "... AST_main.o"
+	@echo "... AST_main.i"
+	@echo "... AST_main.s"
 	@echo "... Parser.o"
 	@echo "... Parser.i"
 	@echo "... Parser.s"

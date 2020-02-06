@@ -6,6 +6,22 @@
 
 #IncludeRegexTransform: 
 
+/home/eva/CSE423/AST.cpp
+AST.h
+/home/eva/CSE423/AST.h
+stdio.h
+-
+
+/home/eva/CSE423/AST.h
+stdio.h
+-
+stdlib.h
+-
+assert.h
+-
+string
+-
+
 /home/eva/CSE423/Parser.cpp
 string
 -

@@ -105,19 +105,45 @@ CMakeFiles/compiler.dir/Parser.cpp.o.provides: CMakeFiles/compiler.dir/Parser.cp
 CMakeFiles/compiler.dir/Parser.cpp.o.provides.build: CMakeFiles/compiler.dir/Parser.cpp.o
 
 
+CMakeFiles/compiler.dir/AST.cpp.o: CMakeFiles/compiler.dir/flags.make
+CMakeFiles/compiler.dir/AST.cpp.o: ../AST.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/eva/CSE423/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/compiler.dir/AST.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/compiler.dir/AST.cpp.o -c /home/eva/CSE423/AST.cpp
+
+CMakeFiles/compiler.dir/AST.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/compiler.dir/AST.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/eva/CSE423/AST.cpp > CMakeFiles/compiler.dir/AST.cpp.i
+
+CMakeFiles/compiler.dir/AST.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/compiler.dir/AST.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/eva/CSE423/AST.cpp -o CMakeFiles/compiler.dir/AST.cpp.s
+
+CMakeFiles/compiler.dir/AST.cpp.o.requires:
+
+.PHONY : CMakeFiles/compiler.dir/AST.cpp.o.requires
+
+CMakeFiles/compiler.dir/AST.cpp.o.provides: CMakeFiles/compiler.dir/AST.cpp.o.requires
+	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/AST.cpp.o.provides.build
+.PHONY : CMakeFiles/compiler.dir/AST.cpp.o.provides
+
+CMakeFiles/compiler.dir/AST.cpp.o.provides.build: CMakeFiles/compiler.dir/AST.cpp.o
+
+
 # Object files for target compiler
 compiler_OBJECTS = \
 "CMakeFiles/compiler.dir/Scanner.cpp.o" \
-"CMakeFiles/compiler.dir/Parser.cpp.o"
+"CMakeFiles/compiler.dir/Parser.cpp.o" \
+"CMakeFiles/compiler.dir/AST.cpp.o"
 
 # External object files for target compiler
 compiler_EXTERNAL_OBJECTS =
 
 libcompiler.a: CMakeFiles/compiler.dir/Scanner.cpp.o
 libcompiler.a: CMakeFiles/compiler.dir/Parser.cpp.o
+libcompiler.a: CMakeFiles/compiler.dir/AST.cpp.o
 libcompiler.a: CMakeFiles/compiler.dir/build.make
 libcompiler.a: CMakeFiles/compiler.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/eva/CSE423/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libcompiler.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/eva/CSE423/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libcompiler.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/compiler.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/compiler.dir/link.txt --verbose=$(VERBOSE)
 
@@ -128,6 +154,7 @@ CMakeFiles/compiler.dir/build: libcompiler.a
 
 CMakeFiles/compiler.dir/requires: CMakeFiles/compiler.dir/Scanner.cpp.o.requires
 CMakeFiles/compiler.dir/requires: CMakeFiles/compiler.dir/Parser.cpp.o.requires
+CMakeFiles/compiler.dir/requires: CMakeFiles/compiler.dir/AST.cpp.o.requires
 
 .PHONY : CMakeFiles/compiler.dir/requires
 
