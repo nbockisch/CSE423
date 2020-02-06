@@ -1,6 +1,6 @@
 # CSE423
 
-## Group Members: Eva Domschot, Nathan Bockisch, Cole Kendrick 
+## Group Members: Eva Domschot, Nathan Bockisch, Cole Kendrick, Brandon Bicknell
 
 ## Compiling
 
