@@ -39,14 +39,15 @@ node *AST::search(int key, node *leaf)
 	else return NULL;
 }
 
-void AST::insert(int key, node *leaf)
+void AST::insert(ASTNodeType key, node *leaf)
 {
-	if(key < leaf->key_value) {
+	
+	/*if(key < leaf->key_value) {
 		if(leaf->left != NULL)
 			insert(key, leaf->left);
 		else {
 			leaf->left = new node;
-			leaf->left->key_value=key;
+			leaf->left->key_value = key;
 			leaf->left->left = NULL;    
 			leaf->left->right = NULL;   
 		}  
@@ -57,16 +58,16 @@ void AST::insert(int key, node *leaf)
 		else {
 			leaf->right = new node;
 			leaf->right->key_value = key;
-			leaf->right->left = NULL;  //Sets the left child of the child node to null
-			leaf->right->right = NULL; //Sets the right child of the child node to null
+			leaf->right->left = NULL; 
+			leaf->right->right = NULL; 
 		}
-	}
+	}*/
 }
 
-void AST::insert(int key)
+void AST::insert(ASTNodeType key)
 {
 	if(root != NULL)
-		insert(key, root);
+		insert(key, priority, root);
 	else {
 		root = new node;
 		root->key_value = key;
