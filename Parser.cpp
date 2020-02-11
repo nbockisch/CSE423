@@ -88,3 +88,46 @@ void Parser::printRules() {
                 }
         }
 }
+
+/*
+int Parser::search(std::string token) {
+        //Waiting for Grammer Format
+}
+
+std::string Parser::term_match(tmp.name) {
+        //Waiting for Grammer Format
+}
+
+int Parser::verify(std::vector<std::string> tokens) {
+        PV = new ParseVector;
+        int depth = 0;
+        std::vector<int> hold;
+        hold.push_back(0);
+        for(int i = 0; i < tokens.size(); i++) {
+                depth = search(tokens[i]);
+                if(depth < 0) {
+                        hold.push_back(i);
+                } else if(depth == 0) {
+                        PV->TermVec.push_back(tokens[i])
+                } else {
+                        struct Operator tmp;
+                        tmp.name = tokens[i];
+                        tmp.term = term_match(tmp.name);
+                        PV->OpVec.push_back(tmp);
+                }
+        }
+        while(hold.size() != 0) {
+                depth = search(hold.peek());
+                if(depth < 0) {
+                        //Error Situation
+                } else if(depth == 0) {
+                        PV->TermVec.push_back(hold.pop())
+                } else {
+                        struct Operator tmp;
+                        tmp.name = hold.pop();
+                        tmp.term = term_match(tmp.name);
+                        PV->OpVec.push_back(tmp);
+                }
+        }
+}
+*/
