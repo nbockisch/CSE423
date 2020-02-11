@@ -11,7 +11,6 @@
 #include <vector>
 #include <regex>
 
-typedef std::pair<std::string, std::vector<std::string>> Rule;
 /* Data Structures for Grammer Verifier and Outputs
 struct Terminal {
         //std::vector<"TREE">* subtrees; //Internal Tree Construction Method
@@ -31,12 +30,23 @@ struct ParseVector {
 };
 */
 
+enum prod_type { nonterminal, charclass, literal, keyw };
+
+struct Production {
+        prod_type type;
+        std::string name;
+        int level; // Level is currently the number of the production found as read in from file..
+};
+
+typedef std::pair<std::string, std::vector<std::vector<Production>>> Rule;
+
 class Parser {
 public:
         Parser(const std::string grammar_file);
         ~Parser();
 
         int loadGrammar();
+        int verifyGrammar();
         void printRules();
         
         //struct ParseVector* releasePV();
