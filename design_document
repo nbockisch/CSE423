@@ -1,9 +1,12 @@
-Team Members: Coleman Kendrick, Eva Domschott, Nathan Bockisch, Brandon Bicknell
+# Team Members: Coleman Kendrick, Eva Domschott, Nathan Bockisch, Brandon Bicknell
 
-Program Overview
+# Program Overview
 
-Usage
+# Usage
 
-Design Discussion
-
-Language Specification
+# Design Discussion
+## Tokenizer
+The tokenizer works by reading in a source file, storing those contents as a string object, and passing that string to a tokenizer function to be split into tokens stored in a vector object.
+The tokenizer function utilizes a struct called token_t, which contains a string for the token contents and an enumerator with the general type of token it is (string, keyword, etc.). To parse
+out tokens from the source file string, regex is employed.
+# Language Specification
