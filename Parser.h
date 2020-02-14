@@ -50,6 +50,7 @@ public:
         void printRules();
         
         //struct ParseVector* releasePV();
+        //int verify(std::vector<std::string> tokens);
 
 private:
         std::string fname;
@@ -58,8 +59,6 @@ private:
         
         /*
         struct ParseVector* PV;
-        //Grammer Format will decide how the search function through the rules is completed
-        int verify(std::vector<std::string> tokens);
         //int search(std::string token);
         //std::string term_match(std::string)        
         */
