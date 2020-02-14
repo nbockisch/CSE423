@@ -142,15 +142,17 @@ void Parser::printRules() {
 
 /*
 int Parser::search(std::string token) {
-        //Waiting for Grammer Format
+        //finds correct grammer matching, returns its level if found, 0 if it's a terminal, or -1 if it was not found
 }
 
 std::string Parser::term_match(tmp.name) {
-        //Waiting for Grammer Format
+        //Uncertain if needs to be used
 }
 
+//Activity, takes token vector, for each token, finds it in the grammer, pushes it to PV and to a normal vector of tokens
 int Parser::verify(std::vector<std::string> tokens) {
         PV = new ParseVector;
+        std::vector<std::string> stk;
         int depth = 0;
         std::vector<int> hold;
         hold.push_back(0);
