@@ -8,31 +8,16 @@ The objectives of the Stage 1 Parser:
 
 Inputs: Tokens, Vector/ Grammer, Vector of Conversion Structures
 
-Actions: Verify Grammer on Tokens, store in 2 Vectors
+Actions: Verify Grammer on Tokens, store in Vectors
 
 Exit Conditions: Error for Tokens failing, unrecoverable. Successful creation of Vectors
 
-Returns: 2 Vectors, one the non-operator tokens. The other a vector of a structure, containing the operator token, it's terminating
-token (i.e. ) for ( and ; for return) and its priority level, 0 being the root, continuing on to the highest level in the Grammer.
+Returns: 1 Vector that preserves the priority and order of the tokens after being parsed through the grammer.
   
-notes: when creating the parse tree, a possible solution is to have a walkback counter, and whenever an operator is invoked,
-look forward to the next operator, and if it is higher priority, add to the walkback counter, and move one forward in both vectors,
-when a equal or lower priority operator is reached, evaluate the current operator, insert its generated subtree to the first vector,
-then walkback to the original operator.
-
-struct Terminal {
-  //std::vector<"TREE">* subtrees; //Internal Tree Construction Method
-  //std::string vals; //Simple Output Method
-};
-
-struct Operator {
+struct ParsedToken {
   std::string name;
-  std::string term;
-  //bool trep; //for if we want to store whether or not this op needs to be in the parse tree
+  enum token type;
+  bool trep;
   int priority;
-};
-
-struct ParseVector {
-  std::vector<Terminal> TermVec;
-  std::vector<Operator> OpVec
+  int children;
 };
