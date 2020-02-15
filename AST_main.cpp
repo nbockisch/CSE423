@@ -10,10 +10,11 @@
 
 int main(int argc, char **argv) {
         AST *ast = new AST();
-	char order[3][7] = {"main", "return", "1"};
+	char const *order[3] = {"main", "return", "1"};
        	ast->insert(order);
 
 	//ast->insert(7, 3);
+	printf("Post order traversal of AST:\n");
 	ast->postorder();
         delete ast;
         
