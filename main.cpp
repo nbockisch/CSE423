@@ -3,9 +3,11 @@
  * @brief Main driver for compiler
  */
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 #include "Scanner.h"
 #include <unistd.h>
 
@@ -42,13 +44,7 @@ int main(int argc, char **argv) {
 
         Scanner *scanner = new Scanner(file);
 
-        int size;
-        char *charstream = scanner->removeWhitespace(size);
-
-        printf("Size: %d\n", size);
-        printf("Charstream:\n");
-        printf("'%s'\n", charstream);
-        
+	std::vector<token_t> tokens = scanner->tokenize(scanner->readFile(size));
+ 
         delete scanner;
-        free(charstream);
 }

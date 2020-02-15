@@ -1,5 +1,13 @@
-#include <ctype.h>
+/**
+ * @file Scanner.cpp
+ * @brief Contains code for the Scanner class that reads in a file and generates tokens
+ **/
 
+#include <iostream>
+#include <ctype.h>
+#include <regex>
+#include <string>
+#include <set>
 #include "Scanner.h"
 
 /**
@@ -28,39 +36,20 @@ Scanner::~Scanner() {
 
 
 /**
- * Scans the file removing any whitespace characters not within any quotes.
- * Does not handle parsing of comments, which should be done before this as 
- *  this function will strip out newlines, making it hard to parse single line
- *  code comments.
+ * Reads in a C source file and returns its contents as a string
  * @param len The size of stream in bytes.
- * @returns File contents with no whitespace as a character stream
+ * @returns File contents in a string
  */
-char* Scanner::removeWhitespace(int &len) {
+std::string Scanner::readFile(int &len) 
+{
 
         len = 0;
-
         int size = 128;
         char * stream = (char*)malloc(sizeof(char)*size);
         assert(stream);
         
         int cur = -1;
-        int isString = 0;
         while( (cur = fgetc(fp)) != -1) {
-                // NOTE: this wont work if something has an apostrophe in the string..
-                //  I will fix this in the future..
-                if(cur == '"' || cur == 39) {
-                        isString = !isString;
-                }
-
-                // Skip any whitespace only if we are not looking at a user defined string.
-                if(!isString) {
-                        if(isspace(cur)) {
-                                continue;
-                        }
-                }
-
-                // Debugging
-                //printf("%c", cur);
                 
                 if(len > size-1) {
                         size *= 2;
@@ -73,6 +62,81 @@ char* Scanner::removeWhitespace(int &len) {
         }
 
         stream[len] = '\0';
-                
-        return stream;
+	        
+        return std::string(stream);
+}
+
+/**
+ * Splits a string of C code into valid tokens
+ * @param code a string with C code
+ * @return A vector of token structs with valid tokens
+ **/
+std::vector<token_t> Scanner::tokenize(std::string code) 
+{
+	std::set<std::string> c_keywords = {"auto", "break", "case", "char", "const",
+		                            "continue", "default", "do", "double",
+			                    "else", "enum", "extern", "float", "for",
+					    "goto", "if", "int", "long", "register",
+			                    "return", "short", "signed", "sizeof",
+                                            "static", "struct", "switch", "typedef",
+					    "union", "unsigned", "void", "volatile",
+					    "while"};
+
+	std::string tmp(code);
+
+	// Comment matching regex from https://stackoverflow.com/questions/16160190/regular-expression-to-find-c-style-block-comments
+	std::string splitter = "(?:\\/\\*[^*]*\\*+(?:[^\\/*][^*]*\\*+)*\\/)"; // multi-line comments
+	splitter.append("|(?:\\/\\/(\\s*\\w*)*)"); // single-line comments
+	splitter.append("|(\\w+)"); // keywords, identifiers, and other words
+	splitter.append("|((\")[^\"]*(\"))"); // double quotes
+	splitter.append("|((\')[^\']*(\'))"); // single quotes
+	splitter.append("|(==|<=|>=|!=|&&|\\+=|\\-=|\\+\\+|\\-\\-)"); // two character operators
+	splitter.append("|[%+\\-/*=^]"); // single character operators
+	splitter.append("|[#,<.>{}()[\\]\\|;:]"); // special characters
+
+	std::regex token_splitter(splitter.c_str());
+
+	// Collect tokens from regex
+	auto token_start = std::sregex_iterator(tmp.begin(), tmp.end(), token_splitter);
+	auto token_stop = std::sregex_iterator();
+
+	std::vector<token_t> tokens;
+
+	for (std::sregex_iterator i = token_start; i != token_stop; ++i) {
+		std::smatch match = *i;
+		token_t tok;
+		tok.contents.assign(match.str());
+		tokens.push_back(tok);
+	}
+
+	// Assign type to tokens
+	std::vector<token_t>::iterator cur = tokens.begin();
+	while (cur != tokens.end()) {
+		if (std::regex_match((*cur).contents, std::regex("(?:\\/\\*[^*]*\\*+(?:[^\\/*][^*]*\\*+)*\\/)|(?:\\/\\/(\\s*\\w*)*)"))) {
+			// Remove comments
+			cur = tokens.erase(cur);
+		} else if (std::regex_match((*cur).contents, std::regex("(((\")[^\"]*(\")))|((\')[^\']*(\'))"))) {
+			(*cur).type = string;
+			++cur;
+		} else if (std::regex_match((*cur).contents, std::regex("(==|<=|>=|!=|&&|\\+=|\\-=|\\+\\+|\\-\\-)|[%+\\-/*=^]"))) {
+			(*cur).type = op;
+			++cur;
+		} else if (std::regex_match((*cur).contents, std::regex("[#,<.>{}()[\\]\\|;:]"))) {
+			(*cur).type = special;
+			++cur;
+		} else if (std::regex_match((*cur).contents, std::regex("(\\w+)"))) {
+			// Check if keyword
+			std::set<std::string>::iterator key_it = c_keywords.find((*cur).contents);
+			if (key_it != c_keywords.end()) {
+				(*cur).type = keyword;
+			} else {
+				(*cur).type = identifier;
+			}
+			++cur;
+		} else {
+			++cur;
+		}
+	}
+	
+	return tokens;	
 }

@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -g -O3  -rdynamic CMakeFiles/scanner.dir/main.cpp.o  -o scanner libcompiler.a 
