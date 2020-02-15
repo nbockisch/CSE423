@@ -6,6 +6,8 @@
 
 #include "AST.h"
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 AST::AST()
 {
@@ -39,51 +41,55 @@ node *AST::search(int key, node *leaf)
 	else return NULL;
 }
 
-void AST::insert(int key[], node *leaf)
+void AST::insert(char const **key, node *leaf)
 {
 	int i;
 	int params = 0;
-	//int size = sizeof(key)/sizeof(key[0]);
-	//printf("%d\n", size);
-	for(i = 0; i < 11; i++) {
-		if (key[i] == 3) //count until op is hit
-			break;
-		params++;
-	}
-	if(leaf->left != NULL)
-		insert(key, leaf->left);
-	else {
+	int firstOp;
+
+	//set up node for first function name hit
+	//could be a function aside from main. will change to deal with that
+	if (strncmp(key[0], "main", 4) == 0) {
 		leaf->left = new node;
-		leaf->left->key_value = key[3];
-		leaf->left->Type = OperatorPlus;
+		leaf->left->Type = Main;
 		leaf->left->left = NULL;    
 		leaf->left->right = NULL;   
-	}  
-
-	/*if(key < leaf->key_value) {
-		if(leaf->left != NULL)
-			insert(key, leaf->left);
-		else {
-			leaf->left = new node;
-			leaf->left->key_value = key[3];
-			leaf->left->Type = OperatorPlus;
-			leaf->left->left = NULL;    
-			leaf->left->right = NULL;   
-		}  
 	}
-	else if(key >= leaf->key_value) {
-		if(leaf->right!=NULL)
-			insert(key, leaf->right);
-		else {
-			leaf->right = new node;
-			leaf->right->key_value = key;
-			leaf->right->left = NULL; 
-			leaf->right->right = NULL; 
+	//count up params until first operator is hit
+	for (i = 1; i < 3; i++) {
+		if (strncmp(key[i], "return", 6) == 0) {//count until operator is hit
+			firstOp = i;
+			break;
 		}
-	}*/
+		params++;
+	}
+
+	if (params == 0) {
+		leaf->left->right = new node;
+		leaf = leaf->left->right;
+		leaf->Type = Return; //change the logic if other ops are encountered instead
+		leaf->left = NULL; //return has one child only; will change for other kinds of ops
+	} else {
+		//this block for setting up passed in params on left side of tree
+	}
+
+	for (i = (firstOp + 1); i < 3; i++) {
+		char *end;
+		long num = strtol(key[i], &end, 10); 
+		//numbers      
+		if (end != key[i]) {
+			leaf->left = new node;
+			leaf = leaf->left;
+			leaf->Type = NumberValue;
+			leaf->key_value = (int) num;
+		} else {
+			//more operators
+			//more functions
+		}
+	}
 }
 
-void AST::insert(int key[])
+void AST::insert(char const **key)
 {
 	root = new node;
 	root->Type = Program;
@@ -106,8 +112,10 @@ void AST::postorder(node *leaf)
 	if (leaf != NULL) {   
 		postorder(leaf->left);
 		postorder(leaf->right);
-		printf("%d\n", leaf->key_value);
-		printf("%s\n", leaf->ASTTypes[leaf->Type]);
+		if (leaf->Type == 8)
+			printf("%d\n", leaf->key_value);
+		else 
+			printf("%s\n", leaf->ASTTypes[leaf->Type]);
 	}
 }
 
