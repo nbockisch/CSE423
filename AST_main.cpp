@@ -10,10 +10,9 @@
 
 int main(int argc, char **argv) {
         AST *ast = new AST();
-       	ast->insert(2, 0);
-	ast->insert(3, 1);
-	ast->insert(5, 1);
-	ast->insert(6, 2);
+	char order[3][7] = {"main", "return", "1"};
+       	ast->insert(order);
+
 	//ast->insert(7, 3);
 	ast->postorder();
         delete ast;

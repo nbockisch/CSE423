@@ -39,15 +39,34 @@ node *AST::search(int key, node *leaf)
 	else return NULL;
 }
 
-void AST::insert(ASTNodeType key, node *leaf)
+void AST::insert(int key[], node *leaf)
 {
-	
+	int i;
+	int params = 0;
+	//int size = sizeof(key)/sizeof(key[0]);
+	//printf("%d\n", size);
+	for(i = 0; i < 11; i++) {
+		if (key[i] == 3) //count until op is hit
+			break;
+		params++;
+	}
+	if(leaf->left != NULL)
+		insert(key, leaf->left);
+	else {
+		leaf->left = new node;
+		leaf->left->key_value = key[3];
+		leaf->left->Type = OperatorPlus;
+		leaf->left->left = NULL;    
+		leaf->left->right = NULL;   
+	}  
+
 	/*if(key < leaf->key_value) {
 		if(leaf->left != NULL)
 			insert(key, leaf->left);
 		else {
 			leaf->left = new node;
-			leaf->left->key_value = key;
+			leaf->left->key_value = key[3];
+			leaf->left->Type = OperatorPlus;
 			leaf->left->left = NULL;    
 			leaf->left->right = NULL;   
 		}  
@@ -64,16 +83,13 @@ void AST::insert(ASTNodeType key, node *leaf)
 	}*/
 }
 
-void AST::insert(ASTNodeType key)
+void AST::insert(int key[])
 {
-	if(root != NULL)
-		insert(key, priority, root);
-	else {
-		root = new node;
-		root->key_value = key;
-		root->left = NULL;
-		root->right = NULL;
-	}
+	root = new node;
+	root->Type = Program;
+	root->left = NULL;
+	root->right = NULL;
+	insert(key, root);
 }
 
 node *AST::search(int key)
@@ -91,6 +107,7 @@ void AST::postorder(node *leaf)
 		postorder(leaf->left);
 		postorder(leaf->right);
 		printf("%d\n", leaf->key_value);
+		printf("%s\n", leaf->ASTTypes[leaf->Type]);
 	}
 }
 
