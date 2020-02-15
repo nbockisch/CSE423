@@ -13,10 +13,10 @@ enum ASTNodeType
 	/* need to add other operators */
 	Undefined,
 	OperatorPlus,
+	Program,
 	OperatorMinus,
 	OperatorMul,
 	OperatorDiv,
-	UnaryMinus,
 	NumberValue
 };
 
@@ -26,6 +26,8 @@ struct node
 	int key_value;
 	node *left;
 	node *right;
+	char ASTTypes[7][10] = {"undefined", "+", "program", "-", "*", "/", "Number"};
+
 };
 
 class AST
@@ -33,7 +35,7 @@ class AST
 	public:
 		AST();
 		~AST();
-		void insert(ASTNodeType key, int priority);
+		void insert(int key[]);
 		void postorder();
 		node *search(int key);
 		void destroy_tree();
@@ -41,7 +43,7 @@ class AST
 	private:
 		void destroy_tree(node *leaf);
 		void postorder(node *leaf);
-		void insert(int key, int priority, node *leaf);
+		void insert(int key[], node *leaf);
 		node *search(int key, node *leaf);
 		node *root;
 };
