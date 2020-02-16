@@ -15,12 +15,16 @@
 int main(int argc, char **argv) {
 	int opt;
 	char *file;
+	int size;
+	int p_tokens = 0;
 
 	/*break apart command line arguments*/
 	while((opt = getopt(argc, argv, ":if:lrx")) != -1) {  
 		switch(opt)  { 
 			/*boiler plate: change letters to whatever you want as needed*/ 
 			case 'i':  
+				/* print out tokens */
+				p_tokens = 1;	
 			case 'l':  
 			case 'r':  
 				printf("option: %c\n", opt);  
@@ -45,6 +49,11 @@ int main(int argc, char **argv) {
         Scanner *scanner = new Scanner(file);
 
 	std::vector<token_t> tokens = scanner->tokenize(scanner->readFile(size));
- 
+
+	// Print tokens
+	if (p_tokens) {
+		scanner->printTokens(tokens);
+	}
+
         delete scanner;
 }

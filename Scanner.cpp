@@ -140,3 +140,34 @@ std::vector<token_t> Scanner::tokenize(std::string code)
 	
 	return tokens;	
 }
+
+/**
+ * prints out a vector of tokens
+ * @param tokens a vector of token objects
+ **/
+void Scanner::printTokens(std::vector<token_t> tokens)
+{
+	for (std::vector<token_t>::iterator token = tokens.begin(); token != tokens.end(); ++token) {
+		std::cout << "<" << (*token).contents << ", ";
+		switch ((*token).type) {
+			case 0:
+				std::cout << "keyword>\n";
+				break;
+			case 1:
+				std::cout << "identifier>\n";
+				break;
+			case 2:
+				std::cout << "constant>\n";
+				break;
+			case 3:
+				std::cout << "string>\n";
+				break;
+			case 4:
+				std::cout << "special>\n";
+				break;
+			case 5:
+				std::cout << "operator>\n";
+				break;
+		}
+	}
+}
