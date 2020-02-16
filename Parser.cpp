@@ -140,47 +140,256 @@ void Parser::printRules() {
         }
 }
 
-/*
-int Parser::search(std::string token) {
-        //finds correct grammer matching, returns its level if found, 0 if it's a terminal, or -1 if it was not found
+//Perfomrs a breadth first search of the grammer list to determine the minimum path to reach the rule from root
+int Parser::recalculate_priority(std::string rule) {
+	//To do
+	return -1;
 }
 
-std::string Parser::term_match(tmp.name) {
-        //Uncertain if needs to be used
+//Takes vector at instance, determines the operation in the grammer the token string belongs in, pushes it in post order format to PV, and reduces it for search_stack for all base tokens
+int Parser::search(std::vector<std::string> tokens) {
+	int index = 0;
+	int depth = 0;
+	std::vector<Rule> bfs;
+	std::vector<int> ruleindex;
+	std::vector<bool> findex;
+	while (index < tokens.size()) { //Termination condition
+		search_stack.push_back(tokens[index]);
+		bool found = false;
+		if (bfs.size() > 0) {
+			for (int i = 0; i < bfs.size(); i++) { //breadth first search of remaining grammer rules
+				if (search_stack[search_stack.size() - 1] == bfs[i].second[ruleindex[i]][depth].name) {
+					findex.push_back(true);
+					found = true;
+				}
+				else {
+					findex.push_back(false);
+				}
+			}
+		}
+		else { //Initial full search for begining of breadth first search
+			for (int i = 0; i < rules.size(); i++) { //Searches for token in right hand side
+				for (int j = 0; j < rules[i].second.size(); j++) {
+					if (search_stack[search_stack.size() - 1] == rules[i].second[j][depth].name) { //Construct breadth first search setup when next token is found
+						bfs.push_back(rules[i]);
+						ruleindex.push_back(j);
+						findex.push_back(true);
+						found = true;
+					}
+				}
+			}
+		}
+		if (found == false && bytype(bfs, ruleindex, depth) == false) { //invalid token couldn't find a match in the grammer
+			return -1;
+		}
+		//gets rid of all failed branches in the breadth first search
+		int i = 0;
+		bool noreduc = true;
+		while (i < findex.size()) {
+			if (findex[i] == false) {
+				findex.erase(findex.begin() + i);
+				bfs.erase(bfs.begin() + i);
+				ruleindex.erase(ruleindex.begin() + i);
+				continue;
+			}
+			else {
+				if ((depth + 1) == bfs[i].second[ruleindex[i]].size()) { //Branch is completed and can be reduced
+					
+					//Todo: Instead of finishing at first completable branch, preserve branch and move forward until all other branches have been invalidated or reached reducibility, then choose the highest one
+					//Possible Issue, the rule closer to the root level is looking for a lower level rule that is equally valid with one that is not chosen, branching situation occurs there
+
+					ParsedToken p;
+					noreduc = false;
+					for (int j = 0; j <= depth; j++) { //setup Parse Tree Vector pushes
+						p.name = tokens[index - (depth + 1 + j)];
+						p.tp = bfs[i].second[ruleindex[i]][j].type;
+						p.trep = true;
+						if (p.name == "(" || p.name == ")" || p.name == "{" || p.name == "}" || p.name == ";" || p.name == "," || p.name == ":") { //things not desired in tree representation
+							p.trep = false;
+						}
+						if (bfs[i].second[ruleindex[i]][j].type == nonterminal) {
+							p.children = depth + 1;
+							p.priority = recalculate_priority(bfs[i].first); //not finished
+						}
+						else {
+							p.children = 0;
+							p.priority = -1;
+						}
+						PV.push_back(p);
+					}
+					while (depth >= 0) { //constructs remove elements currently in search_stack;
+						search_stack.pop_back();
+						depth--;
+					}
+					search_stack.push_back(bfs[i].first); //reduction
+					bfs.clear();
+					ruleindex.clear();
+					findex.clear();
+					break;
+				}
+				i++;
+			}
+			if (noreduc == true && bfs.size() == 0) { //May need to be altered to ensure
+				return -1;
+			}
+		}
+		depth++;
+		index++;
+		findex.clear(); //used repeatedly
+	}
+	
+	//once base is completed, use a function to reduce to correctness
+	verify();
 }
 
-//Activity, takes token vector, for each token, finds it in the grammer, pushes it to PV and to a normal vector of tokens
-int Parser::verify(std::vector<std::string> tokens) {
-        PV = new ParseVector;
-        std::vector<std::string> stk;
-        int depth = 0;
-        std::vector<int> hold;
-        hold.push_back(0);
-        for(int i = 0; i < tokens.size(); i++) {
-                depth = search(tokens[i]);
-                if(depth < 0) {
-                        hold.push_back(i);
-                } else if(depth == 0) {
-                        PV->TermVec.push_back(tokens[i])
-                } else {
-                        struct Operator tmp;
-                        tmp.name = tokens[i];
-                        tmp.term = term_match(tmp.name);
-                        PV->OpVec.push_back(tmp);
-                }
-        }
-        while(hold.size() != 0) {
-                depth = search(hold.peek());
-                if(depth < 0) {
-                        //Error Situation
-                } else if(depth == 0) {
-                        PV->TermVec.push_back(hold.pop())
-                } else {
-                        struct Operator tmp;
-                        tmp.name = hold.pop();
-                        tmp.term = term_match(tmp.name);
-                        PV->OpVec.push_back(tmp);
-                }
-        }
+//Search by type
+int Parser::bytype(std::vector<Rule> bfs, std::vector<int> ruleindex, int depth) {
+	std::string token = search_stack.back();
+	search_stack.pop_back();
+	ParsedToken p;
+	p.name = token;
+	p.priority = -1;
+	p.tp = charclass;
+	p.trep = true;
+	if (isalpha(token[0])) {
+		PV.push_back(p);
+		token = "ID";
+	}
+	else if (isdigit(token[0])) {
+		PV.push_back(p);
+		token = "NUMCONST";
+	}
+	else if (token == "") { //Empty Argument List, check this for debugging, should happen during basic lr parse
+		PV.push_back(p);
+		token == "epsilon";
+	}
+	else {
+		return -1;
+	}
+	
+	//New Search
+	search_stack.push_back(token);
+	bool found = false;
+	if (bfs.size() > 0) {
+		std::vector<bool> findex;
+		for (int i = 0; i < bfs.size(); i++) { //breadth first search of remaining grammer rules
+			if (search_stack[search_stack.size() - 1] == bfs[i].second[ruleindex[i]][depth].name) {
+				findex.push_back(true);
+				found = true;
+			}
+			else {
+				findex.push_back(false);
+			}
+		}
+		if (found == false) {
+			return -1;
+		}
+	}
+	else {
+		for (int i = 0; i < rules.size(); i++) { //Searches for token in right hand side
+			for (int j = 0; j < rules[i].second.size(); j++) {
+				if (token == rules[i].second[j][depth].name) { //Construct breadth first search setup when next token is found
+					bfs.push_back(rules[i]);
+					ruleindex.push_back(j);
+					found = true;
+				}
+			}
+		}
+	}
+	if (found == false) {
+		return -1;
+	}
+	return 0;
 }
-*/
+
+//Resolves oversight in Grammer Structure
+Production Parser::match(std::string left) {
+	for (int i = 0; i < rules.size(); i++) {
+		for (int j = 0; j < rules[i].second.size(); j++) {
+			for (int k = 0; k < rules[i].second[j].size(); k++) {
+				if (left == rules[i].second[j][k].name) {
+					return rules[i].second[j][k];
+				}
+			}
+		}
+	}
+}
+
+//Goes through the search_stack until it completes to root or fails
+int Parser::verify() {
+	std::vector<Rule> bfs;
+	std::vector<int> ruleindex;
+	std::vector<bool> findex;
+	int depth = 0;
+	int index = 0;
+	while (true) { //Termination condition
+		bool found = false;
+		if (bfs.size() > 0) {
+			for (int i = 0; i < bfs.size(); i++) { //breadth first search of remaining grammer rules
+				if (search_stack[index] == bfs[i].second[ruleindex[i]][depth].name) {
+					findex.push_back(true);
+					found = true;
+				}
+				else {
+					findex.push_back(false);
+				}
+			}
+			if (found == false && bytype(bfs, ruleindex, depth) == false) {
+				return -1;
+			}
+			else { //gets rid of all failed branches in the breadth first search
+				int i = 0;
+				bool noreduc = true;
+				while (i < bfs.size()) {
+					if (findex[i] == false) {
+						findex.erase(findex.begin() + i);
+						bfs.erase(bfs.begin() + i);
+						ruleindex.erase(ruleindex.begin() + i);
+						continue;
+					}
+					else {
+						if (depth == bfs[i].second[ruleindex[i]].size()) { //Branch is completed and can be reduced
+							noreduc = false;
+							while (depth > 0) { //constructs remove elements currently in search_stack;
+								search_stack.pop_back();
+								depth--;
+							}
+							search_stack.push_back(bfs[i].first); //reduction
+							bfs.clear();
+							ruleindex.clear();
+							findex.clear();
+							break;
+						}
+					}
+					i++;
+				}
+				if (noreduc == true && bfs.size() == 0) { //May need to be altered to ensure
+					return -1;
+				}
+				else if (search_stack.size() == 1 && search_stack.back() == "program") { //correct exit condition
+					return 0;
+				}
+			}
+		}
+		else { //Initial full search for begining of breadth first search
+			for (int i = 0; i < rules.size(); i++) { //Searches for token in right hand side
+				for (int j = 0; j < rules[i].second.size(); j++) {
+					if (search_stack[search_stack.size() - 1] == rules[i].second[j][depth].name) { //Construct breadth first search setup when next token is found
+						bfs.push_back(rules[i]);
+						ruleindex.push_back(j);
+						found = true;
+					}
+				}
+			}
+		}
+		if (found == false && bytype(bfs, ruleindex, depth) == false) { //invalid token couldn't find a match in the grammer
+			return -1;
+		}
+		depth++;
+		index++;
+		if (index >= search_stack.size()) {
+			index = 0;
+		}
+	}
+}
+
