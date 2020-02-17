@@ -3,6 +3,11 @@
  * @brief Main driver for compiler
  */
 
+/**
+ * @file main.cpp
+ * @brief Main driver for compiler
+ */
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,14 +21,16 @@
 int main(int argc, char **argv) {
 	int opt;
 	char *file;
-	int tree = 0;
+	int size;
+	int p_tokens = 0;
+
 	/*break apart command line arguments*/
-	while((opt = getopt(argc, argv, ":af:lrx")) != -1) {  
+	while((opt = getopt(argc, argv, ":if:lrx")) != -1) {  
 		switch(opt)  { 
 			/*boiler plate: change letters to whatever you want as needed*/ 
-			case 'a':  
-				tree = 1;
-				break;
+			case 'i':  
+				/* print out tokens */
+				p_tokens = 1;	
 			case 'l':  
 			case 'r':  
 				printf("option: %c\n", opt);  
@@ -48,16 +55,11 @@ int main(int argc, char **argv) {
         Scanner *scanner = new Scanner(file);
 
 	std::vector<token_t> tokens = scanner->tokenize(scanner->readFile(size));
-	
-	AST *ast = new AST();
-	char const *order[3] = {"main", "return", "1"};
-       	ast->insert(order);
-	if (tree == 1) {
-		printf("Post order traversal of AST:\n");
-		ast->postorder();
-	}
-        delete ast;
- 
-        delete scanner;
 
+	// Print tokens
+	if (p_tokens) {
+		scanner->printTokens(tokens);
+	}
+
+        delete scanner;
 }

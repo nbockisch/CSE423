@@ -14,18 +14,22 @@
 enum prod_type { nonterminal, charclass, literal, keyw };
 
 struct ParsedToken {
-        std::string name;
-        prod_type tp;
-        bool trep; //for if we want to store whether or not this op needs to be in the parse tree
-        int priority;
-        int children;
+	std::string name;
+	prod_type tp;
+	bool trep; //for if we want to store whether or not this op needs to be in the parse tree
+	int priority;
+	int children;
 };
 
 
 struct Production {
-        prod_type type;
-        std::string name;
-        int level; // Level is currently the number of the production found as read in from file..
+	prod_type type;
+	std::string name;
+	int level; // Level is currently the number of the production found as read in from file..
+
+	bool operator==(const Production& x) {
+		return x.name == name && x.type == type;
+	}
 };
 
 typedef std::pair<std::string, std::vector<std::vector<Production>>> Rule;
@@ -39,17 +43,23 @@ public:
         int verifyGrammar();
         void printRules();
         
-        std::vector<ParsedToken> releasePV();
-        int verify(std::vector<std::string> tokens);
+        std::vector<ParsedToken> releasePV() {return PV;}
+		std::string search(std::vector<std::string> tokens);
+		int pushtok(std::vector<std::string> tokens);
 
 private:
         std::string fname;
 
         std::vector<Rule> rules;
-        
+		int index = 0;
         
         std::vector<ParsedToken> PV;
-        int search(std::string token);
+		std::vector<std::string> search_stack;
+
+		std::string bytype();
+		int recalculate_priority(std::string rule);
+		std::string can_epsilon(std::string main_rule);
+		Production match(std::string left);
         //std::string term_match(std::string);
 
 };

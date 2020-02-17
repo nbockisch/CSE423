@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include <ctype.h>
+#include <sstream>
 
 #include "Parser.h"
 
@@ -34,6 +35,9 @@ int Parser::loadGrammar() {
                 int prod_num = 0;
                 while(std::getline(file, line)) {
                         lc++;
+						if (line.size() == 0) {
+							continue;
+						}
                         // Skip since comment or blank line.. NOTE: Probably need more robust checking here..
                         if (line.front() == '#' || line.front() == '\0') {
                                 continue;
@@ -140,47 +144,250 @@ void Parser::printRules() {
         }
 }
 
-/*
-int Parser::search(std::string token) {
-        //finds correct grammer matching, returns its level if found, 0 if it's a terminal, or -1 if it was not found
+//Perfomrs a breadth first search of the grammer list to determine the minimum path to reach the rule from root
+int Parser::recalculate_priority(std::string rule) {
+	//To do
+	return -1;
 }
 
-std::string Parser::term_match(tmp.name) {
-        //Uncertain if needs to be used
+//Determines if an element in the breadth first search can be replaced with epsilon
+std::string Parser::can_epsilon(std::string main_rule) {
+	for (int i = 0; i < rules.size(); i++) { //Search Rules
+		if (main_rule == rules[i].first) { //For Input
+			for (int j = 0; j < rules[i].second.size(); j++) { //Check all reduction rules
+				for (int k = 0; k < rules[i].second[j].size(); k++) { //Check all parts of the reduction rules
+					for (int x = 0; x < rules.size(); x++) { //look up all reduction rule parts
+						if (rules[i].second[j][k].name == rules[x].first) { //that were part of main input
+							for (int y = 0; y < rules[x].second.size(); y++) { //search all subrules
+								if (rules[x].second[y][0].name == "epsilon") { //for one that has epsilon
+									return rules[x].first; //returns the name of that as it exists in main_rule
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return "";
 }
 
-//Activity, takes token vector, for each token, finds it in the grammer, pushes it to PV and to a normal vector of tokens
-int Parser::verify(std::vector<std::string> tokens) {
-        PV = new ParseVector;
-        std::vector<std::string> stk;
-        int depth = 0;
-        std::vector<int> hold;
-        hold.push_back(0);
-        for(int i = 0; i < tokens.size(); i++) {
-                depth = search(tokens[i]);
-                if(depth < 0) {
-                        hold.push_back(i);
-                } else if(depth == 0) {
-                        PV->TermVec.push_back(tokens[i])
-                } else {
-                        struct Operator tmp;
-                        tmp.name = tokens[i];
-                        tmp.term = term_match(tmp.name);
-                        PV->OpVec.push_back(tmp);
-                }
-        }
-        while(hold.size() != 0) {
-                depth = search(hold.peek());
-                if(depth < 0) {
-                        //Error Situation
-                } else if(depth == 0) {
-                        PV->TermVec.push_back(hold.pop())
-                } else {
-                        struct Operator tmp;
-                        tmp.name = hold.pop();
-                        tmp.term = term_match(tmp.name);
-                        PV->OpVec.push_back(tmp);
-                }
-        }
+
+//Takes vector at instance, determines the operation in the grammer the token string belongs in, pushes it in post order format to PV, and reduces it for search_stack for all base tokens
+std::string Parser::search(std::vector<std::string> tokens) {
+	std::vector<Rule> bfs;
+	std::vector<int> ruleindex;
+	std::vector<bool> findex;
+	std::vector<int> depths;
+	bool found = true;
+	while (found) { //bfs exploration
+		found = false;
+		if (bfs.size() > 0) {
+			for (int i = 0; i < bfs.size(); i++) { //breadth first search of remaining grammer rules
+				if (search_stack.back() == bfs[i].second[ruleindex[i]][depths[i]].name) {
+					findex.push_back(true);
+					found = true;
+				}
+				else {
+					findex.push_back(false);
+				}
+			}
+		}
+		else { //Initial full search for begining of breadth first search
+			for (int i = 0; i < rules.size(); i++) { //Searches for token in right hand side
+				for (int j = 0; j < rules[i].second.size(); j++) {
+					if (search_stack.back() == rules[i].second[j][0].name) { //Construct breadth first search setup when next token is found
+						bfs.push_back(rules[i]);
+						ruleindex.push_back(j);
+						findex.push_back(true);
+						depths.push_back(0);
+						found = true;
+					}
+				}
+			}
+		}
+		if (found == false) {
+			if (bytype() != "") {
+				found = true;
+				findex.clear();
+				continue;
+			}
+		}
+		//gets rid of all failed branches in the breadth first search
+		//also launches new searchers in order to determine if a branch is truly failed
+		int i = 0;
+		bool noreduc = true;
+		while (i < findex.size()) {
+			if (findex[i] == false) {
+				std::string tmp;
+				if (can_epsilon(bfs[i].first) == bfs[i].second[ruleindex[i]][depths[i]].name) { //tests if a statement can be reduced to using nothing
+					if (search_stack.back() != bfs[i].second[ruleindex[i]][depths[i]+1].name) { //checks if the name that caused the failure is now valid
+						search_stack.pop_back();
+						search_stack.push_back(bfs[i].second[ruleindex[i]][depths[i]].name);
+						index--;
+						std::string prev = search_stack.back();
+						std::string tmp = search(tokens);
+						if (tmp != bfs[i].second[ruleindex[i]][depths[i]+1].name) {
+							search_stack.pop_back();
+							search_stack.push_back(prev);
+							findex.erase(findex.begin() + i);
+							bfs.erase(bfs.begin() + i);
+							ruleindex.erase(ruleindex.begin() + i);
+							depths.erase(depths.begin() + i);
+						}
+					}
+					else {
+						search_stack.insert(search_stack.end() - 1, bfs[i].second[ruleindex[i]][depths[i]].name);
+						found = true;
+						depths[i]++;
+					}
+				}
+				else { //checks if failed token can be reduced
+
+					//To Do, ensure that failed returns properly clear everything from the search_stack
+
+					std::string prev = search_stack.back();
+					std::string tmp = search(tokens);
+					if (tmp != bfs[i].second[ruleindex[i]][depths[i]].name) { //rule has failed
+						findex.erase(findex.begin() + i);
+						bfs.erase(bfs.begin() + i);
+						ruleindex.erase(ruleindex.begin() + i);
+						depths.erase(depths.begin() + i);
+						PV.pop_back();
+						search_stack.pop_back();
+						search_stack.push_back(prev);
+						continue;
+					}
+				}
+			}
+			if ((depths[i] + 1) == bfs[i].second[ruleindex[i]].size()) { //Branch is completed and can be reduced
+				int max = 0;
+				for (int y = 0; y < depths.size(); y++) {
+					if (bfs[i].second[ruleindex[i]].size() > max) {
+						max = bfs[i].second[ruleindex[i]].size();
+					}
+				}
+				
+				if (depths[i] == max-1) {
+					//To Do, see if this limit on search can be removed and allow a failed return to clear it from search stack
+					if (max != 1) {
+						std::string prev = search_stack.back();
+						std::string tmp = search(tokens);
+						if (recalculate_priority(tmp) < recalculate_priority(bfs[i].first)) {
+							search_stack.pop_back();
+							search_stack.push_back(prev);
+						}
+					}
+					ParsedToken p;
+					noreduc = false;
+					p.name = tokens[index];
+					p.tp = bfs[i].second[ruleindex[i]][bfs[i].second[ruleindex[i]].size()-1].type;
+					p.trep = true;
+					if (p.name == "(" || p.name == ")" || p.name == "{" || p.name == "}" || p.name == ";" || p.name == "," || p.name == ":") { //things not desired in tree representation
+						p.trep = false;
+					}
+					if (bfs[i].second[ruleindex[i]][bfs[i].second[ruleindex[i]].size() - 1].type == nonterminal) {
+						p.children = depths[i] + 1;
+						p.priority = recalculate_priority(bfs[i].first); //not finished
+					}
+					else {
+						p.children = 0;
+						p.priority = -1;
+					}
+					PV.push_back(p);
+					
+					int cnt = 0;
+					while (depths[i] >= 0) { //constructs remove elements currently in search_stack;
+						search_stack.pop_back();
+						depths[i]--;
+						cnt++;
+					}
+					search_stack.push_back(bfs[i].first); //reduction
+					bfs.clear();
+					ruleindex.clear();
+					findex.clear();
+					depths.clear();
+
+					if (cnt > 1 || search_stack.back() == "program")
+						return search_stack.back();
+				}
+			}
+			i++;
+		}
+		if (noreduc && pushtok(tokens) == -1) { //second half only happens when no reduction occurs for an entire cycle
+			return search_stack.back();
+		}
+		for (int y = 0; y < depths.size(); y++) {
+			depths[y]++;
+		}
+		findex.clear(); //used repeatedly
+	}
+	//once base is completed, use a function to reduce to correctness
+	return search_stack.back();
 }
-*/
+
+int Parser::pushtok(std::vector<std::string> tokens) {
+	if (index < tokens.size()) {
+		search_stack.push_back(tokens[index]);
+		index++;
+		return 0;
+	}
+	return -1;
+}
+
+//Search by type
+std::string Parser::bytype() {
+	std::string token = search_stack.back();
+
+	for (int i = 0; i < rules.size(); i++) {
+		if (token == rules[i].first) {
+			return "";
+		}
+		for (int j = 0; j < rules[i].second.size(); j++) {
+			for (int k = 0; k < rules[i].second[j].size(); k++) {
+				if (token == rules[i].second[j][k].name) {
+					return "";
+				}
+			}
+		}
+	}
+
+	ParsedToken p;
+	p.name = token;
+	p.priority = -1;
+	p.tp = charclass;
+	p.trep = true;
+	if (isalpha(token[0])) {
+		PV.push_back(p);
+		token = "ID";
+	}
+	else if (isdigit(token[0])) {
+		PV.push_back(p);
+		token = "NUMCONST";
+	}
+	else if (token == "") { //Empty Argument List, check this for debugging, should happen during basic lr parse
+		PV.push_back(p);
+		token == "epsilon";
+	}
+	else {
+		return "";
+	}
+	
+	//New Search
+	search_stack.pop_back();
+	search_stack.push_back(token);
+	return search_stack.back();
+}
+
+//Resolves oversight in Grammer Structure
+Production Parser::match(std::string left) {
+	for (int i = 0; i < rules.size(); i++) {
+		for (int j = 0; j < rules[i].second.size(); j++) {
+			for (int k = 0; k < rules[i].second[j].size(); k++) {
+				if (left == rules[i].second[j][k].name) {
+					return rules[i].second[j][k];
+				}
+			}
+		}
+	}
+}

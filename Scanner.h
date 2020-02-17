@@ -34,6 +34,7 @@ public:
 
 	std::string readFile(int &len);
 	std::vector<token_t> tokenize(std::string code);
+	void printTokens(std::vector<token_t> tokens);
 
 private:
         FILE *fp;
