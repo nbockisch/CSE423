@@ -15,4 +15,6 @@ Design Discussion
 
 The tokenizer uses regex to split out tokens by comments, keywords, identifiers, other words, string literals in quotes, two character operators, single character operators, and punctuation charcters like colons, braces, semicolons, and commas. Removing comments from selection initially gave trouble, so they are added to the list of tokens first and then removed afterwards. The source file is read into a string object via a function in the Scanner class, then passed to the tokenizer function as a string where it is split through regex and added to a vector object. The individual tokens are stored in a custom struct that holds the contents of the token as a string and the general type of token it is in an enumerator. 
 
+The parser uses a breadth first search to find all possible results from each token, and determining the order from there. Is not complete.
+
 Language Specification
