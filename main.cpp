@@ -3,6 +3,11 @@
  * @brief Main driver for compiler
  */
 
+/**
+ * @file main.cpp
+ * @brief Main driver for compiler
+ */
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +15,7 @@
 #include <vector>
 #include "Scanner.h"
 #include <unistd.h>
+#include "AST.h"
 
 
 int main(int argc, char **argv) {
