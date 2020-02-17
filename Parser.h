@@ -44,21 +44,22 @@ public:
         void printRules();
         
         std::vector<ParsedToken> releasePV() {return PV;}
-		int search(std::vector<std::string> tokens);
+		std::string search(std::vector<std::string> tokens);
+		int pushtok(std::vector<std::string> tokens);
 
 private:
         std::string fname;
 
         std::vector<Rule> rules;
-        
+		int index = 0;
         
         std::vector<ParsedToken> PV;
 		std::vector<std::string> search_stack;
 
-		int bytype(std::vector<Rule> bfs, std::vector<int> ruleindex, int depth);
+		std::string bytype();
 		int recalculate_priority(std::string rule);
+		std::string can_epsilon(std::string main_rule);
 		Production match(std::string left);
-		int verify();
         //std::string term_match(std::string);
 
 };
