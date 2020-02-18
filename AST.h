@@ -39,12 +39,15 @@ class AST
 		~AST();
 		void insert(char const **key);
 		void postorder();
+		void printTree();
 		node *search(int key);
 		void destroy_tree();
 
 	private:
 		void destroy_tree(node *leaf);
+		void printTree(node *root, int level);
 		void postorder(node *leaf);
+		int height(node *leaf);
 		void insert(char const **key, node *leaf);
 		node *search(int key, node *leaf);
 		node *root;

@@ -6,6 +6,7 @@
 
 #include "AST.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -82,6 +83,8 @@ void AST::insert(char const **key, node *leaf)
 			leaf = leaf->left;
 			leaf->Type = NumberValue;
 			leaf->key_value = (int) num;
+			leaf->left = NULL;
+			leaf->right = NULL;
 		} else {
 			//more operators
 			//more functions
@@ -109,7 +112,7 @@ void AST::postorder() {
 
 void AST::postorder(node *leaf)
 {
-	if (leaf != NULL) {   
+	if (leaf != NULL) {  
 		postorder(leaf->left);
 		postorder(leaf->right);
 		if (leaf->Type == 8)
@@ -118,6 +121,47 @@ void AST::postorder(node *leaf)
 			printf("%s\n", leaf->ASTTypes[leaf->Type]);
 	}
 }
+
+void AST::printTree()  
+{  
+	int h = height(root);  
+	int i;  
+	for (i = 1; i <= h; i++)  
+		printTree(root, i);  
+}  
+
+void AST::printTree(node *root, int level)  
+{  
+	if (root == NULL)  
+		return;  
+	if (level == 1)  
+		if (root->Type == 8)
+			printf("%d\n", root->key_value);
+		else {
+			printf("%s\n", root->ASTTypes[root->Type]); 
+			printf("|\n");
+		}
+	else if (level > 1)  {  
+		printTree(root->left, level - 1);  
+		printTree(root->right, level - 1);  
+	}  
+}  
+
+int AST::height(node *leaf)  
+{  
+	if (leaf == NULL)  
+        	return 0;  
+    	else {  
+		/* compute the height of each subtree */
+		int lheight = height(leaf->left);  
+		int rheight = height(leaf->right);  
+  
+        	/* use the larger one */
+		if (lheight > rheight)  
+			return(lheight + 1);  
+		else return(rheight + 1);  
+    	}  
+}  
 
 void AST::destroy_tree()
 {

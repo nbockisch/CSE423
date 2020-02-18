@@ -2,10 +2,17 @@ Team Members: Coleman Kendrick, Eva Domschott, Nathan Bockisch, Brandon Bicknell
 
 Program Overview
 
+To compile program:
+mkdir build
+cd build
+cmake ..
+make
+
 To use the program, run ./scanner -f <file>
 
 Additional flags include:
 -i: Print tokens
+-a: Print AST
 
 The tokenizer separates punctuation characters like braces, colons, semicolons, and commas. It also supports multi-character operators like ++ and !=. It recognizes all of the C keywords and separates them out. 
 
@@ -18,6 +25,8 @@ The tokenizer uses regex to split out tokens by comments, keywords, identifiers,
 The parser loads a set of grammar rules from a given file. Each rule is parsed to find non-terminals, literals (punctuation, language characteristics), language specific keywords (like int and return), and character classes which determine proper identifiers. 
 
 The parser uses a breadth first search to find all possible results from each token, and determining the order from there. Is not complete.
+
+The AST is a binary tree. Insertion is done by taking in a vector of the tokens in a top down order. So far only a basic program can be inserted. Waiting on the parser for some of the details. Since the parser isn't finished, an array of strings in top down order is being passed to it to show insertion. 
 
 Language Specification
 
