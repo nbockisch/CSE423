@@ -11,25 +11,28 @@
 #include <vector>
 #include <regex>
 
-typedef std::pair<std::string, std::vector<std::string>> Rule;
-/* Data Structures for Grammer Verifier and Outputs
-struct Terminal {
-        //std::vector<"TREE">* subtrees; //Internal Tree Construction Method
-        //std::string vals; //Simple Output Method
+enum prod_type { nonterminal, charclass, literal, keyw };
+
+struct ParsedToken {
+	std::string name;
+	prod_type tp;
+	bool trep; //for if we want to store whether or not this op needs to be in the parse tree
+	int priority;
+	int children;
 };
 
-struct Operator {
-        std::string name;
-        std::string term;
-        //bool trep; //for if we want to store whether or not this op needs to be in the parse tree
-        int priority;
+
+struct Production {
+	prod_type type;
+	std::string name;
+	int level; // Level is currently the number of the production found as read in from file..
+
+	bool operator==(const Production& x) {
+		return x.name == name && x.type == type;
+	}
 };
 
-struct ParseVector {
-        std::vector<Terminal> TermVec;
-        std::vector<Operator> OpVec
-};
-*/
+typedef std::pair<std::string, std::vector<std::vector<Production>>> Rule;
 
 class Parser {
 public:
@@ -37,21 +40,28 @@ public:
         ~Parser();
 
         int loadGrammar();
+        int verifyGrammar();
         void printRules();
         
-        //struct ParseVector* releasePV();
-
+        std::vector<ParsedToken> releasePV() {return PV;}
+		int verify(std::vector<std::string> tokens);
+		void build_Actions();
+		void build_Goto();
 private:
         std::string fname;
 
         std::vector<Rule> rules;
+		int index = 0;
         
-        /*
-        struct ParseVector* PV;
-        //Grammer Format will decide how the search function through the rules is completed
-        int verify(std::vector<std::string> tokens);
-        //int search(std::string token);
-        //std::string term_match(std::string)        
-        */
+		std::string terms[37] = { "NUMCONST", "ID", "int", "void", ";", "e", "break", "return", "[", "]", "{", "}", "(", ")", "=", "+=", "-=", "*=", "/=", "++", "--", "or", "and", "not", "<=", "<", ">", ">=", "==", "!=", "+", "-", "*", "div", "%", "?", "," };
 
+		std::vector<std::pair<std::string, int>> ActionsTable;
+		std::vector<std::vector<std::pair<Rule, int>>> GoTo;
+
+        std::vector<ParsedToken> PV;
+		std::vector<std::string> search_stack;
+		std::string identify_term(std::string target);
+
+		int recalculate_priority(std::string rule);
 };
+
