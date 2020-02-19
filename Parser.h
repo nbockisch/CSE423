@@ -62,6 +62,13 @@ private:
 		std::vector<std::string> search_stack;
 		std::string identify_term(std::string target);
 
+		void build_lr0();
+
+		std::vector<std::pair<std::string, std::vector<std::string>>> closure(std::vector<std::string> reduction);
+		std::string find_rule(std::vector<std::string> text);
+		void go_to();
+
+		std::vector<std::vector<std::string>> lr0;
+
 		int recalculate_priority(std::string rule);
 };
-
