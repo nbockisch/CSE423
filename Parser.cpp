@@ -150,9 +150,92 @@ int Parser::recalculate_priority(std::string rule) {
 	return -1;
 }
 
+//creates a lr0 array using the rules
+void Parser::build_lr0() {
+	std::vector<std::vector<std::string>> tmp;
+	for (int i = 0; i < rules.size(); i++) {
+		for (int j = 0; j < rules[i].second.size(); j++) {
+			std::vector<std::string> tmp2;
+			for (int k = 0; k < rules[i].second[j].size(); k++) {
+				tmp2.push_back(rules[i].second[j][k].name);
+			}
+			tmp.push_back(tmp2);
+			tmp2.clear();
+		}
+	}
+
+	for (int i = 0; i < tmp.size(); i++) {
+		std::vector<std::string> tmp2 = tmp[i];
+		for (int j = 0; j <= tmp2.size(); j++) {
+			tmp2.insert(tmp2.begin() + j, "\0");
+			lr0.push_back(tmp2);
+			tmp2.erase(tmp2.begin() + j);
+		}
+	}
+}
+
+//Finds the rule using the right side matching
+std::string Parser::find_rule(std::vector<std::string> text) {
+	text.erase(std::remove(text.begin(), text.end(), "\0"), text.end());
+	for (int i = 0; i < rules.size(); i++) {
+		for (int j = 0; j < rules[i].second.size(); j++) {
+			bool found = false;
+			for (int k = 0; k < rules[i].second[j].size() && k < text.size(); k++) {
+				if (rules[i].second[j][k].name == text[k]) {
+					found = true;
+				}
+				else {
+					found = false;
+					break;
+				}
+			}
+			if (found == true) {
+				return rules[i].first;
+			}
+		}
+	}
+}
+
+//finds the closure set of any particular lr0 element
+std::vector<std::pair<std::string, std::vector<std::string>>> Parser::closure(std::vector<std::string> reduction) {
+	std::vector<std::pair<std::string, std::vector<std::string>>> closure_table;
+	std::pair<std::string, std::vector<std::string>> x;
+	x.second = reduction;
+	x.first = find_rule(reduction);
+
+	closure_table.push_back(x);
+
+	bool finish = false;
+	while (!finish) {
+		finish = true;
+		std::vector<std::string>::iterator it = std::find(reduction.begin(), reduction.end(), "\0");
+		int dot = std::distance(reduction.begin(), it);
+
+		for (int i = 0; i < rules.size(); i++) {
+			if (rules[i].first == reduction[dot + 1]) {
+				for (int j = 0; j < lr0.size(); j++) {
+					if (find_rule(lr0[j]) == rules[i].first && lr0[j][0] == "\0") {
+						finish == false;
+						reduction = lr0[j];
+						x.second = reduction;
+						x.first = rules[i].first;
+						closure_table.push_back(x);
+						break;
+					}
+				}
+			}
+		}
+	}
+	return closure_table;
+}
+
+void Parser::go_to() {
+
+}
+
 //Build Action Table
 void Parser::build_Actions() {
-
+	
 }
 
 //Build Go To Table
