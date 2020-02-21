@@ -9,12 +9,7 @@
 #include "AST.h"
 
 int main(int argc, char **argv) {
-        AST *ast = new AST();
-	char const *order[3] = {"main", "return", "1"};
-       	ast->insert(order);
-	printf("Post order traversal of AST:\n");
-	ast->postorder();
-        delete ast;
+       
         
         return 0;
 }

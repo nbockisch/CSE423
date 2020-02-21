@@ -27,18 +27,17 @@ struct token_t {
 };
 
 
+
 class Scanner {
 public:
         Scanner(const char *fname);
         ~Scanner();
-
 	std::string readFile(int &len);
 	std::vector<token_t> tokenize(std::string code);
 	void printTokens(std::vector<token_t> tokens);
 
 private:
-        FILE *fp;
-                             
+        FILE *fp;       
         // Will probably have an std::vector<Token*> to keep an array of all Tokens?
                 
 };
