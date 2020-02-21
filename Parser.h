@@ -32,6 +32,11 @@ struct Production {
 	}
 };
 
+struct dfa_state {
+	std::vector<std::pair<std::string, std::vector<std::string>>> state_closure;
+	std::vector<std::pair<std::string, dfa_state>> transition_list;
+};
+
 typedef std::pair<std::string, std::vector<std::vector<Production>>> Rule;
 
 class Parser {
@@ -66,7 +71,7 @@ private:
 
 		std::vector<std::pair<std::string, std::vector<std::string>>> closure(std::vector<std::string> reduction);
 		std::string find_rule(std::vector<std::string> text);
-		void go_to();
+		std::vector<std::pair<std::string, std::vector<std::string>>> go_to(std::vector<std::pair<std::string, std::vector<std::string>>> dfa_state, std::string symbol);
 
 		std::vector<std::vector<std::string>> lr0;
 
