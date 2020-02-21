@@ -1,4 +1,4 @@
-/**
+**
  * @file Parser.cpp
  * @brief Implementation of the Parser class
  */
@@ -229,8 +229,19 @@ std::vector<std::pair<std::string, std::vector<std::string>>> Parser::closure(st
 	return closure_table;
 }
 
-void Parser::go_to() {
-
+//Inputs, a set of i0 derived from closure, and a symbol being looked for
+std::vector<std::pair<std::string, std::vector<std::string>>> Parser::go_to(std::vector<std::pair<std::string, std::vector<std::string>>> dfa_state, std::string symbol) {
+	for (int i = 0; i < dfa_state.size(); i++) {
+		for (int j = 0; j < dfa_state[i].second.size(); j++) {
+			if (dfa_state[i].second[j] == symbol && j > 0 && dfa_state[i].second[j-1] == "\0") {
+				std::vector<std::string> search = dfa_state[i].second;
+				std::swap(search[j - 1], search[j]);
+				return closure(search); 
+			}
+		}
+	}
+	std::vector<std::pair<std::string, std::vector<std::string>>> empty;
+	return empty;
 }
 
 //Build Action Table
@@ -240,7 +251,6 @@ void Parser::build_Actions() {
 
 //Build Go To Table
 void Parser::build_Goto() {
-
 }
 
 //verify the grammer
