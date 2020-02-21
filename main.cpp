@@ -13,10 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
-#include "Scanner.h"
 #include <unistd.h>
 #include "AST.h"
-
 
 int main(int argc, char **argv) {
 	int opt;
@@ -61,15 +59,19 @@ int main(int argc, char **argv) {
 	if (p_tokens) {
 		scanner->printTokens(tokens);
 	}
+
 	/*the parsing is not finished but this piece inserts a basic program into the tree in the way it will after parsing piece finished*/
-	AST *ast = new AST();
-	char const *order[3] = {"main", "return", "1"};
-       	ast->insert(order);
+	//ASTNode *ast = new ASTNode();
+	//char const *order[3] = {"main", "return", "1"};
+       	//ast->insert(order);
+	ASTNode *ast = new ASTNode();
+	ast = ast->Parse(tokens);
+	printf("%s\n", ast->ASTTypes[ast->Type]); 
 	/*prints tree*/
 	if (tree == 1) {
 		printf("Tree structure:\n");
-		ast->printTree();
+		ast->printTree(ast);
 	}
-        delete ast;
+       
         delete scanner;
 }
