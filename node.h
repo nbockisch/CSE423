@@ -1,3 +1,5 @@
+/*code modified from this source https://gnuu.org/2009/09/18/writing-your-own-toy-compiler/*/
+
 #include <iostream>
 #include <vector>
 //#include <llvm/IR/Value.h>
