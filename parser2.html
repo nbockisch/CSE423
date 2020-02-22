@@ -1,0 +1,1653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:bison="http://www.gnu.org/software/bison/">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>parser2.y - GNU Bison XML Automaton Report</title>
+    <style type="text/css">
+      body {
+        font-family: "Nimbus Sans L", Arial, sans-serif;
+        font-size: 9pt;
+      }
+      a:link {
+        color: #1f00ff;
+        text-decoration: none;
+      }
+      a:visited {
+        color: #1f00ff;
+        text-decoration: none;
+      }
+      a:hover {
+        color: red;
+      }
+      #menu a {
+        text-decoration: underline;
+      }
+      .i {
+        font-style: italic;
+      }
+      .pre {
+        font-family: monospace;
+        white-space: pre;
+      }
+      ol.decimal {
+        list-style-type: decimal;
+      }
+      ol.lower-alpha {
+        list-style-type: lower-alpha;
+      }
+      .point {
+        color: #cc0000;
+      }
+      #footer {
+        margin-top: 3.5em;
+        font-size: 7pt;
+      }
+      </style>
+  </head>
+  <body><h1>GNU Bison XML Automaton Report</h1><p>
+    input grammar: <span class="i">parser2.y</span></p>
+
+<h3>Table of Contents</h3><ul id="menu"><li><a href="#reductions">Reductions</a><ul class="lower-alpha"><li><a href="#nonterminals_useless_in_grammar">Nonterminals useless in grammar</a></li><li><a href="#terminals_unused_in_grammar">Terminals unused in grammar</a></li><li><a href="#rules_useless_in_grammar">Rules useless in grammar</a></li></ul></li><li><a href="#conflicts">Conflicts</a></li><li><a href="#grammar">Grammar</a><ul class="lower-alpha"><li><a href="#grammar">Itemset</a></li><li><a href="#terminals">Terminal symbols</a></li><li><a href="#nonterminals">Nonterminal symbols</a></li></ul></li><li><a href="#automaton">Automaton</a></li></ul><h2><a name="reductions" id="reductions"></a> Reductions</h2><h3><a name="nonterminals_useless_in_grammar" id="nonterminals_useless_in_grammar"></a> Nonterminals useless in grammar</h3>
+
+<h3><a name="terminals_unused_in_grammar" id="terminals_unused_in_grammar"></a> Terminals unused in grammar</h3>
+
+<p class="pre">   TDOT
+
+
+</p><h3><a name="rules_useless_in_grammar" id="rules_useless_in_grammar"></a> Rules useless in grammar</h3>
+<h2><a name="conflicts" id="conflicts"></a> Conflicts</h2>
+
+<p class="pre"><a href="#state_16">State 16</a> conflicts: 1 shift/reduce
+<a href="#state_28">State 28</a> conflicts: 1 shift/reduce
+<a href="#state_50">State 50</a> conflicts: 6 shift/reduce
+<a href="#state_51">State 51</a> conflicts: 6 shift/reduce
+<a href="#state_52">State 52</a> conflicts: 6 shift/reduce
+<a href="#state_53">State 53</a> conflicts: 6 shift/reduce
+<a href="#state_54">State 54</a> conflicts: 10 shift/reduce
+
+
+</p><h2><a name="grammar" id="grammar"></a> Grammar</h2>
+<p class="pre">
+<a name="rule_0" id="rule_0"></a>    0 <span class="i">$accept</span> → <span class="i">program</span> <b>$end</b>
+
+<a name="rule_1" id="rule_1"></a>    1 <span class="i">program</span> → <span class="i">declist</span>
+
+<a name="rule_2" id="rule_2"></a>    2 <span class="i">declist</span> → <span class="i">declaration</span>
+<a name="rule_3" id="rule_3"></a>    3         | <span class="i">declist</span> <span class="i">declaration</span>
+
+<a name="rule_4" id="rule_4"></a>    4 <span class="i">declaration</span> → <span class="i">var_decl</span>
+<a name="rule_5" id="rule_5"></a>    5             | <span class="i">func_decl</span>
+<a name="rule_6" id="rule_6"></a>    6             | <span class="i">expr</span>
+<a name="rule_7" id="rule_7"></a>    7             | <b>TRETURN</b> <span class="i">expr</span> <b>TSEMI</b>
+<a name="rule_8" id="rule_8"></a>    8             | <span class="i">if_decl</span>
+<a name="rule_9" id="rule_9"></a>    9             | <b>TWHILE</b> <span class="i">expr</span> <span class="i">block</span>
+
+<a name="rule_10" id="rule_10"></a>   10 <span class="i">block</span> → <b>TLBRACE</b> <span class="i">declist</span> <b>TRBRACE</b>
+<a name="rule_11" id="rule_11"></a>   11       | <b>TLBRACE</b> <b>TRBRACE</b>
+
+<a name="rule_12" id="rule_12"></a>   12 <span class="i">if_decl</span> → <b>TIF</b> <span class="i">expr</span> <span class="i">block</span> <span class="i">else_decl</span>
+<a name="rule_13" id="rule_13"></a>   13         | <b>TIF</b> <span class="i">expr</span> <span class="i">block</span>
+
+<a name="rule_14" id="rule_14"></a>   14 <span class="i">else_decl</span> → <b>TELSE</b> <span class="i">block</span>
+
+<a name="rule_15" id="rule_15"></a>   15 <span class="i">var_decl</span> → <span class="i">type</span> <span class="i">ident</span>
+<a name="rule_16" id="rule_16"></a>   16          | <span class="i">type</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+
+<a name="rule_17" id="rule_17"></a>   17 <span class="i">func_decl</span> → <span class="i">type</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">func_decl_args</span> <b>TRPAREN</b> <span class="i">block</span>
+
+<a name="rule_18" id="rule_18"></a>   18 <span class="i">func_decl_args</span> → %empty
+<a name="rule_19" id="rule_19"></a>   19                | <span class="i">var_decl</span>
+<a name="rule_20" id="rule_20"></a>   20                | <span class="i">func_decl_args</span> <b>TCOMMA</b> <span class="i">var_decl</span>
+
+<a name="rule_21" id="rule_21"></a>   21 <span class="i">ident</span> → <b>TIDENTIFIER</b>
+
+<a name="rule_22" id="rule_22"></a>   22 <span class="i">type</span> → <b>TINT</b>
+<a name="rule_23" id="rule_23"></a>   23      | <b>TVOID</b>
+
+<a name="rule_24" id="rule_24"></a>   24 <span class="i">number</span> → <b>TINTEGER</b>
+<a name="rule_25" id="rule_25"></a>   25        | <b>TDOUBLE</b>
+
+<a name="rule_26" id="rule_26"></a>   26 <span class="i">expr</span> → <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+<a name="rule_27" id="rule_27"></a>   27      | <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+<a name="rule_28" id="rule_28"></a>   28      | <span class="i">ident</span>
+<a name="rule_29" id="rule_29"></a>   29      | <span class="i">number</span>
+<a name="rule_30" id="rule_30"></a>   30      | <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+<a name="rule_31" id="rule_31"></a>   31      | <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+<a name="rule_32" id="rule_32"></a>   32      | <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+<a name="rule_33" id="rule_33"></a>   33      | <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+<a name="rule_34" id="rule_34"></a>   34      | <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+<a name="rule_35" id="rule_35"></a>   35      | <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+<a name="rule_36" id="rule_36"></a>   36 <span class="i">call_args</span> → %empty
+<a name="rule_37" id="rule_37"></a>   37           | <span class="i">expr</span>
+<a name="rule_38" id="rule_38"></a>   38           | <span class="i">call_args</span> <b>TCOMMA</b> <span class="i">expr</span>
+
+<a name="rule_39" id="rule_39"></a>   39 <span class="i">compare</span> → <b>TCEQ</b>
+<a name="rule_40" id="rule_40"></a>   40         | <b>TCNE</b>
+<a name="rule_41" id="rule_41"></a>   41         | <b>TCLT</b>
+<a name="rule_42" id="rule_42"></a>   42         | <b>TCLE</b>
+<a name="rule_43" id="rule_43"></a>   43         | <b>TCGT</b>
+<a name="rule_44" id="rule_44"></a>   44         | <b>TCGE</b>
+</p>
+
+<h3><a name="terminals" id="terminals"></a> Terminals, with rules where they appear</h3>
+
+<p class="pre"><b>$end</b> (0) <a href="#rule_0">0</a>
+<b>error</b> (256)
+<b>TIDENTIFIER</b> (258) <a href="#rule_21">21</a>
+<b>TINTEGER</b> (259) <a href="#rule_24">24</a>
+<b>TDOUBLE</b> (260) <a href="#rule_25">25</a>
+<b>TVOID</b> (261) <a href="#rule_23">23</a>
+<b>TINT</b> (262) <a href="#rule_22">22</a>
+<b>TCEQ</b> (263) <a href="#rule_39">39</a>
+<b>TCNE</b> (264) <a href="#rule_40">40</a>
+<b>TCLT</b> (265) <a href="#rule_41">41</a>
+<b>TCLE</b> (266) <a href="#rule_42">42</a>
+<b>TCGT</b> (267) <a href="#rule_43">43</a>
+<b>TCGE</b> (268) <a href="#rule_44">44</a>
+<b>TEQUAL</b> (269) <a href="#rule_16">16</a> <a href="#rule_26">26</a>
+<b>TLPAREN</b> (270) <a href="#rule_17">17</a> <a href="#rule_27">27</a> <a href="#rule_35">35</a>
+<b>TRPAREN</b> (271) <a href="#rule_17">17</a> <a href="#rule_27">27</a> <a href="#rule_35">35</a>
+<b>TLBRACE</b> (272) <a href="#rule_10">10</a> <a href="#rule_11">11</a>
+<b>TRBRACE</b> (273) <a href="#rule_10">10</a> <a href="#rule_11">11</a>
+<b>TCOMMA</b> (274) <a href="#rule_20">20</a> <a href="#rule_38">38</a>
+<b>TDOT</b> (275)
+<b>TSEMI</b> (276) <a href="#rule_7">7</a> <a href="#rule_16">16</a> <a href="#rule_26">26</a> <a href="#rule_27">27</a>
+<b>TPLUS</b> (277) <a href="#rule_32">32</a>
+<b>TMINUS</b> (278) <a href="#rule_33">33</a>
+<b>TMUL</b> (279) <a href="#rule_30">30</a>
+<b>TDIV</b> (280) <a href="#rule_31">31</a>
+<b>TRETURN</b> (281) <a href="#rule_7">7</a>
+<b>TIF</b> (282) <a href="#rule_12">12</a> <a href="#rule_13">13</a>
+<b>TELSE</b> (283) <a href="#rule_14">14</a>
+<b>TWHILE</b> (284) <a href="#rule_9">9</a>
+</p>
+
+<h3><a name="nonterminals" id="nonterminals"></a> Nonterminals, with rules where they appear</h3>
+
+<p class="pre"><b>$accept</b> (30)
+    on left: <a href="#rule_0">0</a>
+<b>program</b> (31)
+    on left: <a href="#rule_1">1</a>
+    on right: <a href="#rule_0">0</a>
+<b>declist</b> (32)
+    on left: <a href="#rule_2">2</a> <a href="#rule_3">3</a>
+    on right: <a href="#rule_1">1</a> <a href="#rule_3">3</a> <a href="#rule_10">10</a>
+<b>declaration</b> (33)
+    on left: <a href="#rule_4">4</a> <a href="#rule_5">5</a> <a href="#rule_6">6</a> <a href="#rule_7">7</a> <a href="#rule_8">8</a> <a href="#rule_9">9</a>
+    on right: <a href="#rule_2">2</a> <a href="#rule_3">3</a>
+<b>block</b> (34)
+    on left: <a href="#rule_10">10</a> <a href="#rule_11">11</a>
+    on right: <a href="#rule_9">9</a> <a href="#rule_12">12</a> <a href="#rule_13">13</a> <a href="#rule_14">14</a> <a href="#rule_17">17</a>
+<b>if_decl</b> (35)
+    on left: <a href="#rule_12">12</a> <a href="#rule_13">13</a>
+    on right: <a href="#rule_8">8</a>
+<b>else_decl</b> (36)
+    on left: <a href="#rule_14">14</a>
+    on right: <a href="#rule_12">12</a>
+<b>var_decl</b> (37)
+    on left: <a href="#rule_15">15</a> <a href="#rule_16">16</a>
+    on right: <a href="#rule_4">4</a> <a href="#rule_19">19</a> <a href="#rule_20">20</a>
+<b>func_decl</b> (38)
+    on left: <a href="#rule_17">17</a>
+    on right: <a href="#rule_5">5</a>
+<b>func_decl_args</b> (39)
+    on left: <a href="#rule_18">18</a> <a href="#rule_19">19</a> <a href="#rule_20">20</a>
+    on right: <a href="#rule_17">17</a> <a href="#rule_20">20</a>
+<b>ident</b> (40)
+    on left: <a href="#rule_21">21</a>
+    on right: <a href="#rule_15">15</a> <a href="#rule_16">16</a> <a href="#rule_17">17</a> <a href="#rule_26">26</a> <a href="#rule_27">27</a> <a href="#rule_28">28</a>
+<b>type</b> (41)
+    on left: <a href="#rule_22">22</a> <a href="#rule_23">23</a>
+    on right: <a href="#rule_15">15</a> <a href="#rule_16">16</a> <a href="#rule_17">17</a>
+<b>number</b> (42)
+    on left: <a href="#rule_24">24</a> <a href="#rule_25">25</a>
+    on right: <a href="#rule_29">29</a>
+<b>expr</b> (43)
+    on left: <a href="#rule_26">26</a> <a href="#rule_27">27</a> <a href="#rule_28">28</a> <a href="#rule_29">29</a> <a href="#rule_30">30</a> <a href="#rule_31">31</a> <a href="#rule_32">32</a> <a href="#rule_33">33</a> <a href="#rule_34">34</a> <a href="#rule_35">35</a>
+    on right: <a href="#rule_6">6</a> <a href="#rule_7">7</a> <a href="#rule_9">9</a> <a href="#rule_12">12</a> <a href="#rule_13">13</a> <a href="#rule_16">16</a> <a href="#rule_26">26</a> <a href="#rule_30">30</a> <a href="#rule_31">31</a> <a href="#rule_32">32</a> <a href="#rule_33">33</a> <a href="#rule_34">34</a> <a href="#rule_35">35</a> <a href="#rule_37">37</a> <a href="#rule_38">38</a>
+<b>call_args</b> (44)
+    on left: <a href="#rule_36">36</a> <a href="#rule_37">37</a> <a href="#rule_38">38</a>
+    on right: <a href="#rule_27">27</a> <a href="#rule_38">38</a>
+<b>compare</b> (45)
+    on left: <a href="#rule_39">39</a> <a href="#rule_40">40</a> <a href="#rule_41">41</a> <a href="#rule_42">42</a> <a href="#rule_43">43</a> <a href="#rule_44">44</a>
+    on right: <a href="#rule_34">34</a>
+</p><h2><a name="automaton" id="automaton"></a> Automaton</h2>
+
+<h3><a name="state_0" id="state_0"></a>state 0</h3>
+
+<p class="pre">  <a href="#rule_0">  0</a> <span class="i">$accept</span> → <span class="point">.</span> <span class="i">program</span> <b>$end</b>
+  <a href="#rule_1">  1</a> <span class="i">program</span> → <span class="point">.</span> <span class="i">declist</span>
+  <a href="#rule_2">  2</a> <span class="i">declist</span> → <span class="point">.</span> <span class="i">declaration</span>
+  <a href="#rule_3">  3</a>         | <span class="point">.</span> <span class="i">declist</span> <span class="i">declaration</span>
+  <a href="#rule_4">  4</a> <span class="i">declaration</span> → <span class="point">.</span> <span class="i">var_decl</span>
+  <a href="#rule_5">  5</a>             | <span class="point">.</span> <span class="i">func_decl</span>
+  <a href="#rule_6">  6</a>             | <span class="point">.</span> <span class="i">expr</span>
+  <a href="#rule_7">  7</a>             | <span class="point">.</span> <b>TRETURN</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_8">  8</a>             | <span class="point">.</span> <span class="i">if_decl</span>
+  <a href="#rule_9">  9</a>             | <span class="point">.</span> <b>TWHILE</b> <span class="i">expr</span> <span class="i">block</span>
+  <a href="#rule_12"> 12</a> <span class="i">if_decl</span> → <span class="point">.</span> <b>TIF</b> <span class="i">expr</span> <span class="i">block</span> <span class="i">else_decl</span>
+  <a href="#rule_13"> 13</a>         | <span class="point">.</span> <b>TIF</b> <span class="i">expr</span> <span class="i">block</span>
+  <a href="#rule_15"> 15</a> <span class="i">var_decl</span> → <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span>
+  <a href="#rule_16"> 16</a>          | <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_17"> 17</a> <span class="i">func_decl</span> → <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">func_decl_args</span> <b>TRPAREN</b> <span class="i">block</span>
+  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_22"> 22</a> <span class="i">type</span> → <span class="point">.</span> <b>TINT</b>
+  <a href="#rule_23"> 23</a>      | <span class="point">.</span> <b>TVOID</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TVOID        <a href="#state_4">shift, and go to state 4</a>
+    TINT         <a href="#state_5">shift, and go to state 5</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+    TRETURN      <a href="#state_7">shift, and go to state 7</a>
+    TIF          <a href="#state_8">shift, and go to state 8</a>
+    TWHILE       <a href="#state_9">shift, and go to state 9</a>
+
+    program      <a href="#state_10">go to state 10</a>
+    declist      <a href="#state_11">go to state 11</a>
+    declaration  <a href="#state_12">go to state 12</a>
+    if_decl      <a href="#state_13">go to state 13</a>
+    var_decl     <a href="#state_14">go to state 14</a>
+    func_decl    <a href="#state_15">go to state 15</a>
+    ident        <a href="#state_16">go to state 16</a>
+    type         <a href="#state_17">go to state 17</a>
+    number       <a href="#state_18">go to state 18</a>
+    expr         <a href="#state_19">go to state 19</a>
+</p>
+
+<h3><a name="state_1" id="state_1"></a>state 1</h3>
+
+<p class="pre">  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <b>TIDENTIFIER</b> <span class="point">.</span>
+
+    $default  <a href="#rule_21">reduce using rule 21</a> (ident)
+</p>
+
+<h3><a name="state_2" id="state_2"></a>state 2</h3>
+
+<p class="pre">  <a href="#rule_24"> 24</a> <span class="i">number</span> → <b>TINTEGER</b> <span class="point">.</span>
+
+    $default  <a href="#rule_24">reduce using rule 24</a> (number)
+</p>
+
+<h3><a name="state_3" id="state_3"></a>state 3</h3>
+
+<p class="pre">  <a href="#rule_25"> 25</a> <span class="i">number</span> → <b>TDOUBLE</b> <span class="point">.</span>
+
+    $default  <a href="#rule_25">reduce using rule 25</a> (number)
+</p>
+
+<h3><a name="state_4" id="state_4"></a>state 4</h3>
+
+<p class="pre">  <a href="#rule_23"> 23</a> <span class="i">type</span> → <b>TVOID</b> <span class="point">.</span>
+
+    $default  <a href="#rule_23">reduce using rule 23</a> (type)
+</p>
+
+<h3><a name="state_5" id="state_5"></a>state 5</h3>
+
+<p class="pre">  <a href="#rule_22"> 22</a> <span class="i">type</span> → <b>TINT</b> <span class="point">.</span>
+
+    $default  <a href="#rule_22">reduce using rule 22</a> (type)
+</p>
+
+<h3><a name="state_6" id="state_6"></a>state 6</h3>
+
+<p class="pre">  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+  <a href="#rule_35"> 35</a>      | <b>TLPAREN</b> <span class="point">.</span> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_20">go to state 20</a>
+</p>
+
+<h3><a name="state_7" id="state_7"></a>state 7</h3>
+
+<p class="pre">  <a href="#rule_7">  7</a> <span class="i">declaration</span> → <b>TRETURN</b> <span class="point">.</span> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_21">go to state 21</a>
+</p>
+
+<h3><a name="state_8" id="state_8"></a>state 8</h3>
+
+<p class="pre">  <a href="#rule_12"> 12</a> <span class="i">if_decl</span> → <b>TIF</b> <span class="point">.</span> <span class="i">expr</span> <span class="i">block</span> <span class="i">else_decl</span>
+  <a href="#rule_13"> 13</a>         | <b>TIF</b> <span class="point">.</span> <span class="i">expr</span> <span class="i">block</span>
+  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_22">go to state 22</a>
+</p>
+
+<h3><a name="state_9" id="state_9"></a>state 9</h3>
+
+<p class="pre">  <a href="#rule_9">  9</a> <span class="i">declaration</span> → <b>TWHILE</b> <span class="point">.</span> <span class="i">expr</span> <span class="i">block</span>
+  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_23">go to state 23</a>
+</p>
+
+<h3><a name="state_10" id="state_10"></a>state 10</h3>
+
+<p class="pre">  <a href="#rule_0">  0</a> <span class="i">$accept</span> → <span class="i">program</span> <span class="point">.</span> <b>$end</b>
+
+    $end  <a href="#state_24">shift, and go to state 24</a>
+</p>
+
+<h3><a name="state_11" id="state_11"></a>state 11</h3>
+
+<p class="pre">  <a href="#rule_1">  1</a> <span class="i">program</span> → <span class="i">declist</span> <span class="point">.</span>  [$end]
+  <a href="#rule_3">  3</a> <span class="i">declist</span> → <span class="i">declist</span> <span class="point">.</span> <span class="i">declaration</span>
+  <a href="#rule_4">  4</a> <span class="i">declaration</span> → <span class="point">.</span> <span class="i">var_decl</span>
+  <a href="#rule_5">  5</a>             | <span class="point">.</span> <span class="i">func_decl</span>
+  <a href="#rule_6">  6</a>             | <span class="point">.</span> <span class="i">expr</span>
+  <a href="#rule_7">  7</a>             | <span class="point">.</span> <b>TRETURN</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_8">  8</a>             | <span class="point">.</span> <span class="i">if_decl</span>
+  <a href="#rule_9">  9</a>             | <span class="point">.</span> <b>TWHILE</b> <span class="i">expr</span> <span class="i">block</span>
+  <a href="#rule_12"> 12</a> <span class="i">if_decl</span> → <span class="point">.</span> <b>TIF</b> <span class="i">expr</span> <span class="i">block</span> <span class="i">else_decl</span>
+  <a href="#rule_13"> 13</a>         | <span class="point">.</span> <b>TIF</b> <span class="i">expr</span> <span class="i">block</span>
+  <a href="#rule_15"> 15</a> <span class="i">var_decl</span> → <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span>
+  <a href="#rule_16"> 16</a>          | <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_17"> 17</a> <span class="i">func_decl</span> → <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">func_decl_args</span> <b>TRPAREN</b> <span class="i">block</span>
+  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_22"> 22</a> <span class="i">type</span> → <span class="point">.</span> <b>TINT</b>
+  <a href="#rule_23"> 23</a>      | <span class="point">.</span> <b>TVOID</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TVOID        <a href="#state_4">shift, and go to state 4</a>
+    TINT         <a href="#state_5">shift, and go to state 5</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+    TRETURN      <a href="#state_7">shift, and go to state 7</a>
+    TIF          <a href="#state_8">shift, and go to state 8</a>
+    TWHILE       <a href="#state_9">shift, and go to state 9</a>
+
+    $default  <a href="#rule_1">reduce using rule 1</a> (program)
+
+    declaration  <a href="#state_25">go to state 25</a>
+    if_decl      <a href="#state_13">go to state 13</a>
+    var_decl     <a href="#state_14">go to state 14</a>
+    func_decl    <a href="#state_15">go to state 15</a>
+    ident        <a href="#state_16">go to state 16</a>
+    type         <a href="#state_17">go to state 17</a>
+    number       <a href="#state_18">go to state 18</a>
+    expr         <a href="#state_19">go to state 19</a>
+</p>
+
+<h3><a name="state_12" id="state_12"></a>state 12</h3>
+
+<p class="pre">  <a href="#rule_2">  2</a> <span class="i">declist</span> → <span class="i">declaration</span> <span class="point">.</span>
+
+    $default  <a href="#rule_2">reduce using rule 2</a> (declist)
+</p>
+
+<h3><a name="state_13" id="state_13"></a>state 13</h3>
+
+<p class="pre">  <a href="#rule_8">  8</a> <span class="i">declaration</span> → <span class="i">if_decl</span> <span class="point">.</span>
+
+    $default  <a href="#rule_8">reduce using rule 8</a> (declaration)
+</p>
+
+<h3><a name="state_14" id="state_14"></a>state 14</h3>
+
+<p class="pre">  <a href="#rule_4">  4</a> <span class="i">declaration</span> → <span class="i">var_decl</span> <span class="point">.</span>
+
+    $default  <a href="#rule_4">reduce using rule 4</a> (declaration)
+</p>
+
+<h3><a name="state_15" id="state_15"></a>state 15</h3>
+
+<p class="pre">  <a href="#rule_5">  5</a> <span class="i">declaration</span> → <span class="i">func_decl</span> <span class="point">.</span>
+
+    $default  <a href="#rule_5">reduce using rule 5</a> (declaration)
+</p>
+
+<h3><a name="state_16" id="state_16"></a>state 16</h3>
+
+<p class="pre">  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="i">ident</span> <span class="point">.</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="i">ident</span> <span class="point">.</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="i">ident</span> <span class="point">.</span>  [$end, TIDENTIFIER, TINTEGER, TDOUBLE, TVOID, TINT, TCEQ, TCNE, TCLT, TCLE, TCGT, TCGE, TLPAREN, TRPAREN, TLBRACE, TRBRACE, TCOMMA, TSEMI, TPLUS, TMINUS, TMUL, TDIV, TRETURN, TIF, TWHILE]
+
+    TEQUAL   <a href="#state_26">shift, and go to state 26</a>
+    TLPAREN  <a href="#state_27">shift, and go to state 27</a>
+
+    TLPAREN   [<a href="#rule_28">reduce using rule 28</a> (expr)]
+    $default  <a href="#rule_28">reduce using rule 28</a> (expr)
+</p>
+
+<h3><a name="state_17" id="state_17"></a>state 17</h3>
+
+<p class="pre">  <a href="#rule_15"> 15</a> <span class="i">var_decl</span> → <span class="i">type</span> <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_16"> 16</a>          | <span class="i">type</span> <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_17"> 17</a> <span class="i">func_decl</span> → <span class="i">type</span> <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">func_decl_args</span> <b>TRPAREN</b> <span class="i">block</span>
+  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+
+    ident  <a href="#state_28">go to state 28</a>
+</p>
+
+<h3><a name="state_18" id="state_18"></a>state 18</h3>
+
+<p class="pre">  <a href="#rule_29"> 29</a> <span class="i">expr</span> → <span class="i">number</span> <span class="point">.</span>
+
+    $default  <a href="#rule_29">reduce using rule 29</a> (expr)
+</p>
+
+<h3><a name="state_19" id="state_19"></a>state 19</h3>
+
+<p class="pre">  <a href="#rule_6">  6</a> <span class="i">declaration</span> → <span class="i">expr</span> <span class="point">.</span>  [$end, TIDENTIFIER, TINTEGER, TDOUBLE, TVOID, TINT, TLPAREN, TRBRACE, TRETURN, TIF, TWHILE]
+  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ    <a href="#state_29">shift, and go to state 29</a>
+    TCNE    <a href="#state_30">shift, and go to state 30</a>
+    TCLT    <a href="#state_31">shift, and go to state 31</a>
+    TCLE    <a href="#state_32">shift, and go to state 32</a>
+    TCGT    <a href="#state_33">shift, and go to state 33</a>
+    TCGE    <a href="#state_34">shift, and go to state 34</a>
+    TPLUS   <a href="#state_35">shift, and go to state 35</a>
+    TMINUS  <a href="#state_36">shift, and go to state 36</a>
+    TMUL    <a href="#state_37">shift, and go to state 37</a>
+    TDIV    <a href="#state_38">shift, and go to state 38</a>
+
+    $default  <a href="#rule_6">reduce using rule 6</a> (declaration)
+
+    compare  <a href="#state_39">go to state 39</a>
+</p>
+
+<h3><a name="state_20" id="state_20"></a>state 20</h3>
+
+<p class="pre">  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <b>TLPAREN</b> <span class="i">expr</span> <span class="point">.</span> <b>TRPAREN</b>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ     <a href="#state_29">shift, and go to state 29</a>
+    TCNE     <a href="#state_30">shift, and go to state 30</a>
+    TCLT     <a href="#state_31">shift, and go to state 31</a>
+    TCLE     <a href="#state_32">shift, and go to state 32</a>
+    TCGT     <a href="#state_33">shift, and go to state 33</a>
+    TCGE     <a href="#state_34">shift, and go to state 34</a>
+    TRPAREN  <a href="#state_40">shift, and go to state 40</a>
+    TPLUS    <a href="#state_35">shift, and go to state 35</a>
+    TMINUS   <a href="#state_36">shift, and go to state 36</a>
+    TMUL     <a href="#state_37">shift, and go to state 37</a>
+    TDIV     <a href="#state_38">shift, and go to state 38</a>
+
+    compare  <a href="#state_39">go to state 39</a>
+</p>
+
+<h3><a name="state_21" id="state_21"></a>state 21</h3>
+
+<p class="pre">  <a href="#rule_7">  7</a> <span class="i">declaration</span> → <b>TRETURN</b> <span class="i">expr</span> <span class="point">.</span> <b>TSEMI</b>
+  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ    <a href="#state_29">shift, and go to state 29</a>
+    TCNE    <a href="#state_30">shift, and go to state 30</a>
+    TCLT    <a href="#state_31">shift, and go to state 31</a>
+    TCLE    <a href="#state_32">shift, and go to state 32</a>
+    TCGT    <a href="#state_33">shift, and go to state 33</a>
+    TCGE    <a href="#state_34">shift, and go to state 34</a>
+    TSEMI   <a href="#state_41">shift, and go to state 41</a>
+    TPLUS   <a href="#state_35">shift, and go to state 35</a>
+    TMINUS  <a href="#state_36">shift, and go to state 36</a>
+    TMUL    <a href="#state_37">shift, and go to state 37</a>
+    TDIV    <a href="#state_38">shift, and go to state 38</a>
+
+    compare  <a href="#state_39">go to state 39</a>
+</p>
+
+<h3><a name="state_22" id="state_22"></a>state 22</h3>
+
+<p class="pre">  <a href="#rule_10"> 10</a> <span class="i">block</span> → <span class="point">.</span> <b>TLBRACE</b> <span class="i">declist</span> <b>TRBRACE</b>
+  <a href="#rule_11"> 11</a>       | <span class="point">.</span> <b>TLBRACE</b> <b>TRBRACE</b>
+  <a href="#rule_12"> 12</a> <span class="i">if_decl</span> → <b>TIF</b> <span class="i">expr</span> <span class="point">.</span> <span class="i">block</span> <span class="i">else_decl</span>
+  <a href="#rule_13"> 13</a>         | <b>TIF</b> <span class="i">expr</span> <span class="point">.</span> <span class="i">block</span>
+  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ     <a href="#state_29">shift, and go to state 29</a>
+    TCNE     <a href="#state_30">shift, and go to state 30</a>
+    TCLT     <a href="#state_31">shift, and go to state 31</a>
+    TCLE     <a href="#state_32">shift, and go to state 32</a>
+    TCGT     <a href="#state_33">shift, and go to state 33</a>
+    TCGE     <a href="#state_34">shift, and go to state 34</a>
+    TLBRACE  <a href="#state_42">shift, and go to state 42</a>
+    TPLUS    <a href="#state_35">shift, and go to state 35</a>
+    TMINUS   <a href="#state_36">shift, and go to state 36</a>
+    TMUL     <a href="#state_37">shift, and go to state 37</a>
+    TDIV     <a href="#state_38">shift, and go to state 38</a>
+
+    block    <a href="#state_43">go to state 43</a>
+    compare  <a href="#state_39">go to state 39</a>
+</p>
+
+<h3><a name="state_23" id="state_23"></a>state 23</h3>
+
+<p class="pre">  <a href="#rule_9">  9</a> <span class="i">declaration</span> → <b>TWHILE</b> <span class="i">expr</span> <span class="point">.</span> <span class="i">block</span>
+  <a href="#rule_10"> 10</a> <span class="i">block</span> → <span class="point">.</span> <b>TLBRACE</b> <span class="i">declist</span> <b>TRBRACE</b>
+  <a href="#rule_11"> 11</a>       | <span class="point">.</span> <b>TLBRACE</b> <b>TRBRACE</b>
+  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ     <a href="#state_29">shift, and go to state 29</a>
+    TCNE     <a href="#state_30">shift, and go to state 30</a>
+    TCLT     <a href="#state_31">shift, and go to state 31</a>
+    TCLE     <a href="#state_32">shift, and go to state 32</a>
+    TCGT     <a href="#state_33">shift, and go to state 33</a>
+    TCGE     <a href="#state_34">shift, and go to state 34</a>
+    TLBRACE  <a href="#state_42">shift, and go to state 42</a>
+    TPLUS    <a href="#state_35">shift, and go to state 35</a>
+    TMINUS   <a href="#state_36">shift, and go to state 36</a>
+    TMUL     <a href="#state_37">shift, and go to state 37</a>
+    TDIV     <a href="#state_38">shift, and go to state 38</a>
+
+    block    <a href="#state_44">go to state 44</a>
+    compare  <a href="#state_39">go to state 39</a>
+</p>
+
+<h3><a name="state_24" id="state_24"></a>state 24</h3>
+
+<p class="pre">  <a href="#rule_0">  0</a> <span class="i">$accept</span> → <span class="i">program</span> <b>$end</b> <span class="point">.</span>
+
+    $default  accept
+</p>
+
+<h3><a name="state_25" id="state_25"></a>state 25</h3>
+
+<p class="pre">  <a href="#rule_3">  3</a> <span class="i">declist</span> → <span class="i">declist</span> <span class="i">declaration</span> <span class="point">.</span>
+
+    $default  <a href="#rule_3">reduce using rule 3</a> (declist)
+</p>
+
+<h3><a name="state_26" id="state_26"></a>state 26</h3>
+
+<p class="pre">  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_26"> 26</a>      | <span class="i">ident</span> <b>TEQUAL</b> <span class="point">.</span> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_45">go to state 45</a>
+</p>
+
+<h3><a name="state_27" id="state_27"></a>state 27</h3>
+
+<p class="pre">  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="i">ident</span> <b>TLPAREN</b> <span class="point">.</span> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+  <a href="#rule_36"> 36</a> <span class="i">call_args</span> → <span class="point">.</span> %empty  [TRPAREN, TCOMMA]
+  <a href="#rule_37"> 37</a>           | <span class="point">.</span> <span class="i">expr</span>
+  <a href="#rule_38"> 38</a>           | <span class="point">.</span> <span class="i">call_args</span> <b>TCOMMA</b> <span class="i">expr</span>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    $default  <a href="#rule_36">reduce using rule 36</a> (call_args)
+
+    ident      <a href="#state_16">go to state 16</a>
+    number     <a href="#state_18">go to state 18</a>
+    expr       <a href="#state_46">go to state 46</a>
+    call_args  <a href="#state_47">go to state 47</a>
+</p>
+
+<h3><a name="state_28" id="state_28"></a>state 28</h3>
+
+<p class="pre">  <a href="#rule_15"> 15</a> <span class="i">var_decl</span> → <span class="i">type</span> <span class="i">ident</span> <span class="point">.</span>  [$end, TIDENTIFIER, TINTEGER, TDOUBLE, TVOID, TINT, TLPAREN, TRBRACE, TRETURN, TIF, TWHILE]
+  <a href="#rule_16"> 16</a>          | <span class="i">type</span> <span class="i">ident</span> <span class="point">.</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_17"> 17</a> <span class="i">func_decl</span> → <span class="i">type</span> <span class="i">ident</span> <span class="point">.</span> <b>TLPAREN</b> <span class="i">func_decl_args</span> <b>TRPAREN</b> <span class="i">block</span>
+
+    TEQUAL   <a href="#state_48">shift, and go to state 48</a>
+    TLPAREN  <a href="#state_49">shift, and go to state 49</a>
+
+    TLPAREN   [<a href="#rule_15">reduce using rule 15</a> (var_decl)]
+    $default  <a href="#rule_15">reduce using rule 15</a> (var_decl)
+</p>
+
+<h3><a name="state_29" id="state_29"></a>state 29</h3>
+
+<p class="pre">  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <b>TCEQ</b> <span class="point">.</span>
+
+    $default  <a href="#rule_39">reduce using rule 39</a> (compare)
+</p>
+
+<h3><a name="state_30" id="state_30"></a>state 30</h3>
+
+<p class="pre">  <a href="#rule_40"> 40</a> <span class="i">compare</span> → <b>TCNE</b> <span class="point">.</span>
+
+    $default  <a href="#rule_40">reduce using rule 40</a> (compare)
+</p>
+
+<h3><a name="state_31" id="state_31"></a>state 31</h3>
+
+<p class="pre">  <a href="#rule_41"> 41</a> <span class="i">compare</span> → <b>TCLT</b> <span class="point">.</span>
+
+    $default  <a href="#rule_41">reduce using rule 41</a> (compare)
+</p>
+
+<h3><a name="state_32" id="state_32"></a>state 32</h3>
+
+<p class="pre">  <a href="#rule_42"> 42</a> <span class="i">compare</span> → <b>TCLE</b> <span class="point">.</span>
+
+    $default  <a href="#rule_42">reduce using rule 42</a> (compare)
+</p>
+
+<h3><a name="state_33" id="state_33"></a>state 33</h3>
+
+<p class="pre">  <a href="#rule_43"> 43</a> <span class="i">compare</span> → <b>TCGT</b> <span class="point">.</span>
+
+    $default  <a href="#rule_43">reduce using rule 43</a> (compare)
+</p>
+
+<h3><a name="state_34" id="state_34"></a>state 34</h3>
+
+<p class="pre">  <a href="#rule_44"> 44</a> <span class="i">compare</span> → <b>TCGE</b> <span class="point">.</span>
+
+    $default  <a href="#rule_44">reduce using rule 44</a> (compare)
+</p>
+
+<h3><a name="state_35" id="state_35"></a>state 35</h3>
+
+<p class="pre">  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <b>TPLUS</b> <span class="point">.</span> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_50">go to state 50</a>
+</p>
+
+<h3><a name="state_36" id="state_36"></a>state 36</h3>
+
+<p class="pre">  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <b>TMINUS</b> <span class="point">.</span> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_51">go to state 51</a>
+</p>
+
+<h3><a name="state_37" id="state_37"></a>state 37</h3>
+
+<p class="pre">  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_30"> 30</a>      | <span class="i">expr</span> <b>TMUL</b> <span class="point">.</span> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_52">go to state 52</a>
+</p>
+
+<h3><a name="state_38" id="state_38"></a>state 38</h3>
+
+<p class="pre">  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <b>TDIV</b> <span class="point">.</span> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_53">go to state 53</a>
+</p>
+
+<h3><a name="state_39" id="state_39"></a>state 39</h3>
+
+<p class="pre">  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="i">compare</span> <span class="point">.</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_54">go to state 54</a>
+</p>
+
+<h3><a name="state_40" id="state_40"></a>state 40</h3>
+
+<p class="pre">  <a href="#rule_35"> 35</a> <span class="i">expr</span> → <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b> <span class="point">.</span>
+
+    $default  <a href="#rule_35">reduce using rule 35</a> (expr)
+</p>
+
+<h3><a name="state_41" id="state_41"></a>state 41</h3>
+
+<p class="pre">  <a href="#rule_7">  7</a> <span class="i">declaration</span> → <b>TRETURN</b> <span class="i">expr</span> <b>TSEMI</b> <span class="point">.</span>
+
+    $default  <a href="#rule_7">reduce using rule 7</a> (declaration)
+</p>
+
+<h3><a name="state_42" id="state_42"></a>state 42</h3>
+
+<p class="pre">  <a href="#rule_2">  2</a> <span class="i">declist</span> → <span class="point">.</span> <span class="i">declaration</span>
+  <a href="#rule_3">  3</a>         | <span class="point">.</span> <span class="i">declist</span> <span class="i">declaration</span>
+  <a href="#rule_4">  4</a> <span class="i">declaration</span> → <span class="point">.</span> <span class="i">var_decl</span>
+  <a href="#rule_5">  5</a>             | <span class="point">.</span> <span class="i">func_decl</span>
+  <a href="#rule_6">  6</a>             | <span class="point">.</span> <span class="i">expr</span>
+  <a href="#rule_7">  7</a>             | <span class="point">.</span> <b>TRETURN</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_8">  8</a>             | <span class="point">.</span> <span class="i">if_decl</span>
+  <a href="#rule_9">  9</a>             | <span class="point">.</span> <b>TWHILE</b> <span class="i">expr</span> <span class="i">block</span>
+  <a href="#rule_10"> 10</a> <span class="i">block</span> → <b>TLBRACE</b> <span class="point">.</span> <span class="i">declist</span> <b>TRBRACE</b>
+  <a href="#rule_11"> 11</a>       | <b>TLBRACE</b> <span class="point">.</span> <b>TRBRACE</b>
+  <a href="#rule_12"> 12</a> <span class="i">if_decl</span> → <span class="point">.</span> <b>TIF</b> <span class="i">expr</span> <span class="i">block</span> <span class="i">else_decl</span>
+  <a href="#rule_13"> 13</a>         | <span class="point">.</span> <b>TIF</b> <span class="i">expr</span> <span class="i">block</span>
+  <a href="#rule_15"> 15</a> <span class="i">var_decl</span> → <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span>
+  <a href="#rule_16"> 16</a>          | <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_17"> 17</a> <span class="i">func_decl</span> → <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">func_decl_args</span> <b>TRPAREN</b> <span class="i">block</span>
+  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_22"> 22</a> <span class="i">type</span> → <span class="point">.</span> <b>TINT</b>
+  <a href="#rule_23"> 23</a>      | <span class="point">.</span> <b>TVOID</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TVOID        <a href="#state_4">shift, and go to state 4</a>
+    TINT         <a href="#state_5">shift, and go to state 5</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+    TRBRACE      <a href="#state_55">shift, and go to state 55</a>
+    TRETURN      <a href="#state_7">shift, and go to state 7</a>
+    TIF          <a href="#state_8">shift, and go to state 8</a>
+    TWHILE       <a href="#state_9">shift, and go to state 9</a>
+
+    declist      <a href="#state_56">go to state 56</a>
+    declaration  <a href="#state_12">go to state 12</a>
+    if_decl      <a href="#state_13">go to state 13</a>
+    var_decl     <a href="#state_14">go to state 14</a>
+    func_decl    <a href="#state_15">go to state 15</a>
+    ident        <a href="#state_16">go to state 16</a>
+    type         <a href="#state_17">go to state 17</a>
+    number       <a href="#state_18">go to state 18</a>
+    expr         <a href="#state_19">go to state 19</a>
+</p>
+
+<h3><a name="state_43" id="state_43"></a>state 43</h3>
+
+<p class="pre">  <a href="#rule_12"> 12</a> <span class="i">if_decl</span> → <b>TIF</b> <span class="i">expr</span> <span class="i">block</span> <span class="point">.</span> <span class="i">else_decl</span>
+  <a href="#rule_13"> 13</a>         | <b>TIF</b> <span class="i">expr</span> <span class="i">block</span> <span class="point">.</span>  [$end, TIDENTIFIER, TINTEGER, TDOUBLE, TVOID, TINT, TLPAREN, TRBRACE, TRETURN, TIF, TWHILE]
+  <a href="#rule_14"> 14</a> <span class="i">else_decl</span> → <span class="point">.</span> <b>TELSE</b> <span class="i">block</span>
+
+    TELSE  <a href="#state_57">shift, and go to state 57</a>
+
+    $default  <a href="#rule_13">reduce using rule 13</a> (if_decl)
+
+    else_decl  <a href="#state_58">go to state 58</a>
+</p>
+
+<h3><a name="state_44" id="state_44"></a>state 44</h3>
+
+<p class="pre">  <a href="#rule_9">  9</a> <span class="i">declaration</span> → <b>TWHILE</b> <span class="i">expr</span> <span class="i">block</span> <span class="point">.</span>
+
+    $default  <a href="#rule_9">reduce using rule 9</a> (declaration)
+</p>
+
+<h3><a name="state_45" id="state_45"></a>state 45</h3>
+
+<p class="pre">  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <span class="point">.</span> <b>TSEMI</b>
+  <a href="#rule_30"> 30</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ    <a href="#state_29">shift, and go to state 29</a>
+    TCNE    <a href="#state_30">shift, and go to state 30</a>
+    TCLT    <a href="#state_31">shift, and go to state 31</a>
+    TCLE    <a href="#state_32">shift, and go to state 32</a>
+    TCGT    <a href="#state_33">shift, and go to state 33</a>
+    TCGE    <a href="#state_34">shift, and go to state 34</a>
+    TSEMI   <a href="#state_59">shift, and go to state 59</a>
+    TPLUS   <a href="#state_35">shift, and go to state 35</a>
+    TMINUS  <a href="#state_36">shift, and go to state 36</a>
+    TMUL    <a href="#state_37">shift, and go to state 37</a>
+    TDIV    <a href="#state_38">shift, and go to state 38</a>
+
+    compare  <a href="#state_39">go to state 39</a>
+</p>
+
+<h3><a name="state_46" id="state_46"></a>state 46</h3>
+
+<p class="pre">  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_37"> 37</a> <span class="i">call_args</span> → <span class="i">expr</span> <span class="point">.</span>  [TRPAREN, TCOMMA]
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ    <a href="#state_29">shift, and go to state 29</a>
+    TCNE    <a href="#state_30">shift, and go to state 30</a>
+    TCLT    <a href="#state_31">shift, and go to state 31</a>
+    TCLE    <a href="#state_32">shift, and go to state 32</a>
+    TCGT    <a href="#state_33">shift, and go to state 33</a>
+    TCGE    <a href="#state_34">shift, and go to state 34</a>
+    TPLUS   <a href="#state_35">shift, and go to state 35</a>
+    TMINUS  <a href="#state_36">shift, and go to state 36</a>
+    TMUL    <a href="#state_37">shift, and go to state 37</a>
+    TDIV    <a href="#state_38">shift, and go to state 38</a>
+
+    $default  <a href="#rule_37">reduce using rule 37</a> (call_args)
+
+    compare  <a href="#state_39">go to state 39</a>
+</p>
+
+<h3><a name="state_47" id="state_47"></a>state 47</h3>
+
+<p class="pre">  <a href="#rule_27"> 27</a> <span class="i">expr</span> → <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <span class="point">.</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_38"> 38</a> <span class="i">call_args</span> → <span class="i">call_args</span> <span class="point">.</span> <b>TCOMMA</b> <span class="i">expr</span>
+
+    TRPAREN  <a href="#state_60">shift, and go to state 60</a>
+    TCOMMA   <a href="#state_61">shift, and go to state 61</a>
+</p>
+
+<h3><a name="state_48" id="state_48"></a>state 48</h3>
+
+<p class="pre">  <a href="#rule_16"> 16</a> <span class="i">var_decl</span> → <span class="i">type</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="point">.</span> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_62">go to state 62</a>
+</p>
+
+<h3><a name="state_49" id="state_49"></a>state 49</h3>
+
+<p class="pre">  <a href="#rule_15"> 15</a> <span class="i">var_decl</span> → <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span>
+  <a href="#rule_16"> 16</a>          | <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_17"> 17</a> <span class="i">func_decl</span> → <span class="i">type</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="point">.</span> <span class="i">func_decl_args</span> <b>TRPAREN</b> <span class="i">block</span>
+  <a href="#rule_18"> 18</a> <span class="i">func_decl_args</span> → <span class="point">.</span> %empty  [TRPAREN, TCOMMA]
+  <a href="#rule_19"> 19</a>                | <span class="point">.</span> <span class="i">var_decl</span>
+  <a href="#rule_20"> 20</a>                | <span class="point">.</span> <span class="i">func_decl_args</span> <b>TCOMMA</b> <span class="i">var_decl</span>
+  <a href="#rule_22"> 22</a> <span class="i">type</span> → <span class="point">.</span> <b>TINT</b>
+  <a href="#rule_23"> 23</a>      | <span class="point">.</span> <b>TVOID</b>
+
+    TVOID  <a href="#state_4">shift, and go to state 4</a>
+    TINT   <a href="#state_5">shift, and go to state 5</a>
+
+    $default  <a href="#rule_18">reduce using rule 18</a> (func_decl_args)
+
+    var_decl        <a href="#state_63">go to state 63</a>
+    func_decl_args  <a href="#state_64">go to state 64</a>
+    type            <a href="#state_65">go to state 65</a>
+</p>
+
+<h3><a name="state_50" id="state_50"></a>state 50</h3>
+
+<p class="pre">  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span> <span class="point">.</span>  [$end, TIDENTIFIER, TINTEGER, TDOUBLE, TVOID, TINT, TCEQ, TCNE, TCLT, TCLE, TCGT, TCGE, TLPAREN, TRPAREN, TLBRACE, TRBRACE, TCOMMA, TSEMI, TPLUS, TMINUS, TRETURN, TIF, TWHILE]
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ  <a href="#state_29">shift, and go to state 29</a>
+    TCNE  <a href="#state_30">shift, and go to state 30</a>
+    TCLT  <a href="#state_31">shift, and go to state 31</a>
+    TCLE  <a href="#state_32">shift, and go to state 32</a>
+    TCGT  <a href="#state_33">shift, and go to state 33</a>
+    TCGE  <a href="#state_34">shift, and go to state 34</a>
+    TMUL  <a href="#state_37">shift, and go to state 37</a>
+    TDIV  <a href="#state_38">shift, and go to state 38</a>
+
+    TCEQ      [<a href="#rule_32">reduce using rule 32</a> (expr)]
+    TCNE      [<a href="#rule_32">reduce using rule 32</a> (expr)]
+    TCLT      [<a href="#rule_32">reduce using rule 32</a> (expr)]
+    TCLE      [<a href="#rule_32">reduce using rule 32</a> (expr)]
+    TCGT      [<a href="#rule_32">reduce using rule 32</a> (expr)]
+    TCGE      [<a href="#rule_32">reduce using rule 32</a> (expr)]
+    $default  <a href="#rule_32">reduce using rule 32</a> (expr)
+
+    compare  <a href="#state_39">go to state 39</a>
+
+    Conflict between <a href="#rule_32">rule 32</a> and token TPLUS resolved as reduce (%left TPLUS).
+    Conflict between <a href="#rule_32">rule 32</a> and token TMINUS resolved as reduce (%left TMINUS).
+    Conflict between <a href="#rule_32">rule 32</a> and token TMUL resolved as shift (TPLUS &lt; TMUL).
+    Conflict between <a href="#rule_32">rule 32</a> and token TDIV resolved as shift (TPLUS &lt; TDIV).
+</p>
+
+<h3><a name="state_51" id="state_51"></a>state 51</h3>
+
+<p class="pre">  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span> <span class="point">.</span>  [$end, TIDENTIFIER, TINTEGER, TDOUBLE, TVOID, TINT, TCEQ, TCNE, TCLT, TCLE, TCGT, TCGE, TLPAREN, TRPAREN, TLBRACE, TRBRACE, TCOMMA, TSEMI, TPLUS, TMINUS, TRETURN, TIF, TWHILE]
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ  <a href="#state_29">shift, and go to state 29</a>
+    TCNE  <a href="#state_30">shift, and go to state 30</a>
+    TCLT  <a href="#state_31">shift, and go to state 31</a>
+    TCLE  <a href="#state_32">shift, and go to state 32</a>
+    TCGT  <a href="#state_33">shift, and go to state 33</a>
+    TCGE  <a href="#state_34">shift, and go to state 34</a>
+    TMUL  <a href="#state_37">shift, and go to state 37</a>
+    TDIV  <a href="#state_38">shift, and go to state 38</a>
+
+    TCEQ      [<a href="#rule_33">reduce using rule 33</a> (expr)]
+    TCNE      [<a href="#rule_33">reduce using rule 33</a> (expr)]
+    TCLT      [<a href="#rule_33">reduce using rule 33</a> (expr)]
+    TCLE      [<a href="#rule_33">reduce using rule 33</a> (expr)]
+    TCGT      [<a href="#rule_33">reduce using rule 33</a> (expr)]
+    TCGE      [<a href="#rule_33">reduce using rule 33</a> (expr)]
+    $default  <a href="#rule_33">reduce using rule 33</a> (expr)
+
+    compare  <a href="#state_39">go to state 39</a>
+
+    Conflict between <a href="#rule_33">rule 33</a> and token TPLUS resolved as reduce (%left TPLUS).
+    Conflict between <a href="#rule_33">rule 33</a> and token TMINUS resolved as reduce (%left TMINUS).
+    Conflict between <a href="#rule_33">rule 33</a> and token TMUL resolved as shift (TMINUS &lt; TMUL).
+    Conflict between <a href="#rule_33">rule 33</a> and token TDIV resolved as shift (TMINUS &lt; TDIV).
+</p>
+
+<h3><a name="state_52" id="state_52"></a>state 52</h3>
+
+<p class="pre">  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_30"> 30</a>      | <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span> <span class="point">.</span>  [$end, TIDENTIFIER, TINTEGER, TDOUBLE, TVOID, TINT, TCEQ, TCNE, TCLT, TCLE, TCGT, TCGE, TLPAREN, TRPAREN, TLBRACE, TRBRACE, TCOMMA, TSEMI, TPLUS, TMINUS, TMUL, TDIV, TRETURN, TIF, TWHILE]
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ  <a href="#state_29">shift, and go to state 29</a>
+    TCNE  <a href="#state_30">shift, and go to state 30</a>
+    TCLT  <a href="#state_31">shift, and go to state 31</a>
+    TCLE  <a href="#state_32">shift, and go to state 32</a>
+    TCGT  <a href="#state_33">shift, and go to state 33</a>
+    TCGE  <a href="#state_34">shift, and go to state 34</a>
+
+    TCEQ      [<a href="#rule_30">reduce using rule 30</a> (expr)]
+    TCNE      [<a href="#rule_30">reduce using rule 30</a> (expr)]
+    TCLT      [<a href="#rule_30">reduce using rule 30</a> (expr)]
+    TCLE      [<a href="#rule_30">reduce using rule 30</a> (expr)]
+    TCGT      [<a href="#rule_30">reduce using rule 30</a> (expr)]
+    TCGE      [<a href="#rule_30">reduce using rule 30</a> (expr)]
+    $default  <a href="#rule_30">reduce using rule 30</a> (expr)
+
+    compare  <a href="#state_39">go to state 39</a>
+
+    Conflict between <a href="#rule_30">rule 30</a> and token TPLUS resolved as reduce (TPLUS &lt; TMUL).
+    Conflict between <a href="#rule_30">rule 30</a> and token TMINUS resolved as reduce (TMINUS &lt; TMUL).
+    Conflict between <a href="#rule_30">rule 30</a> and token TMUL resolved as reduce (%left TMUL).
+    Conflict between <a href="#rule_30">rule 30</a> and token TDIV resolved as reduce (%left TDIV).
+</p>
+
+<h3><a name="state_53" id="state_53"></a>state 53</h3>
+
+<p class="pre">  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span> <span class="point">.</span>  [$end, TIDENTIFIER, TINTEGER, TDOUBLE, TVOID, TINT, TCEQ, TCNE, TCLT, TCLE, TCGT, TCGE, TLPAREN, TRPAREN, TLBRACE, TRBRACE, TCOMMA, TSEMI, TPLUS, TMINUS, TMUL, TDIV, TRETURN, TIF, TWHILE]
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ  <a href="#state_29">shift, and go to state 29</a>
+    TCNE  <a href="#state_30">shift, and go to state 30</a>
+    TCLT  <a href="#state_31">shift, and go to state 31</a>
+    TCLE  <a href="#state_32">shift, and go to state 32</a>
+    TCGT  <a href="#state_33">shift, and go to state 33</a>
+    TCGE  <a href="#state_34">shift, and go to state 34</a>
+
+    TCEQ      [<a href="#rule_31">reduce using rule 31</a> (expr)]
+    TCNE      [<a href="#rule_31">reduce using rule 31</a> (expr)]
+    TCLT      [<a href="#rule_31">reduce using rule 31</a> (expr)]
+    TCLE      [<a href="#rule_31">reduce using rule 31</a> (expr)]
+    TCGT      [<a href="#rule_31">reduce using rule 31</a> (expr)]
+    TCGE      [<a href="#rule_31">reduce using rule 31</a> (expr)]
+    $default  <a href="#rule_31">reduce using rule 31</a> (expr)
+
+    compare  <a href="#state_39">go to state 39</a>
+
+    Conflict between <a href="#rule_31">rule 31</a> and token TPLUS resolved as reduce (TPLUS &lt; TDIV).
+    Conflict between <a href="#rule_31">rule 31</a> and token TMINUS resolved as reduce (TMINUS &lt; TDIV).
+    Conflict between <a href="#rule_31">rule 31</a> and token TMUL resolved as reduce (%left TMUL).
+    Conflict between <a href="#rule_31">rule 31</a> and token TDIV resolved as reduce (%left TDIV).
+</p>
+
+<h3><a name="state_54" id="state_54"></a>state 54</h3>
+
+<p class="pre">  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span> <span class="point">.</span>  [$end, TIDENTIFIER, TINTEGER, TDOUBLE, TVOID, TINT, TCEQ, TCNE, TCLT, TCLE, TCGT, TCGE, TLPAREN, TRPAREN, TLBRACE, TRBRACE, TCOMMA, TSEMI, TPLUS, TMINUS, TMUL, TDIV, TRETURN, TIF, TWHILE]
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ    <a href="#state_29">shift, and go to state 29</a>
+    TCNE    <a href="#state_30">shift, and go to state 30</a>
+    TCLT    <a href="#state_31">shift, and go to state 31</a>
+    TCLE    <a href="#state_32">shift, and go to state 32</a>
+    TCGT    <a href="#state_33">shift, and go to state 33</a>
+    TCGE    <a href="#state_34">shift, and go to state 34</a>
+    TPLUS   <a href="#state_35">shift, and go to state 35</a>
+    TMINUS  <a href="#state_36">shift, and go to state 36</a>
+    TMUL    <a href="#state_37">shift, and go to state 37</a>
+    TDIV    <a href="#state_38">shift, and go to state 38</a>
+
+    TCEQ      [<a href="#rule_34">reduce using rule 34</a> (expr)]
+    TCNE      [<a href="#rule_34">reduce using rule 34</a> (expr)]
+    TCLT      [<a href="#rule_34">reduce using rule 34</a> (expr)]
+    TCLE      [<a href="#rule_34">reduce using rule 34</a> (expr)]
+    TCGT      [<a href="#rule_34">reduce using rule 34</a> (expr)]
+    TCGE      [<a href="#rule_34">reduce using rule 34</a> (expr)]
+    TPLUS     [<a href="#rule_34">reduce using rule 34</a> (expr)]
+    TMINUS    [<a href="#rule_34">reduce using rule 34</a> (expr)]
+    TMUL      [<a href="#rule_34">reduce using rule 34</a> (expr)]
+    TDIV      [<a href="#rule_34">reduce using rule 34</a> (expr)]
+    $default  <a href="#rule_34">reduce using rule 34</a> (expr)
+
+    compare  <a href="#state_39">go to state 39</a>
+</p>
+
+<h3><a name="state_55" id="state_55"></a>state 55</h3>
+
+<p class="pre">  <a href="#rule_11"> 11</a> <span class="i">block</span> → <b>TLBRACE</b> <b>TRBRACE</b> <span class="point">.</span>
+
+    $default  <a href="#rule_11">reduce using rule 11</a> (block)
+</p>
+
+<h3><a name="state_56" id="state_56"></a>state 56</h3>
+
+<p class="pre">  <a href="#rule_3">  3</a> <span class="i">declist</span> → <span class="i">declist</span> <span class="point">.</span> <span class="i">declaration</span>
+  <a href="#rule_4">  4</a> <span class="i">declaration</span> → <span class="point">.</span> <span class="i">var_decl</span>
+  <a href="#rule_5">  5</a>             | <span class="point">.</span> <span class="i">func_decl</span>
+  <a href="#rule_6">  6</a>             | <span class="point">.</span> <span class="i">expr</span>
+  <a href="#rule_7">  7</a>             | <span class="point">.</span> <b>TRETURN</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_8">  8</a>             | <span class="point">.</span> <span class="i">if_decl</span>
+  <a href="#rule_9">  9</a>             | <span class="point">.</span> <b>TWHILE</b> <span class="i">expr</span> <span class="i">block</span>
+  <a href="#rule_10"> 10</a> <span class="i">block</span> → <b>TLBRACE</b> <span class="i">declist</span> <span class="point">.</span> <b>TRBRACE</b>
+  <a href="#rule_12"> 12</a> <span class="i">if_decl</span> → <span class="point">.</span> <b>TIF</b> <span class="i">expr</span> <span class="i">block</span> <span class="i">else_decl</span>
+  <a href="#rule_13"> 13</a>         | <span class="point">.</span> <b>TIF</b> <span class="i">expr</span> <span class="i">block</span>
+  <a href="#rule_15"> 15</a> <span class="i">var_decl</span> → <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span>
+  <a href="#rule_16"> 16</a>          | <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_17"> 17</a> <span class="i">func_decl</span> → <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">func_decl_args</span> <b>TRPAREN</b> <span class="i">block</span>
+  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_22"> 22</a> <span class="i">type</span> → <span class="point">.</span> <b>TINT</b>
+  <a href="#rule_23"> 23</a>      | <span class="point">.</span> <b>TVOID</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TVOID        <a href="#state_4">shift, and go to state 4</a>
+    TINT         <a href="#state_5">shift, and go to state 5</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+    TRBRACE      <a href="#state_66">shift, and go to state 66</a>
+    TRETURN      <a href="#state_7">shift, and go to state 7</a>
+    TIF          <a href="#state_8">shift, and go to state 8</a>
+    TWHILE       <a href="#state_9">shift, and go to state 9</a>
+
+    declaration  <a href="#state_25">go to state 25</a>
+    if_decl      <a href="#state_13">go to state 13</a>
+    var_decl     <a href="#state_14">go to state 14</a>
+    func_decl    <a href="#state_15">go to state 15</a>
+    ident        <a href="#state_16">go to state 16</a>
+    type         <a href="#state_17">go to state 17</a>
+    number       <a href="#state_18">go to state 18</a>
+    expr         <a href="#state_19">go to state 19</a>
+</p>
+
+<h3><a name="state_57" id="state_57"></a>state 57</h3>
+
+<p class="pre">  <a href="#rule_10"> 10</a> <span class="i">block</span> → <span class="point">.</span> <b>TLBRACE</b> <span class="i">declist</span> <b>TRBRACE</b>
+  <a href="#rule_11"> 11</a>       | <span class="point">.</span> <b>TLBRACE</b> <b>TRBRACE</b>
+  <a href="#rule_14"> 14</a> <span class="i">else_decl</span> → <b>TELSE</b> <span class="point">.</span> <span class="i">block</span>
+
+    TLBRACE  <a href="#state_42">shift, and go to state 42</a>
+
+    block  <a href="#state_67">go to state 67</a>
+</p>
+
+<h3><a name="state_58" id="state_58"></a>state 58</h3>
+
+<p class="pre">  <a href="#rule_12"> 12</a> <span class="i">if_decl</span> → <b>TIF</b> <span class="i">expr</span> <span class="i">block</span> <span class="i">else_decl</span> <span class="point">.</span>
+
+    $default  <a href="#rule_12">reduce using rule 12</a> (if_decl)
+</p>
+
+<h3><a name="state_59" id="state_59"></a>state 59</h3>
+
+<p class="pre">  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b> <span class="point">.</span>
+
+    $default  <a href="#rule_26">reduce using rule 26</a> (expr)
+</p>
+
+<h3><a name="state_60" id="state_60"></a>state 60</h3>
+
+<p class="pre">  <a href="#rule_27"> 27</a> <span class="i">expr</span> → <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <span class="point">.</span> <b>TSEMI</b>
+
+    TSEMI  <a href="#state_68">shift, and go to state 68</a>
+</p>
+
+<h3><a name="state_61" id="state_61"></a>state 61</h3>
+
+<p class="pre">  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+  <a href="#rule_24"> 24</a> <span class="i">number</span> → <span class="point">.</span> <b>TINTEGER</b>
+  <a href="#rule_25"> 25</a>        | <span class="point">.</span> <b>TDOUBLE</b>
+  <a href="#rule_26"> 26</a> <span class="i">expr</span> → <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_27"> 27</a>      | <span class="point">.</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b>
+  <a href="#rule_28"> 28</a>      | <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_29"> 29</a>      | <span class="point">.</span> <span class="i">number</span>
+  <a href="#rule_30"> 30</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="point">.</span> <span class="i">expr</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="point">.</span> <span class="i">expr</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_35"> 35</a>      | <span class="point">.</span> <b>TLPAREN</b> <span class="i">expr</span> <b>TRPAREN</b>
+  <a href="#rule_38"> 38</a> <span class="i">call_args</span> → <span class="i">call_args</span> <b>TCOMMA</b> <span class="point">.</span> <span class="i">expr</span>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+    TINTEGER     <a href="#state_2">shift, and go to state 2</a>
+    TDOUBLE      <a href="#state_3">shift, and go to state 3</a>
+    TLPAREN      <a href="#state_6">shift, and go to state 6</a>
+
+    ident   <a href="#state_16">go to state 16</a>
+    number  <a href="#state_18">go to state 18</a>
+    expr    <a href="#state_69">go to state 69</a>
+</p>
+
+<h3><a name="state_62" id="state_62"></a>state 62</h3>
+
+<p class="pre">  <a href="#rule_16"> 16</a> <span class="i">var_decl</span> → <span class="i">type</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <span class="point">.</span> <b>TSEMI</b>
+  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ    <a href="#state_29">shift, and go to state 29</a>
+    TCNE    <a href="#state_30">shift, and go to state 30</a>
+    TCLT    <a href="#state_31">shift, and go to state 31</a>
+    TCLE    <a href="#state_32">shift, and go to state 32</a>
+    TCGT    <a href="#state_33">shift, and go to state 33</a>
+    TCGE    <a href="#state_34">shift, and go to state 34</a>
+    TSEMI   <a href="#state_70">shift, and go to state 70</a>
+    TPLUS   <a href="#state_35">shift, and go to state 35</a>
+    TMINUS  <a href="#state_36">shift, and go to state 36</a>
+    TMUL    <a href="#state_37">shift, and go to state 37</a>
+    TDIV    <a href="#state_38">shift, and go to state 38</a>
+
+    compare  <a href="#state_39">go to state 39</a>
+</p>
+
+<h3><a name="state_63" id="state_63"></a>state 63</h3>
+
+<p class="pre">  <a href="#rule_19"> 19</a> <span class="i">func_decl_args</span> → <span class="i">var_decl</span> <span class="point">.</span>
+
+    $default  <a href="#rule_19">reduce using rule 19</a> (func_decl_args)
+</p>
+
+<h3><a name="state_64" id="state_64"></a>state 64</h3>
+
+<p class="pre">  <a href="#rule_17"> 17</a> <span class="i">func_decl</span> → <span class="i">type</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">func_decl_args</span> <span class="point">.</span> <b>TRPAREN</b> <span class="i">block</span>
+  <a href="#rule_20"> 20</a> <span class="i">func_decl_args</span> → <span class="i">func_decl_args</span> <span class="point">.</span> <b>TCOMMA</b> <span class="i">var_decl</span>
+
+    TRPAREN  <a href="#state_71">shift, and go to state 71</a>
+    TCOMMA   <a href="#state_72">shift, and go to state 72</a>
+</p>
+
+<h3><a name="state_65" id="state_65"></a>state 65</h3>
+
+<p class="pre">  <a href="#rule_15"> 15</a> <span class="i">var_decl</span> → <span class="i">type</span> <span class="point">.</span> <span class="i">ident</span>
+  <a href="#rule_16"> 16</a>          | <span class="i">type</span> <span class="point">.</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_21"> 21</a> <span class="i">ident</span> → <span class="point">.</span> <b>TIDENTIFIER</b>
+
+    TIDENTIFIER  <a href="#state_1">shift, and go to state 1</a>
+
+    ident  <a href="#state_73">go to state 73</a>
+</p>
+
+<h3><a name="state_66" id="state_66"></a>state 66</h3>
+
+<p class="pre">  <a href="#rule_10"> 10</a> <span class="i">block</span> → <b>TLBRACE</b> <span class="i">declist</span> <b>TRBRACE</b> <span class="point">.</span>
+
+    $default  <a href="#rule_10">reduce using rule 10</a> (block)
+</p>
+
+<h3><a name="state_67" id="state_67"></a>state 67</h3>
+
+<p class="pre">  <a href="#rule_14"> 14</a> <span class="i">else_decl</span> → <b>TELSE</b> <span class="i">block</span> <span class="point">.</span>
+
+    $default  <a href="#rule_14">reduce using rule 14</a> (else_decl)
+</p>
+
+<h3><a name="state_68" id="state_68"></a>state 68</h3>
+
+<p class="pre">  <a href="#rule_27"> 27</a> <span class="i">expr</span> → <span class="i">ident</span> <b>TLPAREN</b> <span class="i">call_args</span> <b>TRPAREN</b> <b>TSEMI</b> <span class="point">.</span>
+
+    $default  <a href="#rule_27">reduce using rule 27</a> (expr)
+</p>
+
+<h3><a name="state_69" id="state_69"></a>state 69</h3>
+
+<p class="pre">  <a href="#rule_30"> 30</a> <span class="i">expr</span> → <span class="i">expr</span> <span class="point">.</span> <b>TMUL</b> <span class="i">expr</span>
+  <a href="#rule_31"> 31</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TDIV</b> <span class="i">expr</span>
+  <a href="#rule_32"> 32</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TPLUS</b> <span class="i">expr</span>
+  <a href="#rule_33"> 33</a>      | <span class="i">expr</span> <span class="point">.</span> <b>TMINUS</b> <span class="i">expr</span>
+  <a href="#rule_34"> 34</a>      | <span class="i">expr</span> <span class="point">.</span> <span class="i">compare</span> <span class="i">expr</span>
+  <a href="#rule_38"> 38</a> <span class="i">call_args</span> → <span class="i">call_args</span> <b>TCOMMA</b> <span class="i">expr</span> <span class="point">.</span>  [TRPAREN, TCOMMA]
+  <a href="#rule_39"> 39</a> <span class="i">compare</span> → <span class="point">.</span> <b>TCEQ</b>
+  <a href="#rule_40"> 40</a>         | <span class="point">.</span> <b>TCNE</b>
+  <a href="#rule_41"> 41</a>         | <span class="point">.</span> <b>TCLT</b>
+  <a href="#rule_42"> 42</a>         | <span class="point">.</span> <b>TCLE</b>
+  <a href="#rule_43"> 43</a>         | <span class="point">.</span> <b>TCGT</b>
+  <a href="#rule_44"> 44</a>         | <span class="point">.</span> <b>TCGE</b>
+
+    TCEQ    <a href="#state_29">shift, and go to state 29</a>
+    TCNE    <a href="#state_30">shift, and go to state 30</a>
+    TCLT    <a href="#state_31">shift, and go to state 31</a>
+    TCLE    <a href="#state_32">shift, and go to state 32</a>
+    TCGT    <a href="#state_33">shift, and go to state 33</a>
+    TCGE    <a href="#state_34">shift, and go to state 34</a>
+    TPLUS   <a href="#state_35">shift, and go to state 35</a>
+    TMINUS  <a href="#state_36">shift, and go to state 36</a>
+    TMUL    <a href="#state_37">shift, and go to state 37</a>
+    TDIV    <a href="#state_38">shift, and go to state 38</a>
+
+    $default  <a href="#rule_38">reduce using rule 38</a> (call_args)
+
+    compare  <a href="#state_39">go to state 39</a>
+</p>
+
+<h3><a name="state_70" id="state_70"></a>state 70</h3>
+
+<p class="pre">  <a href="#rule_16"> 16</a> <span class="i">var_decl</span> → <span class="i">type</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b> <span class="point">.</span>
+
+    $default  <a href="#rule_16">reduce using rule 16</a> (var_decl)
+</p>
+
+<h3><a name="state_71" id="state_71"></a>state 71</h3>
+
+<p class="pre">  <a href="#rule_10"> 10</a> <span class="i">block</span> → <span class="point">.</span> <b>TLBRACE</b> <span class="i">declist</span> <b>TRBRACE</b>
+  <a href="#rule_11"> 11</a>       | <span class="point">.</span> <b>TLBRACE</b> <b>TRBRACE</b>
+  <a href="#rule_17"> 17</a> <span class="i">func_decl</span> → <span class="i">type</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">func_decl_args</span> <b>TRPAREN</b> <span class="point">.</span> <span class="i">block</span>
+
+    TLBRACE  <a href="#state_42">shift, and go to state 42</a>
+
+    block  <a href="#state_74">go to state 74</a>
+</p>
+
+<h3><a name="state_72" id="state_72"></a>state 72</h3>
+
+<p class="pre">  <a href="#rule_15"> 15</a> <span class="i">var_decl</span> → <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span>
+  <a href="#rule_16"> 16</a>          | <span class="point">.</span> <span class="i">type</span> <span class="i">ident</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+  <a href="#rule_20"> 20</a> <span class="i">func_decl_args</span> → <span class="i">func_decl_args</span> <b>TCOMMA</b> <span class="point">.</span> <span class="i">var_decl</span>
+  <a href="#rule_22"> 22</a> <span class="i">type</span> → <span class="point">.</span> <b>TINT</b>
+  <a href="#rule_23"> 23</a>      | <span class="point">.</span> <b>TVOID</b>
+
+    TVOID  <a href="#state_4">shift, and go to state 4</a>
+    TINT   <a href="#state_5">shift, and go to state 5</a>
+
+    var_decl  <a href="#state_75">go to state 75</a>
+    type      <a href="#state_65">go to state 65</a>
+</p>
+
+<h3><a name="state_73" id="state_73"></a>state 73</h3>
+
+<p class="pre">  <a href="#rule_15"> 15</a> <span class="i">var_decl</span> → <span class="i">type</span> <span class="i">ident</span> <span class="point">.</span>  [TRPAREN, TCOMMA]
+  <a href="#rule_16"> 16</a>          | <span class="i">type</span> <span class="i">ident</span> <span class="point">.</span> <b>TEQUAL</b> <span class="i">expr</span> <b>TSEMI</b>
+
+    TEQUAL  <a href="#state_48">shift, and go to state 48</a>
+
+    $default  <a href="#rule_15">reduce using rule 15</a> (var_decl)
+</p>
+
+<h3><a name="state_74" id="state_74"></a>state 74</h3>
+
+<p class="pre">  <a href="#rule_17"> 17</a> <span class="i">func_decl</span> → <span class="i">type</span> <span class="i">ident</span> <b>TLPAREN</b> <span class="i">func_decl_args</span> <b>TRPAREN</b> <span class="i">block</span> <span class="point">.</span>
+
+    $default  <a href="#rule_17">reduce using rule 17</a> (func_decl)
+</p>
+
+<h3><a name="state_75" id="state_75"></a>state 75</h3>
+
+<p class="pre">  <a href="#rule_20"> 20</a> <span class="i">func_decl_args</span> → <span class="i">func_decl_args</span> <b>TCOMMA</b> <span class="i">var_decl</span> <span class="point">.</span>
+
+    $default  <a href="#rule_20">reduce using rule 20</a> (func_decl_args)
+</p>
+
+<div id="footer"><hr />This document was generated using
+      <a href="http://www.gnu.org/software/bison/" title="GNU Bison">
+      GNU Bison 3.0.4</a>
+      XML Automaton Report.<br />
+      Verbatim copying and distribution of this entire page is
+      permitted in any medium, provided this notice is preserved.</div></body>
+</html>

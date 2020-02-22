@@ -48,28 +48,30 @@ extern int yydebug;
     TIDENTIFIER = 258,
     TINTEGER = 259,
     TDOUBLE = 260,
-    TCEQ = 261,
-    TCNE = 262,
-    TCLT = 263,
-    TCLE = 264,
-    TCGT = 265,
-    TCGE = 266,
-    TEQUAL = 267,
-    TLPAREN = 268,
-    TRPAREN = 269,
-    TLBRACE = 270,
-    TRBRACE = 271,
-    TCOMMA = 272,
-    TDOT = 273,
-    TSEMI = 274,
-    TPLUS = 275,
-    TMINUS = 276,
-    TMUL = 277,
-    TDIV = 278,
-    TRETURN = 279,
-    TIF = 280,
-    TELSE = 281,
-    TWHILE = 282
+    TVOID = 261,
+    TINT = 262,
+    TCEQ = 263,
+    TCNE = 264,
+    TCLT = 265,
+    TCLE = 266,
+    TCGT = 267,
+    TCGE = 268,
+    TEQUAL = 269,
+    TLPAREN = 270,
+    TRPAREN = 271,
+    TLBRACE = 272,
+    TRBRACE = 273,
+    TCOMMA = 274,
+    TDOT = 275,
+    TSEMI = 276,
+    TPLUS = 277,
+    TMINUS = 278,
+    TMUL = 279,
+    TDIV = 280,
+    TRETURN = 281,
+    TIF = 282,
+    TELSE = 283,
+    TWHILE = 284
   };
 #endif
 
@@ -78,20 +80,21 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 12 "parser2.y" /* yacc.c:1909  */
+#line 16 "parser2.y" /* yacc.c:1909  */
 
 	Node *node;
 	NBlock *block;
 	NExpression *expr;
 	NStatement *declaration;
 	NIdentifier *ident;
+	NType *type;
 	NVariableDeclaration *var_decl;
 	std::vector<NVariableDeclaration*> *varvec;
 	std::vector<NExpression*> *exprvec;
 	std::string *string;
 	int token;
 
-#line 95 "parser2.hpp" /* yacc.c:1909  */
+#line 98 "parser2.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
