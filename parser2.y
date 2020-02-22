@@ -5,7 +5,9 @@
         #include <cstdio>
         #include <cstdlib>
 	NBlock *root; /* the top level root node of our final AST */
-
+	#ifdef YYDEBUG
+  		yydebug = 1;
+	#endif
 	extern int yylex();
 	void yyerror(const char *s) { std::printf("Error: %s\n", s);std::exit(1); }
 %}
@@ -17,6 +19,7 @@
 	NExpression *expr;
 	NStatement *declaration;
 	NIdentifier *ident;
+	NType *type;
 	NVariableDeclaration *var_decl;
 	std::vector<NVariableDeclaration*> *varvec;
 	std::vector<NExpression*> *exprvec;
@@ -28,23 +31,22 @@
    match our tokens.l lex file. We also define the node type
    they represent.
  */
-%token <string> TIDENTIFIER TINTEGER TDOUBLE 
+%token <string> TIDENTIFIER TINTEGER TDOUBLE TVOID TINT
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TDOT TSEMI
 %token <token> TPLUS TMINUS TMUL TDIV
 %token <token> TRETURN TIF TELSE TWHILE 
 
 /* Define the type of node our nonterminal symbols represent.
-   The types refer to the %union declaration above. Ex: when
-   we call an ident (defined by union type ident) we are really
-   calling an (NIdentifier*). It makes the compiler happy.
+   The types refer to the %union declaration above.
  */
 %type <ident> ident 
+%type <type> type
 %type <expr> number expr 
 %type <varvec> func_decl_args
 %type <exprvec> call_args
 %type <block> program declist block
-%type <declaration> declaration var_decl func_decl 
+%type <declaration> declaration var_decl func_decl if_decl else_decl
 %type <token> compare 
 
 /* Operator precedence for mathematical operators */
@@ -55,40 +57,38 @@
 
 %%
 
-program : declist { root = $1; }
-		;
+program : declist { root = $1; };
 		
 declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaration>1); }
-	  | declist declaration { $1->statements.push_back($<declaration>2); }
-	  ;
+	  | declist declaration { $1->statements.push_back($<declaration>2); };
 
 declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
-		| TIF expr block {$$ = new NIfStatement(*$2, *$3); } | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } | TELSE 		block {$$ = new NElseStatement(*$2); }
-		;
+		| if_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); };
+
 block : TLBRACE declist TRBRACE { $$ = $2; }
-	  | TLBRACE TRBRACE { $$ = new NBlock(); }
-	  ;
+	  | TLBRACE TRBRACE { $$ = new NBlock(); };
 
-var_decl : ident ident { $$ = new NVariableDeclaration(*$1, *$2); }
-		 | ident ident TEQUAL expr TSEMI { $$ = new NVariableDeclaration(*$1, *$2, $4); }
-		 ;
+if_decl : TIF expr block else_decl {$$ = new NIfStatement(*$2, *$3); } | TIF expr block {$$ = new NIfStatement(*$2, *$3); };
+
+else_decl : TELSE block {$$ = new NElseStatement(*$2); };
+
+var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); }
+		 | type ident TEQUAL expr TSEMI { $$ = new NVariableDeclaration(*$1, *$2, $4); };
 
 
-func_decl : ident ident TLPAREN func_decl_args TRPAREN block 
-			{ $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; }
-		  ;
+func_decl : type ident TLPAREN func_decl_args TRPAREN block 
+			{ $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; };
 
 func_decl_args : /*blank*/  { $$ = new VariableList(); }
 		  | var_decl { $$ = new VariableList(); $$->push_back($<var_decl>1); }
-		  | func_decl_args TCOMMA var_decl { $1->push_back($<var_decl>3); }
-		  ;
+		  | func_decl_args TCOMMA var_decl { $1->push_back($<var_decl>3); };
 
-ident : TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; }
-	  ;
+ident : TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; };
+
+type : TINT { $$ = new NType(*$1); delete $1; } | TVOID { $$ = new NType(*$1); delete $1; };
 
 number : TINTEGER { $$ = new NInteger(atol($1->c_str())); delete $1; }
-		| TDOUBLE { $$ = new NDouble(atof($1->c_str())); delete $1; }
-		;
+		| TDOUBLE { $$ = new NDouble(atof($1->c_str())); delete $1; };
 
 expr : ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); }
 	 | ident TLPAREN call_args TRPAREN TSEMI { $$ = new NMethodCall(*$1, *$3); delete $3; }
@@ -99,13 +99,11 @@ expr : ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); }
          | expr TPLUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
          | expr TMINUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
  	 | expr compare expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
-     | TLPAREN expr TRPAREN { $$ = $2; }
-	 ;
+     | TLPAREN expr TRPAREN { $$ = $2; };
 
 call_args : /*blank*/  { $$ = new ExpressionList(); }
 		  | expr { $$ = new ExpressionList(); $$->push_back($1); }
-		  | call_args TCOMMA expr  { $1->push_back($3); }
-		  ;
+		  | call_args TCOMMA expr  { $1->push_back($3); } ;
 
 compare : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE;
 
