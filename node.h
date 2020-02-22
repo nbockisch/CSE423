@@ -96,6 +96,33 @@ public:
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
+class NIfStatement : public NStatement {
+public:
+	NBlock& block;
+	NExpression& expression;
+	NIfStatement(NExpression& expression, NBlock& block) : 
+		expression(expression), block(block) { }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+};
+
+class NWhileStatement : public NStatement {
+public:
+	NBlock& block;
+	NExpression& expression;
+	NWhileStatement(NExpression& expression, NBlock& block) : 
+		expression(expression), block(block) { }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+};
+
+
+class NElseStatement : public NStatement {
+public:
+	NBlock& block;
+	NElseStatement(NBlock& block) : 
+		block(block) { }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+};
+
 class NVariableDeclaration : public NStatement {
 public:
 	const NIdentifier& type;
@@ -108,16 +135,6 @@ public:
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
-class NExternDeclaration : public NStatement {
-public:
-    const NIdentifier& type;
-    const NIdentifier& id;
-    VariableList arguments;
-    NExternDeclaration(const NIdentifier& type, const NIdentifier& id,
-            const VariableList& arguments) :
-        type(type), id(id), arguments(arguments) {}
-    //virtual llvm::Value* codeGen(CodeGenContext& context);
-};
 
 class NFunctionDeclaration : public NStatement {
 public:
