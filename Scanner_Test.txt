@@ -1,0 +1,3 @@
+//Series of Acceptable and Unacceptable Cases
+/*Assumed proof by single example for alpha_numeric and repetative rules*/
+aa1a #defines a1b3
