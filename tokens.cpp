@@ -269,7 +269,7 @@ static YY_BUFFER_STATE * yy_buffer_stack = NULL; /**< Stack as an array. */
 static char yy_hold_char;
 static int yy_n_chars;		/* number of characters read into yy_ch_buf */
 int yyleng;
-
+int p_tokens;
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = NULL;
 static int yy_init = 0;		/* whether we need to initialize */
@@ -774,135 +774,216 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 17 "tokens.l"
+if (p_tokens) {
+    printf("<return, TRETURN>\n");
+}
 return TOKEN(TRETURN);
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 18 "tokens.l"
+if (p_tokens) {
+    printf("<if, TIF>\n");
+}
 return TOKEN(TIF);
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 19 "tokens.l"
+if (p_tokens) {
+    printf("<else, TELSE>\n");
+}
 return TOKEN(TELSE);
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 20 "tokens.l"
+if (p_tokens) {
+    printf("<while, TWHILE>\n");
+}
 return TOKEN(TWHILE);
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 21 "tokens.l"
+if (p_tokens) {
+    printf("<void, TVOID>\n");
+}
 SAVE_TOKEN; return TVOID;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 22 "tokens.l"
+if (p_tokens) {
+    printf("<int, TINT>\n");
+}
 SAVE_TOKEN; return TINT;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 23 "tokens.l"
+if (p_tokens) {
+    printf("<TIDENTIFIER>\n");
+}
 SAVE_TOKEN; return TIDENTIFIER;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 24 "tokens.l"
+if (p_tokens) {
+    printf("<TDOUBLE>\n");
+}
 SAVE_TOKEN; return TDOUBLE;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 25 "tokens.l"
+if (p_tokens) {
+    printf("<TINTEGER>\n");
+}
 SAVE_TOKEN; return TINTEGER;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 27 "tokens.l"
+if (p_tokens) {
+    printf("<=, TEQUAL>\n");
+}
 return TOKEN(TEQUAL);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 28 "tokens.l"
+if (p_tokens) {
+    printf("<==, TCEQ>\n");
+}
 return TOKEN(TCEQ);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 29 "tokens.l"
+if (p_tokens) {
+    printf("<!=, TCNE>\n");
+}
 return TOKEN(TCNE);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 30 "tokens.l"
+if (p_tokens) {
+    printf("<<, TCLT>\n");
+}
 return TOKEN(TCLT);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 31 "tokens.l"
+if (p_tokens) {
+    printf("<<=, TCLE>\n");
+}
 return TOKEN(TCLE);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 32 "tokens.l"
+if (p_tokens) {
+    printf("<>, TCGT>\n");
+}
 return TOKEN(TCGT);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 33 "tokens.l"
+if (p_tokens) {
+    printf("<>=, TCGE>\n");
+}
 return TOKEN(TCGE);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 35 "tokens.l"
+if (p_tokens) {
+    printf("<(, TLPAREN>\n");
+}
 return TOKEN(TLPAREN);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 36 "tokens.l"
+if (p_tokens) {
+    printf("<), TRPAREN>\n");
+}
 return TOKEN(TRPAREN);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 37 "tokens.l"
+if (p_tokens) {
+    printf("<}, TLBRACE>\n");
+}
 return TOKEN(TLBRACE);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 38 "tokens.l"
+if (p_tokens) {
+    printf("<}, TRBRACE>\n");
+}
 return TOKEN(TRBRACE);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
+if (p_tokens) {
+    printf("<., TDOT>\n");
+}
 #line 39 "tokens.l"
 return TOKEN(TDOT);
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
+if (p_tokens) {
+    printf("<,, TCOMMA>\n");
+}
 #line 40 "tokens.l"
 return TOKEN(TCOMMA);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
+if (p_tokens) {
+    printf("<+, TPLUS>\n");
+}
 #line 41 "tokens.l"
 return TOKEN(TPLUS);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
+if (p_tokens) {
+    printf("<-, TMINUS>\n");
+}
 #line 42 "tokens.l"
 return TOKEN(TMINUS);
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
+if (p_tokens) {
+    printf("<*, TMUL>\n");
+}
 #line 43 "tokens.l"
 return TOKEN(TMUL);
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
+if (p_tokens) {
+    printf("</, TDIV>\n");
+}
 #line 44 "tokens.l"
 return TOKEN(TDIV);
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
+if (p_tokens) {
+    printf("<;, TSEMI>\n");
+}
 #line 45 "tokens.l"
 return TOKEN(TSEMI);
 	YY_BREAK
