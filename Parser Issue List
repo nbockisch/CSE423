@@ -1,0 +1,8 @@
+Most things that resolve to expression are not supposed to be reducable directly to program
+Declarations besides var_decl and func_decl should not be reducable directly to program
+Issues will occur if var_decl and func_decl don't get split into global and local versions when fixing above problem
+if and while incorrectly accept expressions not surrounded by parenthesis
+Does not allow for calling a function except as the rightmost redection of an expression
+expression will often resolve without considering ';', adding a higher level that eats the final expression and ';'
+***Optional*** assignment is not allowed as part of a larger expression
+for needs to be added
