@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unistd.h>
+#include <stdio.h>
 #include "node.h"
 
 extern NBlock* root;
@@ -22,10 +23,14 @@ int main(int argc, char **argv)
     if (p_tokens) {
         printf("Print tokens\n");
     }
-	yyparse();
-	std::cout << root << std::endl;
 
-	return 0;
+    yyparse();
+    //std::cout << root << std::endl;
+
+    std::string tree = root->print(0);
+    printf("%s\n", tree.c_str());
+    
+    return 0;
 }
 
 
