@@ -31,11 +31,11 @@
    match our tokens.l lex file. We also define the node type
    they represent.
  */
-%token <string> TIDENTIFIER TINTEGER TDOUBLE TVOID TINT
+%token <string> TIDENTIFIER TINTEGER TDOUBLE TVOID TINT TSTATIC
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
-%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TDOT TSEMI
-%token <token> TPLUS TMINUS TMUL TDIV
-%token <token> TRETURN TIF TELSE TWHILE TFOR
+%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TDOT TSEMI TCOLON TLBRACK TRBRACK
+%token <token> TPLUS TMINUS TMUL TDIV TOR TAND TNOT TMOD 
+%token <token> TRETURN TIF TELSE TWHILE TFOR TBREAK
 
 /* Define the type of node our nonterminal symbols represent.
    The types refer to the %union declaration above.
@@ -46,7 +46,7 @@
 %type <varvec> func_decl_args
 %type <exprvec> call_args
 %type <block> program declist block
-%type <declaration> declaration var_decl func_decl if_decl else_decl for_decl local_var_decl local_func_decl local_declist local_declaration
+%type <declaration> declaration varDeclInitialize
 %type <token> compare 
 
 /* Operator precedence for mathematical operators */
@@ -57,67 +57,95 @@
 
 %%
 
-program : declist { root = $1; };
+program : declarationList { root = $1; };
 		
-declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaration>1); }
-	  | declist declaration { $1->statements.push_back($<declaration>2); };
-	  
-local_declist : local_declaration { $$ = NBlock(); $$->statements.push_back($<local_declaration>1); } | local_declist local_declaration { $1->statements.push_back($<local_declaration>2); };
+declarationList : declaration { $$ = new NBlock(); $$->statements.push_back($<declaration>1); }
+	  | declarationList declaration { $1->statements.push_back($<declaration>2); };
 
-declaration : var_decl | func_decl
+declaration : varDeclaration | funDeclaration
 
-local_declaration: local_var_decl | local_func_decl | expr TSEMI { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
-		| if_decl | TWHILE TLPAREN expr TRPAREN block {$$ = new NWhileStatement(*$2, *$3); };
+varDeclaration : typeSpecifier varDeclList
 
-block : TLBRACE local_declist TRBRACE { $$ = $2; }
-	  | TLBRACE TRBRACE { $$ = new NBlock(); };
+scopedVarDeclaration : scopedTypeSpecifier varDeclList
 
-if_decl : TIF TLPAREN expr TRPAREN block else_decl {$$ = new NIfStatement(*$2, *$3); } | TIF expr block {$$ = new NIfStatement(*$2, *$3); };
+varDeclList : varDeclInitialize { $$ = NBlock(); $$->statements.push_back($<varDeclInitialize>1); } | varDeclList TCOMMA varDeclInitialize { $1->statements.push_back($<varDeclInitialize>2); };
 
-for_decl: TFOR TLPAREN expr TSEMI expr TSEMI expr TRPAREN block {$$ = new NForStatement(*$2, *$3, *$4, *$5); };
+varDeclInitialize : varDeclId | varDeclId TCOLON simpleExpression
 
-else_decl : TELSE block {$$ = new NElseStatement(*$2); };
+varDeclId: TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; }; 
+	| TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; } TLBRACK TINTEGER { $$ = new NInteger(atol($1->c_str())); delete $1; } TRBRACK
+	
+scopedTypeSpecifier : TSTATIC typeSpecifier | typeSpecifier
 
-var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); }
-		 | type ident TEQUAL expr TSEMI { $$ = new NVariableDeclaration(*$1, *$2, $4); };
+typeSpecifier : TINT { $$ = new NType(*$1); delete $1; }
 
-local_var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); }
-		 | type ident TEQUAL expr TSEMI { $$ = new NVariableDeclaration(*$1, *$2, $4); };
+funDeclaration : typeSpecifier TIDENTIFIER TLPAREN params TRPAREN statement | TIDENTIFIER TLPAREN params TRPAREN statement
 
-func_decl : type ident TLPAREN func_decl_args TRPAREN block 
-			{ $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; };
-			
-local_func_decl : type ident TLPAREN func_decl_args TRPAREN block 
-			{ $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; };
+params : paramList | /*blank*/  { $$ = new VariableList(); }
 
-func_decl_args : /*blank*/  { $$ = new VariableList(); }
-		  | loca_var_decl { $$ = new VariableList(); $$->push_back($<local_var_decl>1); }
-		  | func_decl_args TCOMMA local_var_decl { $1->push_back($<local_var_decl>3); };
+paramList: paramList TSEMI paramTypeList | paramTypeList 
 
-ident : TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; };
+paramTypeList : typeSpecifier paramIdList
 
-type : TINT { $$ = new NType(*$1); delete $1; } | TVOID { $$ = new NType(*$1); delete $1; };
+paramIdList : paramIdList TCOMMA paramId | paramId
 
-number : TINTEGER { $$ = new NInteger(atol($1->c_str())); delete $1; }
-		| TDOUBLE { $$ = new NDouble(atof($1->c_str())); delete $1; };
+paramId : TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; } | TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; } TLBRACK TRBRACK
 
-expr : ident TEQUAL expr { $$ = new NAssignment(*$<ident>1, *$3); }
-	 | ident TLPAREN call_args TRPAREN { $$ = new NMethodCall(*$1, *$3); delete $3; }
-	 | ident { $<ident>$ = $1; }
-	 | number
-         | expr TMUL expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
-         | expr TDIV expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
-         | expr TPLUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
-         | expr TMINUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
- 	 | expr compare expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
-     | TLPAREN expr TRPAREN { $$ = $2; };
+statement : expressionStmt | compountStmt | selectionStmt | iterationStmt | returnStmt | breakStmt
 
-call_args : /*blank*/  { $$ = new ExpressionList(); }
-		  | expr { $$ = new ExpressionList(); $$->push_back($1); }
-		  | call_args TCOMMA expr  { $1->push_back($3); } ;
+expressionStmt : expression TSEMI | TSEMI
 
-compare : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE;
+compoundStmt : TLBRACE localDeclarations statementList TRBRACE
 
+localDeclarations : localDeclarations scopedVarDeclaration | /*blank*/
 
+statementList : statementList statement | /*blank*/
+
+elsifList : elsifList TELSE TIF TLPAREN simpleExpresssion TRPAREN compoundStmt | /*blank*/
+
+selectionStmt : TIF TLPAREN simpleExpression TRPAREN compoundStmt elsiflList 
+	| TIF TLPAREN simpleExpression TRPAREN compoundStmt elsifList TELSE compoundStmt
+
+iterationStmt : TWHILE TLPAREN simpleExpression TRPAREN compoundStmt 
+	| TFOR TLPAREN expression TSEMI simpleExpression TSEMI simpleExpression TRPAREN compoundStmt
+	
+returnStmt : TRETURN TSEMI | TRETURN expression TSEMI
+
+breakStmt : TBREAK TSEMI
+
+expression : mutable TEQUAL expression | simpleExpression
+
+simpleExpression : simpleExpression TOR andExpression | andExpression
+
+andExpression : andExpression TAND unaryRelExpression | unaryRelExpression
+
+unaryRelExpression : TNOT unaryRelExpression | relExpression
+
+relExpression : sumExpression relop sumExpression | sumExpression
+
+relop : TCLE | TCLT | TCGT | TCGE | TCEQ | TCNE
+
+sumExpression : sumExpression sumop mulExpression | mulExpression
+
+sumop : TPLUS | TMINUS
+
+mulExpression : mulExpression mulop factor | factor
+
+mulop : TMUL | TDIV | TMOD
+
+factor : immutable | mutable
+
+mutable : TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; } | mutable TLBRACK expression TRBRACK
+
+immutable : TLPAREN expression TRPAREN | call | constant
+
+call : TIDENTIFIER TLPAREN args TRPAREN
+
+args : arglist | /*blank*/
+
+argList : argList TCOMMA expression | expression
+
+constant : TINTEGER { $$ = new NInteger(atol($1->c_str())); delete $1; }
+	| TDOUBLE { $$ = new NDouble(atof($1->c_str())); delete $1; };
 
 %%
