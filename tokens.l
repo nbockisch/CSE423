@@ -48,7 +48,6 @@
 "%"                   return TOKEN(TMOD);
 "/"				          	return TOKEN(TDIV);
 ";"                   return TOKEN(TSEMI);
-":"                   return TOKEN(TCOLON);
 "&"                   return TOKEN(TAND);
 "|"                   return TOKEN(TOR);
 "!"                   return TOKEN(TNOT);
