@@ -1,6 +1,0 @@
-//Series of Acceptable and Unacceptable Cases
-/*Assumed proof by single example for alpha_numeric and repetative rules*/
-//Accepted Set
-aa1a #defines a1b3 x+y 1+2 ! % ^ & * ( ) - + _x _1 = | " ' ; ~
-//Rejected Set
-1a 1aa1 
