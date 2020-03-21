@@ -13,6 +13,7 @@
 %}
 
 /* Represents the many different ways we can access our data */
+//TO DO: rewrite node.h to reflect the grammar
 %union {
 	Node *node;
 	NBlock *block;
@@ -40,14 +41,15 @@
 /* Define the type of node our nonterminal symbols represent.
    The types refer to the %union declaration above.
  */
-%type <ident> ident 
-%type <type> type
-%type <expr> number expr 
-%type <varvec> func_decl_args
-%type <exprvec> call_args
-%type <block> program declist block
-%type <declaration> declaration varDeclInitialize
-%type <token> compare 
+//TO DO: Define types for grammer and rules that classify into it
+%type <ident> 
+%type <type> 
+%type <expr> 
+%type <varvec> 
+%type <exprvec> 
+%type <block> 
+%type <declaration> 
+%type <token>  
 
 /* Operator precedence for mathematical operators */
 %left TPLUS TMINUS
@@ -55,94 +57,95 @@
 
 %start program
 
+//TO DO: Add new grammer and rules for C- grammer
 %%
 
 program : declarationList { root = $1; }
 		
-declarationList : declaration { $$ = new NBlock(); $$->statements.push_back($<declaration>1); } 
-	| declarationList declaration { $1->statements.push_back($<declaration>2); }
+declarationList : declaration 
+	| declarationList declaration 
 
 declaration : varDeclaration | funDeclaration
 
-varDeclaration : typeSpecifier varDeclList { $$ = new NVariableDeclaration(*$1, *$2); }
+varDeclaration : typeSpecifier varDeclList 
 
 varDeclList : varDeclInitialize | varDeclList TCOMMA varDeclInitialize
 
 varDeclInitialize : varDeclId 
 
-varDeclId: TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; } 
-	| TIDENTIFIER TLBRACK TINTEGER TRBRACK { $$ = new NIdentifier(*$1); delete $1; }
+varDeclId: TIDENTIFIER 
+	| TIDENTIFIER TLBRACK TINTEGER TRBRACK 
 
-typeSpecifier : TINT { $$ = new NType(*$1); delete $1; } | TVOID { $$ = new NType(*$1); delete $1; }
+typeSpecifier : TINT | TVOID
 
-funDeclaration : typeSpecifier TIDENTIFIER TLPAREN params TRPAREN statement { $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; }
+funDeclaration : typeSpecifier TIDENTIFIER TLPAREN params TRPAREN statement
 
-params : paramList | %empty { $$ = new VariableList(); }
+params : paramList | %empty
 
 paramList: paramList TSEMI paramTypeList | paramTypeList 
 
 paramTypeList : typeSpecifier paramIdList
 
-paramIdList : paramIdList TCOMMA paramId { $1->push_back($<var_decl>3); } 
-	| paramId { $$ = new VariableList(); $$->push_back($<var_decl>1); }
+paramIdList : paramIdList TCOMMA paramId
+	| paramId
 
-paramId : TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; } 
-	| TIDENTIFIER TLBRACK TRBRACK { $$ = new NIdentifier(*$1); delete $1; }
+paramId : TIDENTIFIER
+	| TIDENTIFIER TLBRACK TRBRACK
 
-statement : expressionStmt { $$ = new NExpressionStatement(*$1); } 
+statement : expressionStmt
 	| compountStmt
 	| selectionStmt
 	| iterationStmt
 	| returnStmt
 	| breakStmt
 
-expressionStmt : expression TSEMI { $$ = $1; } | TSEMI
+expressionStmt : expression TSEMI | TSEMI
 
 compoundStmt : TLBRACE localDeclarations statementList TRBRACE 
 
-localDeclarations : localDeclarations VarDeclaration { $$ = new NBlock(); $$->statements.push_back($<declaration>2); } | %empty { $$ = new NBlock(); }
+localDeclarations : localDeclarations VarDeclaration | %empty
 
-statementList : statementList statement { $$ = new NBlock(); $$->statements.push_back($<declaration>2); } | %empty { $$ = new NBlock(); }
+statementList : statementList statement | %empty 
 
-elsifList : elsifList TELSE TIF TLPAREN simpleExpresssion TRPAREN compoundStmt {$$ = new NIfStatement(*$5, *$7); } 
-	| %empty { $$ = new NBlock(); }
+elsifList : elsifList TELSE TIF TLPAREN simpleExpresssion TRPAREN compoundStmt  
+	| %empty 
 
-selectionStmt : TIF TLPAREN simpleExpression TRPAREN compoundStmt elsiflList {$$ = new NIfStatement(*$3, *$5); }
-	| TIF TLPAREN simpleExpression TRPAREN compoundStmt elsifList elseHolder {$$ = new NIfStatement(*$3, *$5); }
+selectionStmt : TIF TLPAREN simpleExpression TRPAREN compoundStmt elsiflList 
+	| TIF TLPAREN simpleExpression TRPAREN compoundStmt elsifList elseHolder 
 
-elseHolder: TELSE compoundStmt {$$ = new NElseStatement(*$2); }
+elseHolder: TELSE compoundStmt 
 
-iterationStmt : TWHILE TLPAREN simpleExpression TRPAREN compoundStmt {$$ = new NWhileStatement(*$3, *$5); }
-	| TFOR TLPAREN expression TSEMI simpleExpression TSEMI simpleExpression TRPAREN compoundStmt {$$ = new NForStatement(*$3, *$5, *$7, *$9); }
+iterationStmt : TWHILE TLPAREN simpleExpression TRPAREN compoundStmt 
+	| TFOR TLPAREN expression TSEMI simpleExpression TSEMI simpleExpression TRPAREN compoundStmt 
 	
-returnStmt : TRETURN TSEMI { $$ = new NReturnStatement(); } 
-	| TRETURN expression TSEMI { $$ = new NReturnStatement(*$2); }
+returnStmt : TRETURN TSEMI
+	| TRETURN expression TSEMI
 
 breakStmt : TBREAK TSEMI
 
-expression : mutable TEQUAL expression { $$ = new NAssignment(*$1, *$3); } | simpleExpression
+expression : mutable TEQUAL expression | simpleExpression
 
-simpleExpression : simpleExpression TOR andExpression { $$ = new NBinaryOperator(*$1, $2, *$3); } | andExpression 
+simpleExpression : simpleExpression TOR andExpression | andExpression 
 
-andExpression : andExpression TAND unaryRelExpression { $$ = new NBinaryOperator(*$1, $2, *$3); } | unaryRelExpression
+andExpression : andExpression TAND unaryRelExpression | unaryRelExpression
 
-unaryRelExpression : TNOT unaryRelExpression { $$ = new NBinaryOperator(*$1, $2); } | relExpression
+unaryRelExpression : TNOT unaryRelExpression | relExpression
 
-relExpression : sumExpression relop sumExpression { $$ = new NBinaryOperator(*$1, $2, *$3); } | sumExpression
+relExpression : sumExpression relop sumExpression | sumExpression
 
 relop : TCLE | TCLT | TCGT | TCGE | TCEQ | TCNE
 
-sumExpression : sumExpression sumop mulExpression { $$ = new NBinaryOperator(*$1, $2, *$3); } | mulExpression
+sumExpression : sumExpression sumop mulExpression | mulExpression
 
 sumop : TPLUS | TMINUS
 
-mulExpression : mulExpression mulop factor { $$ = new NBinaryOperator(*$1, $2, *$3); } | factor
+mulExpression : mulExpression mulop factor | factor
 
 mulop : TMUL | TDIV | TMOD
 
 factor : immutable | mutable
 
-mutable : TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; } | mutable TLBRACK expression TRBRACK
+mutable : TIDENTIFIER | mutable TLBRACK expression TRBRACK
 
 immutable : TLPAREN expression TRPAREN | call | constant
 
@@ -152,7 +155,7 @@ args : arglist | %empty
 
 argList : argList TCOMMA expression | expression
 
-constant : TINTEGER { $$ = new NInteger(atol($1->c_str())); delete $1; } 
-	| TDOUBLE { $$ = new NDouble(atof($1->c_str())); delete $1; }
+constant : TINTEGER 
+	| TDOUBLE 
 
 %%
