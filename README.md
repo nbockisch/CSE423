@@ -6,8 +6,8 @@
 * Nathan Bockisch (nbockisch)
 
 ## Project Structure
-* src - The folder holding the source code for the project. ([more info](src/src.md))
-* test - The folder holding the C source files to test the compiler with. ([more info](test/test.md))
+* src - The folder holding the source code for the project. ([more info](docs/src.md))
+* test - The folder holding the C source files to test the compiler with. ([more info](docs/test.md))
 
 ## Building
 The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or another compiler bound to the `gcc` command), and `make` are installed on your system. Then simply do the following:
