@@ -15,10 +15,10 @@ The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or anot
 2. `make`
 
 ## Usage
-`./compiler -p -t -f <source file>`
-`-p`: Print the parse tree
-`-t`: Print the tokens
-`-f`: Pass in a source file as an argument
+`./compiler -p -t -f <source file>`  
+`-p`: Print the parse tree  
+`-t`: Print the tokens  
+`-f`: Pass in a source file as an argument  
 
 ## Design Decisions and Implementation
 ### Lexer
