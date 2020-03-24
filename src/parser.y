@@ -4,11 +4,18 @@
 	#include "node.h"
         #include <cstdio>
         #include <cstdlib>
+    #include <iostream>
+    #include <unistd.h>
+    #include <stdio.h>
+    #include <string>
 	NBlock *root; /* the top level root node of our final AST */
 	#ifdef YYDEBUG
   		yydebug = 1;
 	#endif
+    extern FILE *yyin;
 	extern int yylex();
+    extern char yytext[];
+    extern int p_tokens;
 	void yyerror(const char *s) { std::printf("Error: %s\n", s);std::exit(1); }
 %}
 
@@ -110,3 +117,43 @@ compare : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE;
 
 
 %%
+int main(int argc, char **argv)
+{
+    int opt;
+    p_tokens = 0;
+    int p_tree = 0;
+    std::string fname;
+
+    while ((opt = getopt(argc, argv,  ":ptf:ax"))  != -1) {
+        switch(opt) {
+            case 'f':
+                // get filename and open file
+                yyin = fopen(optarg, "r");
+                if (!yyin) {
+                    std::cout << "Failure\n" << std::endl;
+                }
+
+                break;
+            case 't':
+                // print out tokens 
+                p_tokens = 1;
+                break;
+            case 'p':
+                // print out the tree
+                p_tree = 1;
+                break;
+        }
+    }
+
+    yyparse();
+
+    if (p_tree) {
+        std::string tree = root->print(0);
+        printf("%s\n", tree.c_str());
+    }
+
+    fclose(yyin);
+    
+    return 0;
+
+}

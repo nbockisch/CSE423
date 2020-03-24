@@ -1,5 +1,4 @@
 # CSE423 Compiler
-
 ## Group Members:
 * Eva Domschott (spiritofthegael)
 * Brandon Bicknell (Bicknell125)
@@ -16,15 +15,16 @@ The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or anot
 2. `make`
 
 ## Usage
+`./compiler -p -t -f <source file>`
+`-p`: Print the parse tree
+`-t`: Print the tokens
+`-f`: Pass in a source file as an argument
 
+## Design Decisions and Implementation
+### Lexer
+The lexer was implemented with Flex due to time considerations.
 
-A basic setup with CMake is used, to compile "out-of-source":
+### Parser
+The parser was implemented with Bison due to time considerations.
 
-mkdir build
-
-cd build
-
-cmake ../
-
-make
-
+## Supported Features
