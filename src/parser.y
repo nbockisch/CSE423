@@ -1,7 +1,13 @@
+/**
+ * @file parser.y
+ * @brief Grammar file and main program launcher for the compiler
+ **/
+
 /*code modified from this source https://gnuu.org/2009/09/18/writing-your-own-toy-compiler/*/
 
 %{
-	#include "node.h"
+    #include "ir.h"
+	//#include "node.h"
         #include <cstdio>
         #include <cstdlib>
     #include <iostream>
@@ -123,6 +129,7 @@ int main(int argc, char **argv)
     p_tokens = 0;
     int p_tree = 0;
     std::string fname;
+    ir *ir_gen;
 
     while ((opt = getopt(argc, argv,  ":ptf:ax"))  != -1) {
         switch(opt) {
@@ -146,7 +153,12 @@ int main(int argc, char **argv)
     }
 
     yyparse();
+   
+    // Generate the IR with the parse tree
+    ir_gen = new ir(root);
+    ir_gen->getIR();
 
+    // Print tree if flag used
     if (p_tree) {
         std::string tree = root->print(0);
         printf("%s\n", tree.c_str());
