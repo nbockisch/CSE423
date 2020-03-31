@@ -10,11 +10,11 @@
 
 class CodeGenContext;
 class NStatement;
-class NExpression;
+class NFunctionDeclaration;
 class NVariableDeclaration;
 
 typedef std::vector<NStatement*> StatementList;
-typedef std::vector<NExpression*> ExpressionList;
+typedef std::vector<NFunctionDeclaration*> FunctionList;
 typedef std::vector<NVariableDeclaration*> VariableList;
 
 // Controls how many spacing characters to print at each level of the tree
@@ -65,14 +65,14 @@ public:
         };
 };
 
-class NExpression : public Node {
+class NVariableDeclaration : public Node {
 public:
         virtual std::string print(int level) const {
                 return std::string("");
         };
 };
 
-class NStatement : public Node {
+class NFunctionDeclaration : public Node {
 public:
         virtual std::string print(int level) const {
                 return std::string("");
