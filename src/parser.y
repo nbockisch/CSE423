@@ -128,10 +128,12 @@ int main(int argc, char **argv)
     int opt;
     p_tokens = 0;
     int p_tree = 0;
+    int p_ir = 0;
     std::string fname;
+    std::vector<std::string> ir_list;
     ir *ir_gen;
 
-    while ((opt = getopt(argc, argv,  ":ptf:ax"))  != -1) {
+    while ((opt = getopt(argc, argv,  ":ptif:ax"))  != -1) {
         switch(opt) {
             case 'f':
                 // get filename and open file
@@ -149,21 +151,35 @@ int main(int argc, char **argv)
                 // print out the tree
                 p_tree = 1;
                 break;
+            case 'i':
+                // print out IR
+                p_ir = 1;
+                break;
         }
     }
 
+    if (p_tokens) {
+        std::cout << "Tokens:" << std::endl;
+    }
     yyparse();
    
     // Generate the IR with the parse tree
     ir_gen = new ir(root);
-    ir_gen->getIR();
+    ir_list = ir_gen->getIR();
 
     // Print tree if flag used
     if (p_tree) {
+        std::cout << "Tree:" << std::endl;
         std::string tree = root->print(0);
         printf("%s\n", tree.c_str());
     }
 
+    if (p_ir) {
+        std::cout << "IR:" << std::endl;
+        for (std::string ir_line : ir_list) {
+            std::cout << ir_line << std::endl;
+        }
+    }
     fclose(yyin);
     
     return 0;

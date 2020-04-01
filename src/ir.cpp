@@ -30,8 +30,8 @@ std::vector<token_t> ir::parse_tree()
     for (std::string tmp; std::getline(in_stream, tmp);) {
         std::smatch match;
         std::regex_search(tmp, match, tok_regex);
-        if (match[0] != "") {
-            std::cout << match[0] << std::endl;
+        if (match[0] == "") {
+            continue;
         }
 
         token_t new_tok;
@@ -42,10 +42,12 @@ std::vector<token_t> ir::parse_tree()
         }
 
         new_tok.level = i;
+        new_tok.contents = match[0];
+        nodes.push_back(new_tok);
     }
 
-    token_t a;
-    nodes.push_back(a);
+    //token_t a;
+    //nodes.push_back(a);
     return nodes;
 }
 
@@ -59,10 +61,54 @@ std::vector<std::string> ir::getIR()
     for (it = this->tree->statements.begin(); it != this->tree->statements.end(); it++) {
         std::cout << "Generating code for " << (**it).print(-2) << std::endl;
     }*/
-    ir::parse_tree();
+    std::vector<token_t> nodes = ir::parse_tree();
     std::vector<std::string> ir;
-    ir.push_back("test");
+    int i, j, end, first_param, block, found_name;
 
+    // Cycle through nodes of parse tree and build the IR
+    for (i = 0; i < nodes.size(); i++) {
+        if (nodes[i].contents.compare("FUNCTION DECL") == 0) {
+            block = 0;
+            found_name = 0;
+            first_param = 1;
+            std::string tmp;
+            end = nodes[i].level;
+            for (j = i + 1; nodes[j].level > end && j < nodes.size(); j++) {
+                if (nodes[j].contents.compare("IDENTIFIER") == 0) {
+                    if (!found_name) {
+                        tmp.append(nodes[j + 1].contents + "(");
+                        found_name = 1;
+                    }
+                } else if (nodes[j].contents.compare("BLOCK") == 0) {
+                    block = 1;
+                    tmp.append(")");
+                    ir.push_back(tmp);
+                    tmp.clear();
+                } else if (nodes[j].contents.compare("VAR DECL") == 0) {
+                    if (!block) {
+                        if (first_param) {
+                            tmp.append(nodes[j + 4].contents);
+                            first_param = 0;
+                        } else {
+                            tmp.append(", " + nodes[j + 4].contents);
+                        }
+                    }
+                }  else if (nodes[j].contents.compare("RETURN") == 0 && block) {
+                    std::string tmp;
+                    tmp.append(" return " + nodes[i + 2].contents);
+                    ir.push_back(tmp);
+                    tmp.clear();
+                }
+            }
+        }  /*else if (nodes[i].contents.compare("RETURN") == 0) {
+            std::string tmp;
+            tmp.append("return " + nodes[i + 2].contents);
+            ir.push_back(tmp);
+        }*/
+    }
 
+    /* for (std::string q : ir) {
+        std::cout << q << std::endl;
+    } */
     return ir;
 }
