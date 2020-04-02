@@ -54,6 +54,7 @@ typedef int flex_int32_t;
 typedef unsigned char flex_uint8_t; 
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
+int p_tokens;
 
 /* Limits of integral types. */
 #ifndef INT8_MIN
@@ -269,7 +270,7 @@ static YY_BUFFER_STATE * yy_buffer_stack = NULL; /**< Stack as an array. */
 static char yy_hold_char;
 static int yy_n_chars;		/* number of characters read into yy_ch_buf */
 int yyleng;
-int p_tokens;
+
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = NULL;
 static int yy_init = 0;		/* whether we need to initialize */
@@ -483,7 +484,7 @@ char *yytext;
 #line 4 "tokens.l"
 #include <string>
 #include "node.h"
-#include "parser2.hpp"
+#include "parser.hpp"
 
 #define SAVE_TOKEN  yylval.string = new std::string(yytext, yyleng)
 #define TOKEN(t)    (yylval.token = t)
