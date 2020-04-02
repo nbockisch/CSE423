@@ -16,9 +16,10 @@ The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or anot
 
 ## Usage
 `./compiler -p -t -f <source file>`  
+`-i`: Print the IR
 `-p`: Print the parse tree  
 `-t`: Print the tokens  
-`-f`: Pass in a source file as an argument  
+`-f <source file>`: Pass in a source file as an argument  
 
 ## Design Decisions and Implementation
 ### Lexer
@@ -27,4 +28,8 @@ The lexer was implemented with Flex due to time considerations.
 ### Parser
 The parser was implemented with Bison due to time considerations.
 
+### IR
+To be added
+
 ## Supported Features
+To be added
