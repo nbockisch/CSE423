@@ -196,7 +196,7 @@ public:
 	NExpression& lhs;
 	NExpression& rhs;
 	NBinaryOperator(NExpression& lhs, int op, NExpression& rhs) :
-		lhs(lhs), rhs(rhs), op(op) { }
+                op(op), lhs(lhs), rhs(rhs) { }
 	// llvm::Value* codeGen(CodeGenContext& context);
 
         std::string print(int level) const {
@@ -306,7 +306,7 @@ public:
 	NBlock& block;
 	NExpression& expression;
 	NIfStatement(NExpression& expression, NBlock& block) : 
-		expression(expression), block(block) { }
+                block(block), expression(expression) { }
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 
         std::string print(int level) const {
@@ -327,7 +327,7 @@ public:
 	NBlock& block;
 	NExpression& expression;
 	NWhileStatement(NExpression& expression, NBlock& block) : 
-		expression(expression), block(block) { }
+                block(block), expression(expression)  { }
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 
 
