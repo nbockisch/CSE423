@@ -3,6 +3,9 @@
  * @brief Declares the ir class used for producing a three variable linear IR
  **/
 
+#ifndef IR_H
+#define IR_H
+
 #include "node.h"
 #include <stdio.h>
 #include <string>
@@ -22,3 +25,5 @@ public:
 private:
     NBlock *tree;
 };
+
+#endif

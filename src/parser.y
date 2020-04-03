@@ -6,8 +6,10 @@
 /*code modified from this source https://gnuu.org/2009/09/18/writing-your-own-toy-compiler/*/
 
 %{
+    #include "node.h"
+    #include "nodevisitor.h"
+    #include "printvisitor.h"
     #include "ir.h"
-	//#include "node.h"
         #include <cstdio>
         #include <cstdlib>
     #include <iostream>
@@ -170,7 +172,9 @@ int main(int argc, char **argv)
     // Print tree if flag used
     if (p_tree) {
         std::cout << "Tree:" << std::endl;
-        std::string tree = root->print(0);
+        PrintVisitor visitor;
+        root->accept(visitor);
+        std::string tree = visitor.getResult();
         printf("%s\n", tree.c_str());
     }
 
