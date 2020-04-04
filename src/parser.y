@@ -10,6 +10,8 @@
     #include "nodevisitor.h"
     #include "printvisitor.h"
     #include "ir.h"
+    #include "symtable.h"
+    #include "symvisitor.h"
         #include <cstdio>
         #include <cstdlib>
     #include <iostream>
@@ -131,11 +133,12 @@ int main(int argc, char **argv)
     p_tokens = 0;
     int p_tree = 0;
     int p_ir = 0;
+    int p_sym = 0;
     std::string fname;
     std::vector<std::string> ir_list;
     ir *ir_gen;
 
-    while ((opt = getopt(argc, argv,  ":ptif:ax"))  != -1) {
+    while ((opt = getopt(argc, argv,  ":ptisf:ax"))  != -1) {
         switch(opt) {
             case 'f':
                 // get filename and open file
@@ -156,6 +159,10 @@ int main(int argc, char **argv)
             case 'i':
                 // print out IR
                 p_ir = 1;
+                break;
+            case 's':
+                // print out the symbol table
+                p_sym = 1;
                 break;
         }
     }
@@ -184,6 +191,14 @@ int main(int argc, char **argv)
             std::cout << ir_line << std::endl;
         }
     }
+
+    if (p_sym) {
+       Symtable *symtab = new Symtable();
+       SymVisitor symvis(symtab);
+       root->accept(symvis);
+       symtab->print();
+    }
+    
     fclose(yyin);
     
     return 0;

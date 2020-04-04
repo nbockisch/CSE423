@@ -1,0 +1,11 @@
+int x_global = 0;
+
+int main() {
+
+    int x_main = 1;
+
+    if(x_main == 1) {
+        int x_ifbody = 2;    
+    }
+
+}

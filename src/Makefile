@@ -3,7 +3,7 @@ CFLAGS=-std=c++11 -Wall -g
 
 TARGETS = compiler
 
-DEPENDS = tokens.o ir.o node.h nodevisitor.h printvisitor.h
+DEPENDS = tokens.o ir.o symtable.o node.h nodevisitor.h printvisitor.h symvisitor.h
 
 all: $(TARGETS)
 
