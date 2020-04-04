@@ -9,6 +9,7 @@
 #include <sstream>
 #include <regex>
 #include "ir.h"
+#include "printvisitor.h"
 
 ir::ir(NBlock *root) {
     this->tree = root;
@@ -20,7 +21,10 @@ ir::ir(NBlock *root) {
  **/
 std::vector<token_t> ir::parse_tree()
 {
-    std::string p_tree = this->tree->print(0);
+    //std::string p_tree = this->tree->print(0);
+    PrintVisitor visitor;
+    this->tree->accept(visitor);
+    std::string p_tree = visitor.getResult();
     std::istringstream in_stream(p_tree);
     std::vector<token_t> nodes;
     std::regex tok_regex("([A-z\\d]+[ ]?[A-z\\d]*)");

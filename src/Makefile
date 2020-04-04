@@ -1,10 +1,23 @@
 CC=g++
+CFLAGS=-std=c++11 -Wall -g
 
-all: parser.cpp tokens.cpp ir.o
-	$(CC) -o compiler parser.cpp tokens.cpp ir.o
+TARGETS = compiler
 
-ir.o: ir.cpp ir.h
-	$(CC) -c ir.cpp
+DEPENDS = tokens.o ir.o symtable.o node.h nodevisitor.h printvisitor.h symvisitor.h
+
+all: $(TARGETS)
+
+compiler: parser.o $(DEPENDS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+parser.o: parser.y
+	bison -d -o parser.cpp parser.y
+	$(CC) $(CFLAGS) -c parser.cpp
+
+%.o : %.cpp
+	$(CC) $(CFLAGS) -c $<
 
 clean:
 	rm *.o
+	rm $(TARGETS)
+
