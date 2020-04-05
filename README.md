@@ -15,11 +15,13 @@ The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or anot
 2. `make`
 
 ## Usage
-`./compiler -p -t -f <source file>`  
+`./compiler -c -p -t -f <source file> -o <ir file>`  
+`-c`: Print the symbol table
 `-i`: Print the IR
 `-p`: Print the parse tree  
 `-t`: Print the tokens  
 `-f <source file>`: Pass in a source file as an argument  
+`-o <ir file>`: Pass in an ir file as an argument
 
 ## Design Decisions and Implementation
 ### Lexer
