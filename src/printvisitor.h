@@ -180,6 +180,8 @@ public:
                 level++;
                 node.type.accept(*this);
                 node.id.accept(*this);
+		if (node.assignmentExpr != NULL)
+			node.assignmentExpr->accept(*this);
                 level--;
         }
         

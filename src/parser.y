@@ -89,9 +89,9 @@ if_decl : TIF expr block else_decl {$$ = new NIfStatement(*$2, *$3); } | TIF exp
 
 else_decl : TELSE block {$$ = new NElseStatement(*$2); };
 
-var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); }
-		 | type ident TEQUAL expr TSEMI { $$ = new NVariableDeclaration(*$1, *$2, $4); };
-
+var_decl : type ident TSEMI { $$ = new NVariableDeclaration(*$1, *$2); } | 
+		type ident TEQUAL expr TSEMI { $$ = new NVariableDeclaration(*$1, *$2, $4); };
+		
 
 func_decl : type ident TLPAREN func_decl_args TRPAREN block 
 			{ $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; };
