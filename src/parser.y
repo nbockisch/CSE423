@@ -127,6 +127,8 @@ compare : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE;
 
 
 %%
+void usage(const char *name);
+
 int main(int argc, char **argv)
 {
     int opt;
@@ -136,17 +138,21 @@ int main(int argc, char **argv)
     int p_sym = 0;
     std::string fname;
     std::vector<std::string> ir_list;
-    ir *ir_gen;
+    ir *ir_gen = NULL;
+    Symtable *symtab = NULL;
 
-    while ((opt = getopt(argc, argv,  ":ptisf:ax"))  != -1) {
+    while ((opt = getopt(argc, argv,  ":hptisf:ax"))  != -1) {
         switch(opt) {
+            case 'h':
+                usage(argv[0]);
+                return 0;
             case 'f':
                 // get filename and open file
                 yyin = fopen(optarg, "r");
                 if (!yyin) {
-                    std::cout << "Failure\n" << std::endl;
+                    std::cout << "Failure: Couldn't open file '" << optarg << "'\n" << std::endl;
+                    return -1;
                 }
-
                 break;
             case 't':
                 // print out tokens 
@@ -167,6 +173,12 @@ int main(int argc, char **argv)
         }
     }
 
+    // Throw an error if no input file was specified
+    if(!yyin) {
+            printf("Error: an input file must be specified with -f!\n");
+            return -1;
+    }
+
     if (p_tokens) {
         std::cout << "Tokens:" << std::endl;
     }
@@ -176,31 +188,58 @@ int main(int argc, char **argv)
     ir_gen = new ir(root);
     ir_list = ir_gen->getIR();
 
+    // Create the symbol table using the tree visitor
+    symtab = new Symtable();
+    SymVisitor symvis(symtab);
+    root->accept(symvis);
+
     // Print tree if flag used
     if (p_tree) {
+        printf("-----------------------------\n");
         std::cout << "Tree:" << std::endl;
+        printf("-----------------------------\n");
         PrintVisitor visitor;
         root->accept(visitor);
         std::string tree = visitor.getResult();
         printf("%s\n", tree.c_str());
+        printf("-----------------------------\n");
     }
 
     if (p_ir) {
+        printf("-----------------------------\n");
         std::cout << "IR:" << std::endl;
+        printf("-----------------------------\n");
         for (std::string ir_line : ir_list) {
             std::cout << ir_line << std::endl;
         }
+        printf("-----------------------------\n");
     }
 
     if (p_sym) {
-       Symtable *symtab = new Symtable();
-       SymVisitor symvis(symtab);
-       root->accept(symvis);
-       symtab->print();
+        printf("-----------------------------\n");
+        printf("Symbol Table:\n");
+        printf("-----------------------------\n");
+        symtab->print();
+        printf("-----------------------------\n");
     }
     
     fclose(yyin);
+
+    // Free memory
+    delete ir_gen;
+    delete symtab;
     
     return 0;
 
+}
+
+void usage(const char *name) {
+        printf("Usage: %s [-p] [-t] [-i] [-s] -f input\n", name);
+        printf("Options:\n");
+        printf("  -f file     Specify the input source file, required.\n");
+        printf("  -p          Print the AST/parse tree representation.\n");
+        printf("  -t          Print the token representation.\n");
+        printf("  -i          Print the IR representation.\n");
+        printf("  -s          Print the symbol table.\n");
+        printf("  -h          Display this help message.\n");
 }
