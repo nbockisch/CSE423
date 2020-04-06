@@ -23,11 +23,21 @@
   		yydebug = 1;
 	#endif
     extern FILE *yyin;
-	extern int yylex();
+    extern int yylex();
     extern char yytext[];
     extern int p_tokens;
-	void yyerror(const char *s) { std::printf("Error: %s\n", s);std::exit(1); }
+    extern int yylineno;
+    extern int yycolumn;
+	void yyerror(const char *s) {
+                std::printf("Error (line %d:%d): %s at '%s'\n", yylineno, yycolumn, s, yytext);
+                std::exit(1);
+        }
+        
+   #define YYPARSE_PARAM scanner
+   #define YYLEX_PARAM scanner
 %}
+
+%locations
 
 /* Represents the many different ways we can access our data */
 %union {
