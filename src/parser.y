@@ -80,7 +80,7 @@ declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaratio
 	  | declist declaration { $1->statements.push_back($<declaration>2); };
 
 declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
-		| if_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } | TFOR TLPAREN expr expr expr TRPAREN block {$$ = new NForStatement(*$3, *$4, *$5, *$7);}; 
+		| if_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } | TFOR TLPAREN expr TSEMI expr TSEMI expr TRPAREN block {$$ = new NForStatement(*$3, *$5, *$7, *$9);}; 
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
