@@ -19,6 +19,7 @@
 "if"						return TOKEN(TIF);
 "else"						return TOKEN(TELSE);
 "while"						return TOKEN(TWHILE);
+"for"             return TOKEN(TFOR);
 "void"						SAVE_TOKEN; return TVOID;
 "int"						SAVE_TOKEN; return TINT;
 [a-zA-Z_][a-zA-Z0-9_]*  			SAVE_TOKEN; return TIDENTIFIER;
