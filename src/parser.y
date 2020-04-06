@@ -63,7 +63,7 @@
 %type <varvec> func_decl_args
 %type <exprvec> call_args
 %type <block> program declist block
-%type <declaration> declaration var_decl func_decl if_decl else_decl for_decl
+%type <declaration> declaration var_decl func_decl if_decl else_decl
 %type <token> compare 
 
 /* Operator precedence for mathematical operators */
