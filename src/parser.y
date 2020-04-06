@@ -52,7 +52,7 @@
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TDOT TSEMI
 %token <token> TPLUS TMINUS TMUL TDIV
-%token <token> TRETURN TIF TELSE TWHILE 
+%token <token> TRETURN TIF TELSE TWHILE TFOR
 
 /* Define the type of node our nonterminal symbols represent.
    The types refer to the %union declaration above.
@@ -63,7 +63,7 @@
 %type <varvec> func_decl_args
 %type <exprvec> call_args
 %type <block> program declist block
-%type <declaration> declaration var_decl func_decl if_decl else_decl
+%type <declaration> declaration var_decl func_decl if_decl else_decl for_decl
 %type <token> compare 
 
 /* Operator precedence for mathematical operators */
@@ -80,7 +80,7 @@ declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaratio
 	  | declist declaration { $1->statements.push_back($<declaration>2); };
 
 declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
-		| if_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); };
+		| if_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } | TFOR TLPAREN expr expr expr TRPAREN block {$$ = new NForStatement(*$3, *$4, *$5, *$7);}; 
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
@@ -204,3 +204,4 @@ int main(int argc, char **argv)
     return 0;
 
 }
+
