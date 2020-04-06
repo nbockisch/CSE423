@@ -110,6 +110,24 @@ public:
 			case 280:
 				out.append("/");
 				break;
+			case 263:
+				out.append("==");
+				break;
+			case 264:
+				out.append("!=");
+				break;
+			case 265:
+				out.append("<");
+				break;
+			case 266:
+				out.append("<=");
+				break;
+			case 267:
+				out.append(">");
+				break;
+			case 268:
+				out.append(">=");
+				break;
 		}
 
                 out.append("\n");
