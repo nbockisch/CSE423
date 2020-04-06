@@ -1,0 +1,46 @@
+Tree:
+<BLOCK>
+     ----- <FUNCTION DECL>
+          ----- <TYPE>
+               ----- int
+          ----- <IDENTIFIER>
+               ----- main
+
+          ----- <BLOCK>
+               ----- <VAR DECL>
+                    ----- <TYPE>
+                         ----- int
+                    ----- <IDENTIFIER>
+                         ----- x
+
+               ----- <VAR DECL>
+                    ----- <TYPE>
+                         ----- int
+                    ----- <IDENTIFIER>
+                         ----- y
+                    ----- <BIN OP>
+                         ----- <IDENTIFIER>
+                              ----- y
+                         ----- <OPERATOR>
+                              ----- +
+                         ----- <INTEGER>
+                              ----- 3
+
+               ----- <EXPR STATEMENT>
+                    ----- <ASSIGNMENT>
+                         ----- <IDENTIFIER>
+                              ----- x
+                         ----- <BIN OP>
+                              ----- <IDENTIFIER>
+                                   ----- x
+                              ----- <OPERATOR>
+                                   ----- *
+                              ----- <INTEGER>
+                                   ----- 2
+
+               ----- <RETURN>
+                    ----- <INTEGER>
+                         ----- 1
+
+
+
