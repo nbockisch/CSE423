@@ -10,7 +10,7 @@
 #include <cxxabi.h>
 
 #include <stdio.h>
-
+#include <string>
 #include "nodevisitor.h"
 
 class CodeGenContext;

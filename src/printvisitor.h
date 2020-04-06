@@ -8,6 +8,7 @@
 
 #include "node.h"
 #include "nodevisitor.h"
+   
 
 // Controls how many spacing characters to print at each level of the tree
 #define INDENTSIZE 5
@@ -96,7 +97,21 @@ public:
                 out.append(pindent(level, "-"));
                 out.append("<OPERATOR>\n");
                 out.append(pindent(level+1, "-"));
-                out.append(tmp);
+		switch(std::stoi(tmp)) {
+			case 277:
+				out.append("+");
+				break;
+			case 278:
+				out.append("-");
+				break;
+			case 279:
+				out.append("*");
+				break;
+			case 280:
+				out.append("/");
+				break;
+		}
+
                 out.append("\n");
 
                 node.rhs.accept(*this);
