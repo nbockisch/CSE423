@@ -63,7 +63,7 @@
 %type <varvec> func_decl_args
 %type <exprvec> call_args
 %type <block> program declist block
-%type <declaration> declaration var_decl func_decl if_decl else_decl
+%type <declaration> declaration var_decl func_var_decl func_decl if_decl else_decl
 %type <token> compare 
 
 /* Operator precedence for mathematical operators */
@@ -80,25 +80,27 @@ declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaratio
 	  | declist declaration { $1->statements.push_back($<declaration>2); };
 
 declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
-		| if_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); };
+		| if_decl | else_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); };
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
 
-if_decl : TIF expr block else_decl {$$ = new NIfStatement(*$2, *$3); } | TIF expr block {$$ = new NIfStatement(*$2, *$3); };
+if_decl : TIF expr block block {$$ = new NIfStatement(*$2, *$3); } | TIF expr block {$$ = new NIfStatement(*$2, *$3); };
 
 else_decl : TELSE block {$$ = new NElseStatement(*$2); };
 
 var_decl : type ident TSEMI { $$ = new NVariableDeclaration(*$1, *$2); } | 
 		type ident TEQUAL expr TSEMI { $$ = new NVariableDeclaration(*$1, *$2, $4); };
+
+func_var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); };
 		
 
-func_decl : type ident TLPAREN func_decl_args TRPAREN block 
-			{ $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; };
+func_decl : type ident TLPAREN func_decl_args TRPAREN block declist { $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; }
+			| type ident TLPAREN func_decl_args TRPAREN block { $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; };
 
 func_decl_args : /*blank*/  { $$ = new VariableList(); }
-		  | var_decl { $$ = new VariableList(); $$->push_back($<var_decl>1); }
-		  | func_decl_args TCOMMA var_decl { $1->push_back($<var_decl>3); };
+		  | func_var_decl { $$ = new VariableList(); $$->push_back($<var_decl>1); }
+		  | func_decl_args TCOMMA func_var_decl { $1->push_back($<var_decl>3); };
 
 ident : TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; };
 
