@@ -30,6 +30,8 @@ The lexer was implemented with Flex due to time considerations.
 ### Parser
 The parser was implemented with Bison due to time considerations.
 
+Sample of a printed parse tree: ([parse tree for sample3 in test folder](docs/parsetree.txt)) 
+
 ### IR
 To be added
 
