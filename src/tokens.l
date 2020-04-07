@@ -20,6 +20,8 @@
 "else"						return TOKEN(TELSE);
 "while"						return TOKEN(TWHILE);
 "for"             return TOKEN(TFOR);
+"break"           return TOKEN(TBREAK);
+"goto"            return TOKEN(TGOTO);
 "void"						SAVE_TOKEN; return TVOID;
 "int"						SAVE_TOKEN; return TINT;
 [a-zA-Z_][a-zA-Z0-9_]*  			SAVE_TOKEN; return TIDENTIFIER;
@@ -45,6 +47,7 @@
 "*"		          			return TOKEN(TMUL);
 "/"				          	return TOKEN(TDIV);
 ";"                                             return TOKEN(TSEMI);
+":"                   return TOKEN(TCOLON);
 
 
 .                       printf("Unknown token!\n"); yyterminate();
