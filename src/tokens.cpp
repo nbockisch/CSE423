@@ -533,8 +533,7 @@ char yytext[YYLMAX];
 char *yytext_ptr;
 #line 1 "tokens.l"
 /*code modified from this source https://gnuu.org/2009/09/18/writing-your-own-toy-compiler/*/
-/*%option bison-bridge bison-locations*/
-#line 5 "tokens.l"
+#line 4 "tokens.l"
 #include <string>
 #include "node.h"
 #include "parser.hpp"
@@ -557,7 +556,7 @@ int yycolumn = 1;
         }
 
 
-#line 561 "tokens.cpp"
+#line 560 "tokens.cpp"
 
 #define INITIAL 0
 
@@ -617,8 +616,6 @@ extern int yywrap (void );
 #endif
 
 #ifndef YY_NO_UNPUT
-    
-    static void yyunput (int c,char *buf_ptr  );
     
 #endif
 
@@ -778,7 +775,7 @@ YY_DECL
 #line 33 "tokens.l"
 
 
-#line 782 "tokens.cpp"
+#line 779 "tokens.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1001,7 +998,7 @@ YY_RULE_SETUP
 #line 70 "tokens.l"
 ECHO;
 	YY_BREAK
-#line 1005 "tokens.cpp"
+#line 1002 "tokens.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1332,47 +1329,6 @@ static int yy_get_next_buffer (void)
 }
 
 #ifndef YY_NO_UNPUT
-
-    static void yyunput (int c, char * yy_bp )
-{
-	char *yy_cp;
-    
-    yy_cp = (yy_c_buf_p);
-
-	/* undo effects of setting up yytext */
-	*yy_cp = (yy_hold_char);
-
-	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-		{ /* need to shift things up to make room */
-		/* +2 for EOB chars. */
-		yy_size_t number_to_move = (yy_n_chars) + 2;
-		char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
-					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-		char *source =
-				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
-
-		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
-			*--dest = *--source;
-
-		yy_cp += (int) (dest - source);
-		yy_bp += (int) (dest - source);
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
-
-		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-			YY_FATAL_ERROR( "flex scanner push-back overflow" );
-		}
-
-	*--yy_cp = (char) c;
-
-    if ( c == '\n' ){
-        --yylineno;
-    }
-
-	(yytext_ptr) = yy_bp;
-	(yy_hold_char) = *yy_cp;
-	(yy_c_buf_p) = yy_cp;
-}
 
 #endif
 

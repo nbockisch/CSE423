@@ -25,6 +25,7 @@ int yycolumn = 1;
 
 %}
 
+%option nounput
 %option noyywrap
 %option yylineno
 %array

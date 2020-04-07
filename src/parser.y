@@ -106,7 +106,7 @@ var_decl : type ident TSEMI { $$ = new NVariableDeclaration(*$1, *$2); } |
 func_decl : type ident TLPAREN func_decl_args TRPAREN block 
 			{ $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; };
 
-func_decl_args : /*blank*/  { $$ = new VariableList(); }
+func_decl_args : /*blank*/ %empty { $$ = new VariableList(); }
 		  | var_decl { $$ = new VariableList(); $$->push_back($<var_decl>1); }
 		  | func_decl_args TCOMMA var_decl { $1->push_back($<var_decl>3); };
 
@@ -128,7 +128,7 @@ expr : ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); }
  	 | expr compare expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
      | TLPAREN expr TRPAREN { $$ = $2; };
 
-call_args : /*blank*/  { $$ = new ExpressionList(); }
+call_args : /*blank*/ %empty { $$ = new ExpressionList(); }
 		  | expr { $$ = new ExpressionList(); $$->push_back($1); }
 		  | call_args TCOMMA expr  { $1->push_back($3); } ;
 
