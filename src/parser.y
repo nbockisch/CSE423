@@ -62,7 +62,7 @@
 %type <expr> number expr 
 %type <varvec> func_decl_args
 %type <exprvec> call_args
-%type <block> program declist block
+%type <block> program declist block 
 %type <declaration> declaration var_decl func_var_decl func_decl if_decl else_decl
 %type <token> compare 
 
@@ -95,8 +95,8 @@ var_decl : type ident TSEMI { $$ = new NVariableDeclaration(*$1, *$2); } |
 func_var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); };
 		
 
-func_decl : type ident TLPAREN func_decl_args TRPAREN block declist { $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; }
-			| type ident TLPAREN func_decl_args TRPAREN block { $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; };
+func_decl : type ident TLPAREN func_decl_args TRPAREN block { $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; }
+		| type ident TLPAREN func_decl_args TRPAREN block block { $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; };
 
 func_decl_args : /*blank*/  { $$ = new VariableList(); }
 		  | func_var_decl { $$ = new VariableList(); $$->push_back($<var_decl>1); }
