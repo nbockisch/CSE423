@@ -1,6 +1,7 @@
-int main()
+
+int main(int a, int x)
 {
-  int x = 5;
+  x = 5;
 
   x = x + 2;
 
@@ -18,3 +19,8 @@ int main()
 
   return 1;
 } 
+
+int testfunc(int x)
+{
+	return 1;
+}
