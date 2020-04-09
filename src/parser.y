@@ -51,7 +51,7 @@
 %token <string> TIDENTIFIER TINTEGER TDOUBLE TVOID TINT
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TDOT TSEMI TCOLON
-%token <token> TPLUS TMINUS TMUL TDIV 
+%token <token> TPLUS TMINUS TMUL TDIV TINC TDEC TADR TNOT
 %token <token> TRETURN TIF TELSE TWHILE TFOR TBREAK TGOTO 
 
 /* Define the type of node our nonterminal symbols represent.
@@ -120,7 +120,12 @@ expr : ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); }
          | expr TPLUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
          | expr TMINUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
  	 | expr compare expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
+	 | unary expr { $$ = new NUnaryOperator($1, *$2, -1); }
+	 | expr unary { $$ = new NUnaryOperator(-1, *$2, $3); }
+	 | TSIZEOF TLPAREN expr TRPAREN { $$ = new NUnaryOperator($1, *$2, -1); }
      | TLPAREN expr TRPAREN { $$ = $2; };
+
+unary: TINC | TDEC | TNOT | TADR
 
 call_args : /*blank*/  { $$ = new ExpressionList(); }
 		  | expr { $$ = new ExpressionList(); $$->push_back($1); }
