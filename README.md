@@ -50,10 +50,11 @@ Checklist of optional features for the parser:
 - [ ] switch statements
 - [ ] ++, —, -=, +=, *=, /=
 
+Sample of a printed parse tree: ([parse tree for sample4 in test folder](docs/parsetree.txt)) 
+
 ### Symbol Table
 
 
-Sample of a printed parse tree: ([parse tree for sample3 in test folder](docs/parsetree.txt)) 
 
 ### IR
 To be added
