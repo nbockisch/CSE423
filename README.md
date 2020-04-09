@@ -31,24 +31,24 @@ The lexer was implemented with Flex due to time considerations.
 The parser was implemented with Bison due to time considerations.
 
 Checklist of required features for the Parser:
--[x] Identifiers, variables, functions
--[x] Keywords
--[x] Arithmetic expressions
--[x] Assignment
--[x] Boolean expressions
--[] Goto statements
--[x] If / Else control flow
--[] Unary operators
--[x] Return statements
--[] Break statements
--[x] While loops
+- [x] Identifiers, variables, functions
+- [x] Keywords
+- [x] Arithmetic expressions
+- [x] Assignment
+- [x] Boolean expressions
+- [ ] Goto statements
+- [x] If / Else control flow
+- [ ] Unary operators
+- [x] Return statements
+- [ ] Break statements
+- [x] While loops
 
 Checklist of optional features for the parser:
--[x] Types other than integers (supports double for numbers and void for functions)
--[] binary operators
--[] for loops
--[] switch statements
--[] ++, —, -=, +=, *=, /=
+- [x] Types other than integers (supports double for numbers and void for functions)
+- [ ] binary operators
+- [ ] for loops
+- [ ] switch statements
+- [ ] ++, —, -=, +=, *=, /=
 
 ### Symbol Table
 
