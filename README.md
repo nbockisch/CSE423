@@ -27,6 +27,8 @@ The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or anot
 ### Lexer
 The lexer was implemented with Flex due to time considerations.
 
+([tokens for sample4 in test folder](docs/tokens.txt)) 
+
 ### Parser
 The parser was implemented with Bison due to time considerations.
 
