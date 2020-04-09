@@ -1,0 +1,108 @@
+-----------------------------
+Tree:
+-----------------------------
+<BLOCK>
+     ----- <FUNCTION DECL>
+          ----- <TYPE>
+               ----- int
+          ----- <IDENTIFIER>
+               ----- main
+
+          ----- <VAR DECL>
+               ----- <TYPE>
+                    ----- int
+               ----- <IDENTIFIER>
+                    ----- a
+
+          ----- <VAR DECL>
+               ----- <TYPE>
+                    ----- int
+               ----- <IDENTIFIER>
+                    ----- x
+
+          ----- <BLOCK>
+               ----- <EXPR STATEMENT>
+                    ----- <ASSIGNMENT>
+                         ----- <IDENTIFIER>
+                              ----- x
+                         ----- <INTEGER>
+                              ----- 5
+
+               ----- <EXPR STATEMENT>
+                    ----- <ASSIGNMENT>
+                         ----- <IDENTIFIER>
+                              ----- x
+                         ----- <BIN OP>
+                              ----- <IDENTIFIER>
+                                   ----- x
+                              ----- <OPERATOR>
+                                   ----- +
+                              ----- <INTEGER>
+                                   ----- 2
+
+               ----- <IF STATEMENT>
+                    ----- <BIN OP>
+                         ----- <IDENTIFIER>
+                              ----- x
+                         ----- <OPERATOR>
+                              ----- ==
+                         ----- <INTEGER>
+                              ----- 7
+                    ----- <BLOCK>
+                         ----- <EXPR STATEMENT>
+                              ----- <ASSIGNMENT>
+                                   ----- <IDENTIFIER>
+                                        ----- x
+                                   ----- <BIN OP>
+                                        ----- <IDENTIFIER>
+                                             ----- x
+                                        ----- <OPERATOR>
+                                             ----- +
+                                        ----- <INTEGER>
+                                             ----- 1
+
+
+               ----- <ELSE STATEMENT>
+                    ----- <BLOCK>
+                         ----- <EXPR STATEMENT>
+                              ----- <ASSIGNMENT>
+                                   ----- <IDENTIFIER>
+                                        ----- x
+                                   ----- <BIN OP>
+                                        ----- <IDENTIFIER>
+                                             ----- x
+                                        ----- <OPERATOR>
+                                             ----- -
+                                        ----- <INTEGER>
+                                             ----- 1
+
+
+               ----- <WHILE STATEMENT>
+                    ----- <BIN OP>
+                         ----- <IDENTIFIER>
+                              ----- x
+                         ----- <OPERATOR>
+                              ----- !=
+                         ----- <INTEGER>
+                              ----- 10
+                    ----- <BLOCK>
+                         ----- <EXPR STATEMENT>
+                              ----- <ASSIGNMENT>
+                                   ----- <IDENTIFIER>
+                                        ----- x
+                                   ----- <BIN OP>
+                                        ----- <IDENTIFIER>
+                                             ----- x
+                                        ----- <OPERATOR>
+                                             ----- +
+                                        ----- <INTEGER>
+                                             ----- 1
+
+
+               ----- <RETURN>
+                    ----- <INTEGER>
+                         ----- 1
+
+
+
+-----------------------------
