@@ -48,6 +48,11 @@
 "/"				          	return TOKEN(TDIV);
 ";"                                             return TOKEN(TSEMI);
 ":"                   return TOKEN(TCOLON);
+"!"                   return TOKEN(TNOT);
+"&"                   return TOKEN(TADR);
+"++"                  return TOKEN(TINC);
+"--"                  return TOKEN(TDEC);
+"sizeof"              return TOKEN(TSIZEOF);
 
 
 .                       printf("Unknown token!\n"); yyterminate();
