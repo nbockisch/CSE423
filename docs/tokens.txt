@@ -1,108 +1,62 @@
------------------------------
-Tree:
------------------------------
-<BLOCK>
-     ----- <FUNCTION DECL>
-          ----- <TYPE>
-               ----- int
-          ----- <IDENTIFIER>
-               ----- main
-
-          ----- <VAR DECL>
-               ----- <TYPE>
-                    ----- int
-               ----- <IDENTIFIER>
-                    ----- a
-
-          ----- <VAR DECL>
-               ----- <TYPE>
-                    ----- int
-               ----- <IDENTIFIER>
-                    ----- x
-
-          ----- <BLOCK>
-               ----- <EXPR STATEMENT>
-                    ----- <ASSIGNMENT>
-                         ----- <IDENTIFIER>
-                              ----- x
-                         ----- <INTEGER>
-                              ----- 5
-
-               ----- <EXPR STATEMENT>
-                    ----- <ASSIGNMENT>
-                         ----- <IDENTIFIER>
-                              ----- x
-                         ----- <BIN OP>
-                              ----- <IDENTIFIER>
-                                   ----- x
-                              ----- <OPERATOR>
-                                   ----- +
-                              ----- <INTEGER>
-                                   ----- 2
-
-               ----- <IF STATEMENT>
-                    ----- <BIN OP>
-                         ----- <IDENTIFIER>
-                              ----- x
-                         ----- <OPERATOR>
-                              ----- ==
-                         ----- <INTEGER>
-                              ----- 7
-                    ----- <BLOCK>
-                         ----- <EXPR STATEMENT>
-                              ----- <ASSIGNMENT>
-                                   ----- <IDENTIFIER>
-                                        ----- x
-                                   ----- <BIN OP>
-                                        ----- <IDENTIFIER>
-                                             ----- x
-                                        ----- <OPERATOR>
-                                             ----- +
-                                        ----- <INTEGER>
-                                             ----- 1
-
-
-               ----- <ELSE STATEMENT>
-                    ----- <BLOCK>
-                         ----- <EXPR STATEMENT>
-                              ----- <ASSIGNMENT>
-                                   ----- <IDENTIFIER>
-                                        ----- x
-                                   ----- <BIN OP>
-                                        ----- <IDENTIFIER>
-                                             ----- x
-                                        ----- <OPERATOR>
-                                             ----- -
-                                        ----- <INTEGER>
-                                             ----- 1
-
-
-               ----- <WHILE STATEMENT>
-                    ----- <BIN OP>
-                         ----- <IDENTIFIER>
-                              ----- x
-                         ----- <OPERATOR>
-                              ----- !=
-                         ----- <INTEGER>
-                              ----- 10
-                    ----- <BLOCK>
-                         ----- <EXPR STATEMENT>
-                              ----- <ASSIGNMENT>
-                                   ----- <IDENTIFIER>
-                                        ----- x
-                                   ----- <BIN OP>
-                                        ----- <IDENTIFIER>
-                                             ----- x
-                                        ----- <OPERATOR>
-                                             ----- +
-                                        ----- <INTEGER>
-                                             ----- 1
-
-
-               ----- <RETURN>
-                    ----- <INTEGER>
-                         ----- 1
-
-
-
------------------------------
+Tokens:
+<int, TINT>
+<main, TIDENTIFIER>
+<(, TLPAREN>
+<int, TINT>
+<a, TIDENTIFIER>
+<,, TCOMMA>
+<int, TINT>
+<x, TIDENTIFIER>
+<), TRPAREN>
+<{, TLBRACE>
+<x, TIDENTIFIER>
+<=, TEQUAL>
+<5, TINTEGER>
+<;, TSEMI>
+<x, TIDENTIFIER>
+<=, TEQUAL>
+<x, TIDENTIFIER>
+<+, TPLUS>
+<2, TINTEGER>
+<;, TSEMI>
+<if, TIF>
+<(, TLPAREN>
+<x, TIDENTIFIER>
+<==, TCEQ>
+<7, TINTEGER>
+<), TRPAREN>
+<{, TLBRACE>
+<x, TIDENTIFIER>
+<=, TEQUAL>
+<x, TIDENTIFIER>
+<+, TPLUS>
+<1, TINTEGER>
+<;, TSEMI>
+<}, TRBRACE>
+<else, TELSE>
+<{, TLBRACE>
+<x, TIDENTIFIER>
+<=, TEQUAL>
+<x, TIDENTIFIER>
+<-, TMINUS>
+<1, TINTEGER>
+<;, TSEMI>
+<}, TRBRACE>
+<while, TWHILE>
+<(, TLPAREN>
+<x, TIDENTIFIER>
+<!=, TCNE>
+<10, TINTEGER>
+<), TRPAREN>
+<{, TLBRACE>
+<x, TIDENTIFIER>
+<=, TEQUAL>
+<x, TIDENTIFIER>
+<+, TPLUS>
+<1, TINTEGER>
+<;, TSEMI>
+<}, TRBRACE>
+<return, TRETURN>
+<1, TINTEGER>
+<;, TSEMI>
+<}, TRBRACE>
