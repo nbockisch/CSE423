@@ -110,18 +110,6 @@ public:
 
 };
 
-class NGOTO : public NExpression {
-public:
-	const NLabel& id;
-	NMethodCall(const NIdentifier& id) :
-		id(id) { }
-	NMethodCall(const NIdentifier& id) : id(id) { }
-	//virtual llvm::Value* codeGen(CodeGenContext& context);
-
-        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
-
-};
-
 class NBinaryOperator : public NExpression {
 public:
 	int op;
@@ -189,6 +177,28 @@ public:
 
         void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
         
+};
+
+class NBreak : public NStatement {
+public:
+	NReturnStatement() : 
+		{ }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+
+        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
+        
+};
+
+class NGOTO : public NStatement {
+public:
+	const NLabel& id;
+	NMethodCall(const NIdentifier& id) :
+		id(id) { }
+	NMethodCall(const NIdentifier& id) : id(id) { }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+
+        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
+
 };
 
 class NIfStatement : public NStatement {
