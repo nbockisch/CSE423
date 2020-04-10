@@ -112,6 +112,18 @@ public:
 
 };
 
+class NUnaryOperator : public NExpression {
+public:
+	int op1,op2;
+	NExpression& expr;
+	NBinaryOperator(int op1, NExpression& expr, int op2) :
+                op1(op1), expr(expr), op2(op2) { }
+	// llvm::Value* codeGen(CodeGenContext& context);
+
+        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
+
+};
+
 class NAssignment : public NExpression {
 public:
 	NIdentifier& lhs;
