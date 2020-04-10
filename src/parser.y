@@ -92,7 +92,7 @@ declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaratio
 declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
 		| if_decl | else_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } 
 		| TFOR TLPAREN expr TSEMI expr TSEMI expr TRPAREN block {$$ = new NForStatement(*$3, *$5, *$7, *$9);} 
-		| TBREAK TSEMI | TGOTO label TSEMI {$$ = new NGOTO(*$2);} | label TCOLON; 
+		| TBREAK TSEMI {$$ = new NBreak();} | TGOTO label TSEMI {$$ = new NGOTO(*$2);} | label TCOLON; 
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
