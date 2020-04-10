@@ -92,7 +92,7 @@ declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaratio
 declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
 		| if_decl | else_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } 
 		| TFOR TLPAREN expr TSEMI expr TSEMI expr TRPAREN block {$$ = new NForStatement(*$3, *$5, *$7, *$9);} 
-		| TBREAK TSEMI | TGOTO ident | ident TCOLON; 
+		| TBREAK TSEMI | TGOTO ident TSEMI | ident TCOLON; 
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
@@ -132,10 +132,10 @@ expr : ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); }
  	 | expr compare expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
 	 | unary expr { $$ = new NUnaryOperator($1, *$2, -1); }
 	 | expr unary { $$ = new NUnaryOperator(-1, *$1, $2); }
-	 | TSIZEOF TLPAREN expr TRPAREN { $$ = new NUnaryOperator($1, *$2, -1); }
+	 | TSIZEOF TLPAREN expr TRPAREN { $$ = new NUnaryOperator($1, *$3, -1); }
      | TLPAREN expr TRPAREN { $$ = $2; };
 
-unary: TINC {$$ = $1;} | TDEC {$$ = $1;} | TNOT {$$ = $1;} | TADR {$$ = $1;}
+unary: TINC | TDEC | TNOT | TADR
 
 call_args : /*blank*/ %empty { $$ = new ExpressionList(); }
 		  | expr { $$ = new ExpressionList(); $$->push_back($1); }
