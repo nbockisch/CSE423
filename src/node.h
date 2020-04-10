@@ -86,16 +86,6 @@ public:
                 
 };
 
-class NLabel : public NExpression {
-public:
-	std::string name;
-	NType(const std::string& name) : name(name) { }
-	//virtual llvm::Value* codeGen(CodeGenContext& context);
-
-        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
-                
-};
-
 
 class NMethodCall : public NExpression {
 public:
@@ -127,7 +117,7 @@ class NUnaryOperator : public NExpression {
 public:
 	int op1,op2;
 	NExpression& expr;
-	NBinaryOperator(int op1, NExpression& expr, int op2) :
+	NUnaryOperator(int op1, NExpression& expr, int op2) :
                 op1(op1), expr(expr), op2(op2) { }
 	// llvm::Value* codeGen(CodeGenContext& context);
 
@@ -181,7 +171,7 @@ public:
 
 class NBreak : public NStatement {
 public:
-	NReturnStatement() : 
+	NBreak() : 
 		{ }
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 
@@ -192,9 +182,8 @@ public:
 class NGOTO : public NStatement {
 public:
 	const NLabel& id;
-	NMethodCall(const NIdentifier& id) :
+	NGOTO(const NIdentifier& id) :
 		id(id) { }
-	NMethodCall(const NIdentifier& id) : id(id) { }
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 
         void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
@@ -259,6 +248,17 @@ public:
                 type(type), id(id) { assignmentExpr = NULL; };
 	NVariableDeclaration(const NType& type, NIdentifier& id, NExpression *assignmentExpr) :
 		type(type), id(id), assignmentExpr(assignmentExpr) { };
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+
+        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
+        
+};
+
+class NLabelDeclaration : public NStatement {
+public:
+	NIdentifier& id;
+	NLabelDeclaration(NIdentifier& id) :
+                id(id) {};
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 
         void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
