@@ -40,7 +40,7 @@ Checklist of required features for the Parser:
 - [x] Boolean expressions
 - [ ] Goto statements
 - [x] If / Else control flow
-- [] Unary operators
+- [ ] Unary operators
 - [x] Return statements
 - [ ] Break statements
 - [x] While loops
