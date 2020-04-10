@@ -67,13 +67,13 @@
 /* Define the type of node our nonterminal symbols represent.
    The types refer to the %union declaration above.
  */
-%type <ident> ident label
+%type <ident> ident
 %type <type> type
 %type <expr> number expr 
 %type <varvec> func_decl_args
 %type <exprvec> call_args
 %type <block> program declist block 
-%type <declaration> declaration var_decl func_var_decl func_decl if_decl else_decl
+%type <declaration> declaration var_decl func_var_decl label_decl func_decl if_decl else_decl
 %type <token> compare unary
 
 /* Operator precedence for mathematical operators */
@@ -89,10 +89,10 @@ program : declist { root = $1; };
 declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaration>1); }
 	  | declist declaration { $1->statements.push_back($<declaration>2); };
 
-declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
+declaration : var_decl | func_decl | label_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
 		| if_decl | else_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } 
 		| TFOR TLPAREN expr TSEMI expr TSEMI expr TRPAREN block {$$ = new NForStatement(*$3, *$5, *$7, *$9);} 
-		| TBREAK TSEMI {$$ = new NBreak();} | TGOTO label TSEMI {$$ = new NGOTO(*$2);} | label TCOLON; 
+		| TBREAK TSEMI {$$ = new NBreak();} | TGOTO ident TSEMI {$$ = new NGOTO(*$2);} |
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
@@ -103,6 +103,8 @@ else_decl : TELSE block {$$ = new NElseStatement(*$2); };
 
 var_decl : type ident TSEMI { $$ = new NVariableDeclaration(*$1, *$2); } | 
 		type ident TEQUAL expr TSEMI { $$ = new NVariableDeclaration(*$1, *$2, $4); };
+		
+label_decl : ident TCOLON { $$ = new NLabelDeclaration(*$1);};
 
 func_var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); };
 		
@@ -115,8 +117,6 @@ func_decl_args : /*blank*/ %empty { $$ = new VariableList(); }
 		  | func_decl_args TCOMMA func_var_decl { $1->push_back($<var_decl>3); };
 
 ident : TIDENTIFIER { $$ = new NIdentifier(*$1); delete $1; };
-
-label: ident {$$ = new NLabel(*$1); delete $1;};
 
 type : TINT { $$ = new NType(*$1); delete $1; } | TVOID { $$ = new NType(*$1); delete $1; };
 
