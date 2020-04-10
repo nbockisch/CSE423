@@ -86,12 +86,35 @@ public:
                 
 };
 
+class NLabel : public NExpression {
+public:
+	std::string name;
+	NType(const std::string& name) : name(name) { }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+
+        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
+                
+};
+
+
 class NMethodCall : public NExpression {
 public:
 	const NIdentifier& id;
 	ExpressionList arguments;
 	NMethodCall(const NIdentifier& id, ExpressionList& arguments) :
 		id(id), arguments(arguments) { }
+	NMethodCall(const NIdentifier& id) : id(id) { }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+
+        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
+
+};
+
+class NGOTO : public NExpression {
+public:
+	const NLabel& id;
+	NMethodCall(const NIdentifier& id) :
+		id(id) { }
 	NMethodCall(const NIdentifier& id) : id(id) { }
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 
