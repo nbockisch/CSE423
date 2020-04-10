@@ -232,6 +232,7 @@ public:
         
 };
 
+//ToDo (Maybe), add label declaration
 
 class NFunctionDeclaration : public NStatement {
 public:
