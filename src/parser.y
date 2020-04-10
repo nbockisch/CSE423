@@ -62,7 +62,7 @@
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
 %token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TDOT TSEMI TCOLON
 %token <token> TPLUS TMINUS TMUL TDIV TINC TDEC TADR TNOT
-%token <token> TRETURN TIF TELSE TWHILE TFOR TBREAK TGOTO 
+%token <token> TRETURN TIF TELSE TWHILE TFOR TBREAK TGOTO TSIZEOF
 
 /* Define the type of node our nonterminal symbols represent.
    The types refer to the %union declaration above.
@@ -131,11 +131,11 @@ expr : ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); }
          | expr TMINUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
  	 | expr compare expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
 	 | unary expr { $$ = new NUnaryOperator($1, *$2, -1); }
-	 | expr unary { $$ = new NUnaryOperator(-1, *$2, $3); }
+	 | expr unary { $$ = new NUnaryOperator(-1, *$1, $2); }
 	 | TSIZEOF TLPAREN expr TRPAREN { $$ = new NUnaryOperator($1, *$2, -1); }
      | TLPAREN expr TRPAREN { $$ = $2; };
 
-unary: TINC | TDEC | TNOT | TADR
+unary: TINC {$$ = $1;} | TDEC {$$ = $1;} | TNOT {$$ = $1;} | TADR {$$ = $1;}
 
 call_args : /*blank*/ %empty { $$ = new ExpressionList(); }
 		  | expr { $$ = new ExpressionList(); $$->push_back($1); }
