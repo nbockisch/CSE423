@@ -171,8 +171,6 @@ public:
 
 class NBreak : public NStatement {
 public:
-	NBreak() : 
-		{ }
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 
         void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
@@ -181,7 +179,7 @@ public:
 
 class NGOTO : public NStatement {
 public:
-	const NLabel& id;
+	const NIdentifier& id;
 	NGOTO(const NIdentifier& id) :
 		id(id) { }
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
