@@ -38,19 +38,20 @@ Checklist of required features for the Parser:
 - [x] Arithmetic expressions
 - [x] Assignment
 - [x] Boolean expressions
-- [ ] Goto statements
+- [x] Goto statements
 - [x] If / Else control flow
-- [ ] Unary operators
+- [x] Unary operators
 - [x] Return statements
-- [ ] Break statements
+- [x] Break statements
 - [x] While loops
 
 Checklist of optional features for the parser:
 - [x] Types other than integers (supports double for numbers and void for functions)
 - [ ] binary operators
-- [ ] for loops
+- [x] for loops
 - [ ] switch statements
-- [ ] ++, —, -=, +=, *=, /=
+- [x] ++, —, &, !, sizeof
+- [ ] -=, +=, *=, /=
 
 Sample of a printed parse tree: ([parse tree for sample4 in test folder](docs/parsetree.txt)) 
 
