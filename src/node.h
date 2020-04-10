@@ -180,6 +180,19 @@ public:
            
 };
 
+class NForStatement : public NStatement {
+public:
+	NBlock& block;
+	NExpression& expression1;
+	NExpression& expression2;
+	NExpression& expression3;
+	NForStatement(NExpression& expression1, NExpression& expression2, NExpression& expression3, NBlock& block) : 
+                block(block), expression1(expression1), expression2(expression2), expression3(expression3)  { }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+
+        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
+           
+};
 
 class NElseStatement : public NStatement {
 public:

@@ -60,9 +60,9 @@
  */
 %token <string> TIDENTIFIER TINTEGER TDOUBLE TVOID TINT
 %token <token> TCEQ TCNE TCLT TCLE TCGT TCGE TEQUAL
-%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TDOT TSEMI
-%token <token> TPLUS TMINUS TMUL TDIV
-%token <token> TRETURN TIF TELSE TWHILE 
+%token <token> TLPAREN TRPAREN TLBRACE TRBRACE TCOMMA TDOT TSEMI TCOLON
+%token <token> TPLUS TMINUS TMUL TDIV TINC TDEC TADR TNOT
+%token <token> TRETURN TIF TELSE TWHILE TFOR TBREAK TGOTO 
 
 /* Define the type of node our nonterminal symbols represent.
    The types refer to the %union declaration above.
@@ -90,7 +90,9 @@ declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaratio
 	  | declist declaration { $1->statements.push_back($<declaration>2); };
 
 declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
-		| if_decl | else_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); };
+		| if_decl | else_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } 
+		| TFOR TLPAREN expr TSEMI expr TSEMI expr TRPAREN block {$$ = new NForStatement(*$3, *$5, *$7, *$9);} 
+		| TBREAK TSEMI | TGOTO ident | ident TCOLON; 
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
@@ -128,7 +130,12 @@ expr : ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); }
          | expr TPLUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
          | expr TMINUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
  	 | expr compare expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
+	 | unary expr { $$ = new NUnaryOperator($1, *$2, -1); }
+	 | expr unary { $$ = new NUnaryOperator(-1, *$2, $3); }
+	 | TSIZEOF TLPAREN expr TRPAREN { $$ = new NUnaryOperator($1, *$2, -1); }
      | TLPAREN expr TRPAREN { $$ = $2; };
+
+unary: TINC | TDEC | TNOT | TADR
 
 call_args : /*blank*/ %empty { $$ = new ExpressionList(); }
 		  | expr { $$ = new ExpressionList(); $$->push_back($1); }
