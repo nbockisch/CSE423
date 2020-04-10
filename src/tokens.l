@@ -7,9 +7,27 @@
 
 #define SAVE_TOKEN  yylval.string = new std::string(yytext, yyleng)
 #define TOKEN(t)    (yylval.token = t)
+
+int p_tokens;
+int yycolumn = 1;
+
+#define YY_USER_ACTION \
+        yylloc.first_line = yylloc.last_line = yylineno; \
+        yylloc.first_column = yycolumn; \
+        yylloc.last_column = yycolumn+yyleng-1; \
+        yycolumn += yyleng;
+        
+#define PRINT_TOK(t) \
+        if(p_tokens) { \
+                printf("<%s, %s>\n", yytext, t); \
+        }
+
+
 %}
 
+%option nounput
 %option noyywrap
+%option yylineno
 %array
 
 %%

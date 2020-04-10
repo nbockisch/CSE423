@@ -15,8 +15,8 @@ The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or anot
 2. `make`
 
 ## Usage
-`./compiler -c -p -t -f <source file> -o <ir file>`  
-`-c`: Print the symbol table
+`./compiler -s -p -t -f <source file> -o <ir file>`  
+`-s`: Print the symbol table
 `-i`: Print the IR
 `-p`: Print the parse tree  
 `-t`: Print the tokens  
@@ -27,10 +27,36 @@ The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or anot
 ### Lexer
 The lexer was implemented with Flex due to time considerations.
 
+[tokens for sample4 in test folder](docs/tokens.txt) 
+
 ### Parser
 The parser was implemented with Bison due to time considerations.
 
-Sample of a printed parse tree: ([parse tree for sample3 in test folder](docs/parsetree.txt)) 
+Checklist of required features for the Parser:
+- [x] Identifiers, variables, functions
+- [x] Keywords
+- [x] Arithmetic expressions
+- [x] Assignment
+- [x] Boolean expressions
+- [ ] Goto statements
+- [x] If / Else control flow
+- [ ] Unary operators
+- [x] Return statements
+- [ ] Break statements
+- [x] While loops
+
+Checklist of optional features for the parser:
+- [x] Types other than integers (supports double for numbers and void for functions)
+- [ ] binary operators
+- [ ] for loops
+- [ ] switch statements
+- [ ] ++, —, -=, +=, *=, /=
+
+Sample of a printed parse tree: ([parse tree for sample4 in test folder](docs/parsetree.txt)) 
+
+### Symbol Table
+
+
 
 ### IR
 To be added

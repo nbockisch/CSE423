@@ -19,7 +19,7 @@ class ir
 {
 public:
     ir(NBlock *root);
-    ~ir();
+    ~ir() { };
     std::vector<token_t> parse_tree();
     std::vector<std::string> getIR();
 private:
