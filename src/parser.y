@@ -67,7 +67,7 @@
 /* Define the type of node our nonterminal symbols represent.
    The types refer to the %union declaration above.
  */
-%type <ident> ident 
+%type <ident> ident label
 %type <type> type
 %type <expr> number expr 
 %type <varvec> func_decl_args
