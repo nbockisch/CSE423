@@ -15,13 +15,14 @@ The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or anot
 2. `make`
 
 ## Usage
-`./compiler -s -p -t -f <source file> -o <ir file>`  
-`-s`: Print the symbol table
-`-i`: Print the IR
+`./compiler -s -p -t -r <ir file> -f <source file> -o <output file>`  
+`-s`: Print the symbol table  
+`-i`: Print the IR  
 `-p`: Print the parse tree  
 `-t`: Print the tokens  
+`-r <ir file`: Read in an IR file as an argument  
 `-f <source file>`: Pass in a source file as an argument  
-`-o <ir file>`: Pass in an ir file as an argument
+`-o <ir file>`: Output the IR results to a file  
 
 ## Design Decisions and Implementation
 ### Lexer
@@ -60,7 +61,25 @@ Sample of a printed parse tree: ([parse tree for sample4 in test folder](docs/pa
 
 
 ### IR
-To be added
+Checklist of required features by the IR:
+- [x] Identifiers, variables, functions
+- [x] Keywords
+- [x] Arithmetic expressions
+- [x] Assignment
+- [ ] Boolean expressions
+- [ ] Goto statements
+- [ ] If / Else control flow
+- [ ] Unary operators
+- [x] Return statements
+- [ ] Break statements
+- [ ] While loops
 
-## Supported Features
-To be added
+Checklist of optional features for the parser:
+- [x] Types other than integers (supports double for numbers and void for functions)
+- [ ] binary operators
+- [ ] for loops
+- [ ] switch statements
+- [ ] ++, —, &, !, sizeof
+- [ ] -=, +=, *=, /=
+
+The IR was implemented by reading in the string form of the parse tree and parsing that information. This was done due to difficulties traversing the tree, however going forward this issue should be resolved and the IR will be changed to use this method instead. The string parsing method is not ideal, as it does give unexpected results in certain edge cases. 

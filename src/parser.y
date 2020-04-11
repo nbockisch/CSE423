@@ -15,6 +15,7 @@
         #include <cstdio>
         #include <cstdlib>
     #include <iostream>
+    #include <fstream>
     #include <unistd.h>
     #include <stdio.h>
     #include <string>
@@ -157,12 +158,15 @@ int main(int argc, char **argv)
     int p_tree = 0;
     int p_ir = 0;
     int p_sym = 0;
+    int ir_file = 0;
+    std::string ir_out_file;
     std::string fname;
     std::vector<std::string> ir_list;
     ir *ir_gen = NULL;
     Symtable *symtab = NULL;
+    FILE *ir_in;
 
-    while ((opt = getopt(argc, argv,  ":hptisf:ax"))  != -1) {
+    while ((opt = getopt(argc, argv,  ":ho:r:ptisf:ax"))  != -1) {
         switch(opt) {
             case 'h':
                 usage(argv[0]);
@@ -174,6 +178,19 @@ int main(int argc, char **argv)
                     std::cout << "Failure: Couldn't open file '" << optarg << "'\n" << std::endl;
                     return -1;
                 }
+                break;
+            case 'r':
+                // get filename and open file
+                ir_in = fopen(optarg, "r");
+                if (!ir_in) {
+                    std::cout << "Failure: Couldn't open file '" << optarg << "'\n" << std::endl;
+                    return -1;
+                }
+                break;
+            case 'o':
+                // output ir to file
+                ir_out_file = optarg;
+                ir_file = 1;
                 break;
             case 't':
                 // print out tokens 
@@ -227,6 +244,13 @@ int main(int argc, char **argv)
     }
 
     if (p_ir) {
+        if (ir_file == 1) {
+            std::ofstream ir_out(ir_out_file);
+            for (std::string ir_line : ir_list) {
+                ir_out << ir_line << std::endl;
+            }
+            ir_out.close();
+        }
         printf("-----------------------------\n");
         std::cout << "IR:" << std::endl;
         printf("-----------------------------\n");
@@ -255,12 +279,14 @@ int main(int argc, char **argv)
 }
 
 void usage(const char *name) {
-        printf("Usage: %s [-p] [-t] [-i] [-s] -f input\n", name);
+        printf("Usage: %s [-p] [-t] [-i] [-s] [-r file] [-o output] -f input\n", name);
         printf("Options:\n");
         printf("  -f file     Specify the input source file, required.\n");
         printf("  -p          Print the AST/parse tree representation.\n");
         printf("  -t          Print the token representation.\n");
         printf("  -i          Print the IR representation.\n");
         printf("  -s          Print the symbol table.\n");
+        printf("  -r file     Read in an ir file.\n");
+        printf("  -o file     Output ir to a file.\n");
         printf("  -h          Display this help message.\n");
 }

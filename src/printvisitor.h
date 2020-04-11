@@ -24,51 +24,51 @@ public:
         }
 
         void visit(const NInteger &node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
 
                 out.append("<INTEGER>\n");
                 
                 char tmp[128];
                 snprintf(tmp, 128, "%lld", node.value);
 
-                out.append(pindent(level+1, "-"));
+                out.append(pindent(level+1, "~"));
                 out.append(tmp);
                 out.append("\n");
         }
 
         void visit(const NDouble &node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
 
                 out.append("<DOUBLE>\n");
                 
                 char tmp[128];
                 snprintf(tmp, 128, "%f", node.value);
 
-                out.append(pindent(level+1, "-"));
+                out.append(pindent(level+1, "~"));
                 out.append(tmp);
                 out.append("\n");
         }
         
         void visit(const NIdentifier& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
 
                 out.append("<IDENTIFIER>\n");
-                out.append(pindent(level+1, "-"));
+                out.append(pindent(level+1, "~"));
                 out.append(node.name);
                 out.append("\n");
         }
         
         void visit(const NType& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
 
                 out.append("<TYPE>\n");
-                out.append(pindent(level+1, "-"));
+                out.append(pindent(level+1, "~"));
                 out.append(node.name);
                 out.append("\n");
         }
         
         void visit(const NMethodCall& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
 
                 out.append("<FUNCTION CALL>\n");
 
@@ -84,7 +84,7 @@ public:
         }
         
         void visit(const NBinaryOperator& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
 
                 out.append("<BIN OP>\n");
                 
@@ -94,9 +94,9 @@ public:
                 level++;
                 node.lhs.accept(*this);
                 
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
                 out.append("<OPERATOR>\n");
-                out.append(pindent(level+1, "-"));
+                out.append(pindent(level+1, "~"));
 		switch(std::stoi(tmp)) {
 			case 277:
 				out.append("+");
@@ -137,7 +137,7 @@ public:
         }
         
         void visit(const NAssignment& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
 
                 out.append("<ASSIGNMENT>\n");
                 level++;
@@ -147,7 +147,7 @@ public:
         }
         
         void visit(const NBlock &node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
                 out.append("<BLOCK>\n");
                 level++;
                 
@@ -159,7 +159,7 @@ public:
         }
         
         void visit(const NExpressionStatement& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
 
                 out.append("<EXPR STATEMENT>\n");
 
@@ -169,7 +169,7 @@ public:
         }
         
         void visit(const NReturnStatement& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
                 
                 out.append("<RETURN>\n");
                 level++;
@@ -178,7 +178,7 @@ public:
         }
         
         void visit(const NIfStatement& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
                 
                 out.append("<IF STATEMENT>\n");
                 level++;
@@ -188,7 +188,7 @@ public:
         }
                 
         void visit(const NWhileStatement& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
                 
                 out.append("<WHILE STATEMENT>\n");
                 level++;
@@ -198,7 +198,7 @@ public:
         }
         
         void visit(const NElseStatement& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
                 
                 out.append("<ELSE STATEMENT>\n");
                 level++;
@@ -207,7 +207,7 @@ public:
         }
         
         void visit(const NVariableDeclaration& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
 
                 out.append("<VAR DECL>\n");
                 level++;
@@ -219,7 +219,7 @@ public:
         }
         
         void visit(const NFunctionDeclaration& node) {
-                out.append(pindent(level, "-"));
+                out.append(pindent(level, "~"));
                 
                 out.append("<FUNCTION DECL>\n");
                 level++;

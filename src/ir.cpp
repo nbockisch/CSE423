@@ -27,7 +27,7 @@ std::vector<token_t> ir::parse_tree()
     std::string p_tree = visitor.getResult();
     std::istringstream in_stream(p_tree);
     std::vector<token_t> nodes;
-    std::regex tok_regex("([A-z\\d]+[ ]?[A-z\\d]*)");
+    std::regex tok_regex("([A-z\\d*+-/]+[ ]?[A-z\\d]*)");
     int i, level;
 
     // Cycle through parse tree line by line
@@ -67,52 +67,101 @@ std::vector<std::string> ir::getIR()
     }*/
     std::vector<token_t> nodes = ir::parse_tree();
     std::vector<std::string> ir;
-    int i, j, end, first_param, block, found_name;
+    int i, j, k, first_param;
+
 
     // Cycle through nodes of parse tree and build the IR
-    for (i = 0; i < nodes.size(); i++) {
+    for (i = 1; i < nodes.size(); i++) {
+        first_param = 0;
+        //std::cout << nodes[i].contents << std::endl;
         if (nodes[i].contents.compare("FUNCTION DECL") == 0) {
-            block = 0;
-            found_name = 0;
-            first_param = 1;
+            // Build function declaration IR
             std::string tmp;
-            end = nodes[i].level;
-            for (j = i + 1; nodes[j].level > end && j < nodes.size(); j++) {
+
+            for (j = i + 1; nodes[j].level > nodes[i].level && j < nodes.size() && nodes[j].contents.compare("BLOCK") != 0; j++) {
                 if (nodes[j].contents.compare("IDENTIFIER") == 0) {
-                    if (!found_name) {
-                        tmp.append(nodes[j + 1].contents + "(");
-                        found_name = 1;
+                    tmp.append("function " + nodes[++j].contents + "(");
+                } else if (nodes[j].contents.compare("VAR DECL") == 0) {
+                    if (first_param == 0) {
+                        first_param = 1;
+                        tmp.append(nodes[j + 4].contents);
+                    } else {
+                        tmp.append(", " + nodes[j + 4].contents);
                     }
-                } else if (nodes[j].contents.compare("BLOCK") == 0) {
-                    block = 1;
-                    tmp.append(")");
+                    j += 4;
+                }                 
+            }
+
+            tmp.append(")");
+            ir.push_back(tmp);
+            tmp.clear();
+
+        } else if (nodes[i].contents.compare("BLOCK") == 0) {
+            // Build block statement IR
+            std::string tmp;
+
+            for (j = i + 1; nodes[j].level > nodes[i].level && j < nodes.size(); j++) {
+                if (nodes[j].contents.compare("ASSIGNMENT") == 0) {
+                    first_param = 0;
+
+                    for (k = j + 1; nodes[k].level > nodes[j].level && k < nodes.size(); k++) {
+                        if (nodes[k].contents.compare("IDENTIFIER") == 0 || nodes[k].contents.compare("OPERATOR") == 0 || nodes[k].contents.compare("INTEGER") == 0) {
+                            if (first_param == 0) {
+                                tmp.append(nodes[++k].contents + " =");
+                                first_param = 1;
+                            } else {
+                                tmp.append(" " + nodes[++k].contents);
+                            }
+                        }
+                    }
+
                     ir.push_back(tmp);
                     tmp.clear();
                 } else if (nodes[j].contents.compare("VAR DECL") == 0) {
-                    if (!block) {
-                        if (first_param) {
-                            tmp.append(nodes[j + 4].contents);
-                            first_param = 0;
-                        } else {
-                            tmp.append(", " + nodes[j + 4].contents);
+                    first_param = 0;
+
+                    for (k = j + 1; nodes[k].level > nodes[j].level && k < nodes.size(); k++) {
+                        if (nodes[k].contents.compare("IDENTIFIER") == 0 || nodes[k].contents.compare("OPERATOR") == 0 || nodes[k].contents.compare("INTEGER") == 0) {
+                            if (first_param == 0) {
+                                tmp.append(nodes[++k].contents);
+                                first_param = 1;
+                            } else if (first_param == 1) {
+                                tmp.append(" = " + nodes[++k].contents);
+                                first_param = 2;
+                            } else {
+                                tmp.append(" " + nodes[++k].contents);
+
+                            }
                         }
                     }
-                }  else if (nodes[j].contents.compare("RETURN") == 0 && block) {
-                    std::string tmp;
-                    tmp.append(" return " + nodes[i + 2].contents);
+
                     ir.push_back(tmp);
                     tmp.clear();
-                }
-            }
-        }  /*else if (nodes[i].contents.compare("RETURN") == 0) {
-            std::string tmp;
-            tmp.append("return " + nodes[i + 2].contents);
-            ir.push_back(tmp);
-        }*/
-    }
+                } else if (nodes[j].contents.compare("RETURN") == 0) {
+                    tmp.append("return " + nodes[j + 2].contents);
+                    j += 2;
 
-    /* for (std::string q : ir) {
-        std::cout << q << std::endl;
-    } */
+                    ir.push_back(tmp);
+                    tmp.clear();
+                } /*else if (nodes[j].contents.compare("WHILE STATEMENT") == 0) {
+                    for (k = j + 1; nodes[k].level > nodes[j].level && k < nodes.size(); k++) {
+                        if (nodes[k].contents.compare("IDENTIFIER") == 0 || nodes[k].contents.compare("OPERATOR") == 0 || nodes[k].contents.compare("INTEGER") == 0) {
+                            if (first_param == 0) {
+                                tmp.append(nodes[++k].contents + " =");
+                                first_param = 1;
+                            } else {
+                                tmp.append(" " + nodes[++k].contents);
+                            }
+                        }
+                    }
+
+                    ir.push_back(tmp);
+                    tmp.clear();
+                
+                } */
+            }
+        }
+    }
+   
     return ir;
 }
