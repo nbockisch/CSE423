@@ -14,7 +14,7 @@ The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or anot
 1. `cd src`
 2. `make`
 
-##There are some compilation warnings that pop up from other things that are being worked on but it should have no effect on anything that has been documented to be supported down below. 
+## There are some compilation warnings that pop up from other things that are being worked on but it should have no effect on anything that has been documented to be supported down below. 
 
 ## Usage
 `./compiler -s -p -t -f <source file> -o <ir file>`  
