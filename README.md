@@ -14,6 +14,8 @@ The project is compiled using `gcc` and a `Makefile`. Ensure both `gcc` (or anot
 1. `cd src`
 2. `make`
 
+There are some compilation warnings that pop up from other things that are being worked on but it should have no effect on anything that has been documented to be supported shown down below. 
+
 ## Usage
 `./compiler -s -p -t -r <ir file> -f <source file> -o <output file>`  
 `-s`: Print the symbol table  
