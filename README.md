@@ -58,10 +58,6 @@ Checklist of optional features for the parser:
 
 Sample of a printed parse tree: ([parse tree for sample4 in test folder](docs/parsetree.txt)) 
 
-### Symbol Table
-
-
-
 ### IR
 Checklist of required features by the IR:
 - [x] Identifiers, variables, functions
@@ -84,4 +80,4 @@ Checklist of optional features for the parser:
 - [ ] ++, —, &, !, sizeof
 - [ ] -=, +=, *=, /=
 
-The IR was implemented by reading in the string form of the parse tree and parsing that information. This was done due to difficulties traversing the tree, however going forward this issue should be resolved and the IR will be changed to use this method instead. The string parsing method is not ideal, as it does give unexpected results in certain edge cases. 
+The IR was implemented by reading in the string form of the parse tree and parsing that information. This was done due to difficulties traversing the tree, however going forward this issue should be resolved and the IR will be changed to use this method instead. The string parsing method is not ideal, as it does give unexpected results in certain edge cases. There are sometimes inaccurate results with certain operators in assignments, such as the division symbol.
