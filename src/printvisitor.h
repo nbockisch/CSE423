@@ -98,16 +98,16 @@ public:
                 out.append("<OPERATOR>\n");
                 out.append(pindent(level+1, "~"));
 		switch(std::stoi(tmp)) {
-			case 277:
+			case 278:
 				out.append("+");
 				break;
-			case 278:
+			case 279:
 				out.append("-");
 				break;
-			case 279:
+			case 280:
 				out.append("*");
 				break;
-			case 280:
+			case 281:
 				out.append("/");
 				break;
 			case 263:
