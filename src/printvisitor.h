@@ -157,6 +157,27 @@ public:
                 }
                 level--;
         }
+
+	void visit(const NGOTO &node) {
+                out.append(pindent(level, "~"));
+                out.append("<GOTO>\n");
+                level++;
+                node.id.accept(*this);
+                level--;
+        }
+
+	void visit(const NGOTOBlock &node) {
+                out.append(pindent(level, "~"));
+                out.append("<GOTO LABEL>\n");
+                level++;
+                node.id.accept(*this);
+                level--;
+        }
+
+	void visit(const NBreak &node) {
+                out.append(pindent(level, "~"));
+                out.append("<BREAK>\n");
+        }
         
         void visit(const NExpressionStatement& node) {
                 out.append(pindent(level, "~"));

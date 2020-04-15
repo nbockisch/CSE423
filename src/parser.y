@@ -90,10 +90,9 @@ program : declist { root = $1; };
 declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaration>1); }
 	  | declist declaration { $1->statements.push_back($<declaration>2); };
 
-declaration : var_decl | func_decl | label_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); }
-		| if_decl | else_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } 
+declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new 				NReturnStatement(*$2); } | if_decl | else_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } 
 		| TFOR TLPAREN expr TSEMI expr TSEMI expr TRPAREN block {$$ = new NForStatement(*$3, *$5, *$7, *$9);} 
-		| TBREAK TSEMI {$$ = new NBreak();} | TGOTO ident TSEMI {$$ = new NGOTO(*$2);} |
+		| TBREAK TSEMI {$$ = new NBreak();} | TGOTO ident TSEMI {$$ = new NGOTO(*$2);} | ident TCOLON {$$ = new NGOTOBlock(*$1);};
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
@@ -104,8 +103,6 @@ else_decl : TELSE block {$$ = new NElseStatement(*$2); };
 
 var_decl : type ident TSEMI { $$ = new NVariableDeclaration(*$1, *$2); } | 
 		type ident TEQUAL expr TSEMI { $$ = new NVariableDeclaration(*$1, *$2, $4); };
-		
-label_decl : ident TCOLON { $$ = new NLabelDeclaration(*$1);};
 
 func_var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); };
 		
@@ -138,7 +135,7 @@ expr : ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); }
 	 | TSIZEOF TLPAREN expr TRPAREN { $$ = new NUnaryOperator($1, *$3, -1); }
      | TLPAREN expr TRPAREN { $$ = $2; };
 
-unary: TINC | TDEC | TNOT | TADR
+unary: TINC | TDEC | TNOT | TADR;
 
 call_args : /*blank*/ %empty { $$ = new ExpressionList(); }
 		  | expr { $$ = new ExpressionList(); $$->push_back($1); }

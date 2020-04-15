@@ -172,7 +172,7 @@ public:
 class NBreak : public NStatement {
 public:
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
-
+	NBreak() {}
         void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
         
 };
@@ -181,6 +181,17 @@ class NGOTO : public NStatement {
 public:
 	const NIdentifier& id;
 	NGOTO(const NIdentifier& id) :
+		id(id) { }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+
+        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
+
+};
+
+class NGOTOBlock : public NStatement {
+public:
+	const NIdentifier& id;
+	NGOTOBlock(const NIdentifier& id) :
 		id(id) { }
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 
@@ -246,17 +257,6 @@ public:
                 type(type), id(id) { assignmentExpr = NULL; };
 	NVariableDeclaration(const NType& type, NIdentifier& id, NExpression *assignmentExpr) :
 		type(type), id(id), assignmentExpr(assignmentExpr) { };
-	//virtual llvm::Value* codeGen(CodeGenContext& context);
-
-        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
-        
-};
-
-class NLabelDeclaration : public NStatement {
-public:
-	NIdentifier& id;
-	NLabelDeclaration(NIdentifier& id) :
-                id(id) {};
 	//virtual llvm::Value* codeGen(CodeGenContext& context);
 
         void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }

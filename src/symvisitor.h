@@ -32,6 +32,10 @@ public:
                 return;
         }
         
+	void visit(const NBreak &node) {
+		return;
+	}
+
         void visit(const NDouble &node) {
                 return;
         }
@@ -98,6 +102,14 @@ public:
                 entry.node = &node;
 
                 table->insert(entry.name, entry);
+        }
+
+	void visit(const NGOTO &node) {
+                return;
+        }
+
+	void visit(const NGOTOBlock &node) {
+		return;
         }
         
         void visit(const NFunctionDeclaration& node) {
