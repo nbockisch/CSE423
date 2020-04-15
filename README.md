@@ -28,7 +28,7 @@ There are some compilation warnings that pop up from other things that are being
 
 ## Design Decisions and Implementation
 ### Lexer
-The lexer was implemented with Flex due to time considerations.
+The lexer was implemented with Flex due to time considerations.The lexer does not currently deal with comments in code.
 
 [tokens for sample4 in test folder](docs/tokens.txt) 
 
