@@ -91,16 +91,18 @@ declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaratio
 	  | declist declaration { $1->statements.push_back($<declaration>2); };
 
 declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new 				NReturnStatement(*$2); } | if_decl | else_decl | elseif_decl | 
-			TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } 
+			TWHILE TLPAREN expr TRPAREN block {$$ = new NWhileStatement(*$3, *$5); } 
 		| TFOR TLPAREN expr1 expr2 expr3 TRPAREN block {$$ = new NForStatement(*$3, *$4, *$5, *$7); } 
 		| TBREAK TSEMI {$$ = new NBreak();} | TGOTO ident TSEMI {$$ = new NGOTO(*$2);} | ident TCOLON {$$ = new NGOTOBlock(*$1);};
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
 
-if_decl : TIF expr block block {$$ = new NIfStatement(*$2, *$3); } | TIF expr block {$$ = new NIfStatement(*$2, *$3); };
+if_decl : TIF TLPAREN expr TRPAREN block block {$$ = new NIfStatement(*$3, *$5); } | TIF TLPAREN expr TRPAREN block 
+	{$$ = new NIfStatement(*$3, *$5); };
 
-elseif_decl : TELSE TIF expr block block {$$ = new NElseIfStatement(*$3, *$4); } | TELSE TIF expr block {$$ = new NElseIfStatement(*$3, *$4); };
+elseif_decl : TELSE TIF TLPAREN expr TRPAREN block block {$$ = new NElseIfStatement(*$4, *$6); } 
+	| TELSE TIF TLPAREN expr TRPAREN block {$$ = new NElseIfStatement(*$4, *$6); };
 
 else_decl : TELSE block {$$ = new NElseStatement(*$2); };
 
