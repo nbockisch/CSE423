@@ -41,11 +41,11 @@ Checklist of required features for the Parser:
 - [x] Arithmetic expressions
 - [x] Assignment
 - [x] Boolean expressions
-- [ ] Goto statements
+- [x] Goto statements
 - [x] If / Else control flow
 - [ ] Unary operators
 - [x] Return statements
-- [ ] Break statements
+- [x] Break statements
 - [x] While loops
 
 Checklist of optional features for the parser:
