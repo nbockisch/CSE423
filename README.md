@@ -76,7 +76,7 @@ Checklist of required features by the IR:
 - [ ] While loops
 
 Checklist of optional features for the parser:
-- [x] Types other than integers (supports double for numbers and void for functions)
+- [x] Types other than integers (supports void for functions)
 - [ ] binary operators
 - [ ] for loops
 - [ ] switch statements
