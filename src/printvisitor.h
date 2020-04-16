@@ -244,6 +244,16 @@ public:
                 node.block.accept(*this);
                 level--;
         }
+
+	void visit(const NElseIfStatement& node) {
+                out.append(pindent(level, "~"));
+                
+                out.append("<ELSE IF STATEMENT>\n");
+                level++;
+                node.expression.accept(*this);
+                node.block.accept(*this);
+                level--;
+        }
                 
         void visit(const NWhileStatement& node) {
                 out.append(pindent(level, "~"));

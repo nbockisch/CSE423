@@ -212,6 +212,18 @@ public:
         
 };
 
+class NElseIfStatement : public NStatement {
+public:
+	NBlock& block;
+	NExpression& expression;
+	NElseIfStatement(NExpression& expression, NBlock& block) : 
+                block(block), expression(expression) { }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+
+        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
+        
+};
+
 class NForStatement : public NStatement {
 public:
 	NBlock& block;

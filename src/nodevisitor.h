@@ -26,6 +26,7 @@ class NIfStatement;
 class NWhileStatement;
 class NForStatement;
 class NElseStatement;
+class NElseIfStatement;
 class NVariableDeclaration;
 class NFunctionDeclaration;
 
@@ -48,6 +49,7 @@ public:
         virtual void visit(const NExpressionStatement& node) = 0;
         virtual void visit(const NReturnStatement& node) = 0;
         virtual void visit(const NIfStatement& node) = 0;
+	virtual void visit(const NElseIfStatement& node) = 0;
         virtual void visit(const NWhileStatement& node) = 0;
 	virtual void visit(const NForStatement& node) = 0;
         virtual void visit(const NElseStatement& node) = 0;

@@ -74,7 +74,7 @@
 %type <varvec> func_decl_args
 %type <exprvec> call_args
 %type <block> program declist block 
-%type <declaration> declaration var_decl func_var_decl func_decl if_decl else_decl
+%type <declaration> declaration var_decl func_var_decl func_decl if_decl else_decl elseif_decl
 %type <token> compare prefix postfix
 
 /* Operator precedence for mathematical operators */
@@ -90,7 +90,8 @@ program : declist { root = $1; };
 declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaration>1); }
 	  | declist declaration { $1->statements.push_back($<declaration>2); };
 
-declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new 				NReturnStatement(*$2); } | if_decl | else_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } 
+declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new 				NReturnStatement(*$2); } | if_decl | else_decl | elseif_decl | 
+			TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } 
 		| TFOR TLPAREN expr1 expr2 expr3 TRPAREN block {$$ = new NForStatement(*$3, *$4, *$5, *$7); } 
 		| TBREAK TSEMI {$$ = new NBreak();} | TGOTO ident TSEMI {$$ = new NGOTO(*$2);} | ident TCOLON {$$ = new NGOTOBlock(*$1);};
 
@@ -98,6 +99,8 @@ block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
 
 if_decl : TIF expr block block {$$ = new NIfStatement(*$2, *$3); } | TIF expr block {$$ = new NIfStatement(*$2, *$3); };
+
+elseif_decl : TELSE TIF expr block block {$$ = new NElseIfStatement(*$3, *$4); } | TELSE TIF expr block {$$ = new NElseIfStatement(*$3, *$4); };
 
 else_decl : TELSE block {$$ = new NElseStatement(*$2); };
 

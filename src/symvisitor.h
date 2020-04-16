@@ -88,6 +88,10 @@ public:
         void visit(const NIfStatement& node) {
                 node.block.accept(*this);
         }
+
+	 void visit(const NElseIfStatement& node) {
+                node.block.accept(*this);
+        }
                 
         void visit(const NWhileStatement& node) {
                 node.block.accept(*this);
