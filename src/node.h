@@ -115,15 +115,16 @@ public:
 
 class NUnaryOperator : public NExpression {
 public:
-	int op1,op2;
-	NExpression& expr;
-	NUnaryOperator(int op1, NExpression& expr, int op2) :
-                op1(op1), expr(expr), op2(op2) { }
+	int op;
+	NExpression& expression;
+	NUnaryOperator(int op, NExpression& expression) :
+                op(op), expression(expression) { }
 	// llvm::Value* codeGen(CodeGenContext& context);
 
         void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
 
 };
+
 
 class NAssignment : public NExpression {
 public:
@@ -211,18 +212,6 @@ public:
         
 };
 
-class NWhileStatement : public NStatement {
-public:
-	NBlock& block;
-	NExpression& expression;
-	NWhileStatement(NExpression& expression, NBlock& block) : 
-                block(block), expression(expression)  { }
-	//virtual llvm::Value* codeGen(CodeGenContext& context);
-
-        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
-           
-};
-
 class NForStatement : public NStatement {
 public:
 	NBlock& block;
@@ -236,6 +225,19 @@ public:
         void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
            
 };
+
+class NWhileStatement : public NStatement {
+public:
+	NBlock& block;
+	NExpression& expression;
+	NWhileStatement(NExpression& expression, NBlock& block) : 
+                block(block), expression(expression)  { }
+	//virtual llvm::Value* codeGen(CodeGenContext& context);
+
+        void accept(NodeVisitor& visitor) const override { visitor.visit(*this); }
+           
+};
+
 
 class NElseStatement : public NStatement {
 public:

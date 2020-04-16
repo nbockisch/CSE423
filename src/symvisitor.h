@@ -57,6 +57,10 @@ public:
                 node.rhs.accept(*this);
         }
         
+	void visit(const NUnaryOperator& node) {
+                node.expression.accept(*this);
+        }
+
         void visit(const NAssignment& node) {
                 node.lhs.accept(*this);
                 node.rhs.accept(*this);
@@ -88,6 +92,11 @@ public:
         void visit(const NWhileStatement& node) {
                 node.block.accept(*this);
         }
+
+	void visit(const NForStatement& node) {
+                node.block.accept(*this);
+        }
+
         
         void visit(const NElseStatement& node) {
                 node.block.accept(*this);

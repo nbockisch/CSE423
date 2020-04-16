@@ -21,8 +21,10 @@ class NGOTO;
 class NGOTOBlock;
 class NExpressionStatement;
 class NReturnStatement;
+class NUnaryOperator;
 class NIfStatement;
 class NWhileStatement;
+class NForStatement;
 class NElseStatement;
 class NVariableDeclaration;
 class NFunctionDeclaration;
@@ -37,6 +39,7 @@ public:
         virtual void visit(const NType& node) = 0;
         virtual void visit(const NMethodCall& node) = 0;
         virtual void visit(const NBinaryOperator& node) = 0;
+	virtual void visit(const NUnaryOperator& node) = 0;
         virtual void visit(const NAssignment& node) = 0;
         virtual void visit(const NBlock& node) = 0;
 	virtual void visit(const NBreak& node) = 0;
@@ -46,6 +49,7 @@ public:
         virtual void visit(const NReturnStatement& node) = 0;
         virtual void visit(const NIfStatement& node) = 0;
         virtual void visit(const NWhileStatement& node) = 0;
+	virtual void visit(const NForStatement& node) = 0;
         virtual void visit(const NElseStatement& node) = 0;
         virtual void visit(const NVariableDeclaration& node) = 0;
         virtual void visit(const NFunctionDeclaration& node) = 0;

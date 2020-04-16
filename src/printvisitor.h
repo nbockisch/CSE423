@@ -135,6 +135,43 @@ public:
                 node.rhs.accept(*this);
                 level--;
         }
+
+	void visit(const NUnaryOperator& node) {
+                out.append(pindent(level, "~"));
+
+                out.append("<UNARY OP>\n");
+                
+                char tmp[128];
+                snprintf(tmp, 128, "%d", node.op);
+
+                level++;
+                node.expression.accept(*this);
+                
+                out.append(pindent(level, "~"));
+                out.append("<OPERATOR>\n");
+                out.append(pindent(level+1, "~"));
+		switch(std::stoi(tmp)) {
+			case 282:
+				out.append("++");
+				break;
+			case 283:
+				out.append("--");
+				break;
+			case 284:
+				out.append("&");
+				break;
+			case 285:
+				out.append("!");
+				break;
+			case 279:
+				out.append("-");
+				break;
+		}
+
+                out.append("\n");
+
+                level--;
+        }
         
         void visit(const NAssignment& node) {
                 out.append(pindent(level, "~"));
@@ -218,6 +255,18 @@ public:
                 level--;
         }
         
+	void visit(const NForStatement& node) {
+                out.append(pindent(level, "~"));
+                
+                out.append("<FOR STATEMENT>\n");
+                level++;
+                node.expression1.accept(*this);
+		node.expression2.accept(*this);
+		node.expression3.accept(*this);
+                node.block.accept(*this);
+                level--;
+        }
+
         void visit(const NElseStatement& node) {
                 out.append(pindent(level, "~"));
                 

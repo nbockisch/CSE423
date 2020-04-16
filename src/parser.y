@@ -70,12 +70,12 @@
  */
 %type <ident> ident
 %type <type> type
-%type <expr> number expr 
+%type <expr> number expr expr1 expr2 expr3
 %type <varvec> func_decl_args
 %type <exprvec> call_args
 %type <block> program declist block 
-%type <declaration> declaration var_decl func_var_decl label_decl func_decl if_decl else_decl
-%type <token> compare unary
+%type <declaration> declaration var_decl func_var_decl func_decl if_decl else_decl
+%type <token> compare prefix postfix
 
 /* Operator precedence for mathematical operators */
 %left TPLUS TMINUS
@@ -91,7 +91,7 @@ declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaratio
 	  | declist declaration { $1->statements.push_back($<declaration>2); };
 
 declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new 				NReturnStatement(*$2); } | if_decl | else_decl | TWHILE expr block {$$ = new NWhileStatement(*$2, *$3); } 
-		| TFOR TLPAREN expr TSEMI expr TSEMI expr TRPAREN block {$$ = new NForStatement(*$3, *$5, *$7, *$9);} 
+		| TFOR TLPAREN expr1 expr2 expr3 TRPAREN block {$$ = new NForStatement(*$3, *$4, *$5, *$7); } 
 		| TBREAK TSEMI {$$ = new NBreak();} | TGOTO ident TSEMI {$$ = new NGOTO(*$2);} | ident TCOLON {$$ = new NGOTOBlock(*$1);};
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
@@ -121,21 +121,29 @@ type : TINT { $$ = new NType(*$1); delete $1; } | TVOID { $$ = new NType(*$1); d
 number : TINTEGER { $$ = new NInteger(atol($1->c_str())); delete $1; }
 		| TDOUBLE { $$ = new NDouble(atof($1->c_str())); delete $1; };
 
+expr1: ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); };
+
+expr2: expr compare expr TSEMI { $$ = new NBinaryOperator(*$1, $2, *$3); };
+
+expr3: expr postfix { $$ = new NUnaryOperator($2, *$1); };
+
 expr : ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); }
 	 | ident TLPAREN call_args TRPAREN TSEMI { $$ = new NMethodCall(*$1, *$3); delete $3; }
-	 | ident { $<ident>$ = $1; }
+	 | ident { $<ident>$ = $1; } 
+	 | TMINUS expr { $$ = new NUnaryOperator($1, *$2); }
 	 | number
          | expr TMUL expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
          | expr TDIV expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
          | expr TPLUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
          | expr TMINUS expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
  	 | expr compare expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
-	 | unary expr { $$ = new NUnaryOperator($1, *$2, -1); }
-	 | expr unary { $$ = new NUnaryOperator(-1, *$1, $2); }
-	 | TSIZEOF TLPAREN expr TRPAREN { $$ = new NUnaryOperator($1, *$3, -1); }
+	 | prefix expr TSEMI { $$ = new NUnaryOperator($1, *$2); }
+	 | expr postfix TSEMI { $$ = new NUnaryOperator($2, *$1); }
      | TLPAREN expr TRPAREN { $$ = $2; };
 
-unary: TINC | TDEC | TNOT | TADR;
+prefix: TINC | TDEC | TNOT | TADR;
+
+postfix: TINC | TDEC;
 
 call_args : /*blank*/ %empty { $$ = new ExpressionList(); }
 		  | expr { $$ = new ExpressionList(); $$->push_back($1); }
