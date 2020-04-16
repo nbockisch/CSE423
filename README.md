@@ -43,7 +43,7 @@ Checklist of required features for the Parser:
 - [x] Boolean expressions
 - [x] Goto statements
 - [x] If / Else control flow
-- [ ] Unary operators
+- [x] Unary operators (++, --, &, and -)
 - [x] Return statements
 - [x] Break statements
 - [x] While loops
@@ -51,9 +51,12 @@ Checklist of required features for the Parser:
 Checklist of optional features for the parser:
 - [x] Types other than integers (supports double for numbers and void for functions)
 - [ ] binary operators
-- [ ] for loops
+- [x] for loops (i must be declared before for loop. Example:
+int i;
+for(i = 0; i < 5; i++) {
+  #do something
+})
 - [ ] switch statements
-- [ ] ++, —, &, !, sizeof
 - [ ] -=, +=, *=, /=
 
 Sample of a printed parse tree: ([parse tree for sample4 in test folder](docs/parsetree.txt)) 
