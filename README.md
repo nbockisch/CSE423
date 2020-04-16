@@ -22,7 +22,7 @@ There are some compilation warnings that pop up from other things that are being
 `-i`: Print the IR  
 `-p`: Print the parse tree  
 `-t`: Print the tokens  
-`-r <ir file`: Read in an IR file as an argument  
+`-r <ir file>`: Read in an IR file as an argument  
 `-f <source file>`: Pass in a source file as an argument  
 `-o <ir file>`: Output the IR results to a file  
 
@@ -52,10 +52,10 @@ Checklist of optional features for the parser:
 - [x] Types other than integers (supports double for numbers and void for functions)
 - [ ] binary operators
 - [x] for loops (i must be declared before for loop. Example:
-int i;
-for(i = 0; i < 5; i++) {
-  #do something
-})
+`int i;  
+for(i = 0; i < 5; i++) {  
+  #do something  
+}`)  
 - [ ] switch statements
 - [ ] -=, +=, *=, /=
 
