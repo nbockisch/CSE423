@@ -49,7 +49,7 @@ Checklist of required features for the Parser:
 - [x] While loops
 
 Checklist of optional features for the parser:
-- [x] Types other than integers (supports double for numbers and void for functions)
+- [x] Types other than integers (supports void for functions)
 - [ ] binary operators
 - [x] for loops (i must be declared before for loop. Example:
 `int i;  
