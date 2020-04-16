@@ -42,14 +42,14 @@ Checklist of required features for the Parser:
 - [x] Assignment
 - [x] Boolean expressions
 - [x] Goto statements
-- [x] If / Else control flow
+- [x] If / Else control flow (supports Else If as well)
 - [x] Unary operators (++, --, &, and -)
 - [x] Return statements
 - [x] Break statements
 - [x] While loops
 
 Checklist of optional features for the parser:
-- [x] Types other than integers (supports double for numbers and void for functions)
+- [x] Types other than integers (supports void for functions)
 - [ ] binary operators
 - [x] for loops (i must be declared before for loop. Example:
 `int i;  
@@ -76,7 +76,7 @@ Checklist of required features by the IR:
 - [ ] While loops
 
 Checklist of optional features for the parser:
-- [x] Types other than integers (supports double for numbers and void for functions)
+- [x] Types other than integers (supports void for functions)
 - [ ] binary operators
 - [ ] for loops
 - [ ] switch statements
