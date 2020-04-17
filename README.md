@@ -83,4 +83,12 @@ Checklist of optional features for the parser:
 - [ ] ++, —, &, !, sizeof
 - [ ] -=, +=, *=, /=
 
-The IR was implemented by reading in the string form of the parse tree and parsing that information. This was done due to difficulties traversing the tree, however going forward this issue should be resolved and the IR will be changed to use this method instead. The string parsing method is not ideal, as it does give unexpected results in certain edge cases. 
+The IR was implemented by reading in the string form of the parse tree and parsing that information. This was done due to difficulties traversing the tree, however going forward this issue should be resolved and the IR will be changed to use this method instead. The string parsing method is not ideal, as it does give unexpected results in certain edge cases.
+
+### Symbol Table
+
+The symbol table is roughly implemented following the section in the textbook. It uses an unordered map to store records containing the variable name, record type (variable, function, function argument, label), variable type, and the AST node. To support multiple scopes, the symbol table is an array of unordered maps, where each element represents a new scope.
+
+The symbol table is filled by traversing the AST using the visitor pattern. When an AST node containing a block node is visited, a new symbol table scope is created via `initializeScope()`. When a variable declaration or function declaration is visited, a new record is created and inserted into the active symbol table scope. After a block node is done being visited, the active scope is switched to the previous scope via `finalizeScope()`.
+
+If there are blocks in the input with no variable definitions, then a scope level is still created but is empty (it contains no records).
