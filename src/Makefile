@@ -1,11 +1,14 @@
 CC=g++
 CFLAGS=-std=c++11 -Wall -g
 
-TARGETS = compiler
+TARGETS = lexer compiler
 
 DEPENDS = tokens.o ir.o symtable.o node.h nodevisitor.h printvisitor.h symvisitor.h
 
 all: $(TARGETS)
+
+lexer: tokens.l
+	lex -o tokens.cpp $^
 
 compiler: parser.o $(DEPENDS)
 	$(CC) $(CFLAGS) -o $@ $^
