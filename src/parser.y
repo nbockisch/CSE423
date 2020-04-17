@@ -272,7 +272,7 @@ int main(int argc, char **argv)
 
     if (p_sym) {
         printf("-----------------------------\n");
-        printf("Symbol Table:\n");
+        printf("Symbol Table: (%d total scopes)\n", symtab->getNumScopes());
         printf("-----------------------------\n");
         symtab->print();
         printf("-----------------------------\n");

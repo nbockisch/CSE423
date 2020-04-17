@@ -27,6 +27,8 @@ struct record_t {
         const Node *node; // Pointer to the object in the AST
 };
 
+typedef std::unordered_map<std::string, record_t> table_t;
+
 class Symtable {
 
 public:
@@ -34,17 +36,26 @@ public:
         ~Symtable();
 
         record_t *lookup(std::string name);
+        record_t *lookup(std::string name, int scope);
         int insert(std::string name, record_t record);
+        int insert(std::string name, record_t record, int scope);
   
         void initializeScope();
         void finalizeScope();
+
+        int getCurCount();
+        int getCount(int scope);
+
+        int getNumScopes();
+
+        table_t *getScope(int scope);
 
         void print();
 
 private:
         std::string rtype_str(record_type type);
         
-        std::vector<std::unordered_map<std::string, record_t>*> tables;
+        std::vector<table_t*> tables;
         
         int prev_table = -1; //Holds index of prev table, probably not needed..
         int cur_table = -1;
