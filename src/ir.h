@@ -7,23 +7,25 @@
 #define IR_H
 
 #include "node.h"
+#include "symtable.h"
 #include <stdio.h>
 #include <string>
 
-struct token_t {
-    std::string contents;
-    int level;
+struct item_t {
+    std::string label;
+    std::string type;
+    std::string id;
+    std::vector<item_t> params;
 };
 
 class ir
 {
 public:
-    ir(NBlock *root);
+    ir(Symtable *table);
     ~ir() { };
-    std::vector<token_t> parse_tree();
-    std::vector<std::string> getIR();
+    std::vector<item_t> items;
 private:
-    NBlock *tree;
+    Symtable *table;
 };
 
 #endif

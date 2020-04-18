@@ -8,6 +8,7 @@
 %{
     #include "node.h"
     #include "nodevisitor.h"
+    #include "irvisitor.h"
     #include "printvisitor.h"
     #include "ir.h"
     #include "symtable.h"
@@ -232,14 +233,20 @@ int main(int argc, char **argv)
     }
     yyparse();
    
-    // Generate the IR with the parse tree
-    ir_gen = new ir(root);
-    ir_list = ir_gen->getIR();
-
     // Create the symbol table using the tree visitor
     symtab = new Symtable();
     SymVisitor symvis(symtab);
     root->accept(symvis);
+    
+    // Generate the IR with the parse tree
+    ir_gen = new ir(symtab);
+    //ir_list = ir_gen->getIR();
+    IrVisitor irvis(ir_gen);
+    root->accept(irvis);
+
+    for (item_t tmp : ir_gen->items) {
+        std::cout << tmp.id << std::endl;
+    }
 
     // Print tree if flag used
     if (p_tree) {
@@ -253,7 +260,7 @@ int main(int argc, char **argv)
         printf("-----------------------------\n");
     }
 
-    if (p_ir) {
+    /*if (p_ir) {
         if (ir_file == 1) {
             std::ofstream ir_out(ir_out_file);
             for (std::string ir_line : ir_list) {
@@ -268,7 +275,7 @@ int main(int argc, char **argv)
             std::cout << ir_line << std::endl;
         }
         printf("-----------------------------\n");
-    }
+    } */
 
     if (p_sym) {
         printf("-----------------------------\n");
