@@ -20,18 +20,40 @@ public:
         }
 
         void visit(const NExpression& node) {
+                item_t item;
+                item.label = "EXPRESSION";
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+
+                blocks.push(item);
                 return;
         }
         
         void visit(const NStatement& node) {
+                item_t item;
+                item.label = "STATEMENT";
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+
+                blocks.push(item);
                 return;
         }
         
         void visit(const NInteger &node) {
+                item_t item;
                 std::stringstream ss;
+                
                 ss << node.value;
+                item.label = "INTEGER";
+                item.val = ss.str();
 
-                exp_comp.push(ss.str());
+                blocks.push(item);
+                //exp_comp.push(ss.str());
+
                 return;
         }
         
@@ -40,34 +62,55 @@ public:
 	}
 
         void visit(const NDouble &node) {
+                item_t item;
                 std::stringstream ss;
+                
                 ss << node.value;
+                item.label = "DOUBLE";
+                item.val = ss.str();
 
-                exp_comp.push(ss.str());
+                blocks.push(item);
                 return;
         }
         
         void visit(const NIdentifier& node) {
-                exp_comp.push(node.name);
+                item_t item;
+                
+                item.label = "IDENTIFIER";
+                item.id = node.name;
+
+                blocks.push(item);
+                //exp_comp.push(node.name);
                 return;
         }
         
         void visit(const NType& node) {
-                exp_comp.push(node.name);
+                item_t item;
+                
+                item.label = "TYPE";
+                item.type = node.name;
+
+                blocks.push(item);
+                //exp_comp.push(node.name);
                 return;
         }
         
         void visit(const NMethodCall& node) {
                 item_t item;
                 item.label = "FUNCTION CALL";
-                while (!exp_comp.empty()) {
-                    item_t tmp;
-                    tmp.id = exp_comp.top();
-                    item.params.push_back(tmp);
-                    exp_comp.pop();
+                item.id = node.id.name;
+
+                if (node.arguments.size() != 0) {
+                    for (auto exp : node.arguments) {
+                        exp->accept(*this);
+                        while (!blocks.empty()) {
+                            item.params.push_back(blocks.top());
+                            blocks.pop();
+                        }
+                    }
                 }
 
-                ir_obj->items.push_back(item);
+                blocks.push(item);
                 return;
         }
         
@@ -78,43 +121,41 @@ public:
                 
                 node.lhs.accept(*this);
                 
-                while (!exp_comp.empty()) {
-                    item_t tmp;
-                    tmp.id = exp_comp.top();
-                    item.params.push_back(tmp);
-                    exp_comp.pop();
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
                 }
 
                 switch (node.op) {
                     case 278:
-                        op.id = "+";
+                        op.val = "+";
                         break;
                     case 279:
-                        op.id = "-";
+                        op.val = "-";
                         break;
                     case 280:
-                        op.id = "*";
+                        op.val = "*";
                         break;
                     case 281:
-                        op.id = "/";
+                        op.val = "/";
                         break;
                     case 263:
-                        op.id = "==";
+                        op.val = "==";
                         break;
                     case 264:
-                        op.id = "!=";
+                        op.val = "!=";
                         break;
                     case 265:
-                        op.id = "<";
+                        op.val = "<";
                         break;
                     case 266:
-                        op.id = "<=";
+                        op.val = "<=";
                         break;
                     case 267:
-                        op.id = ">";
+                        op.val = ">";
                         break;
                     case 268:
-                        op.id = ">=";
+                        op.val = ">=";
                         break;
                      
                 }
@@ -122,50 +163,90 @@ public:
 
                 node.rhs.accept(*this);
 
-                while (!exp_comp.empty()) {
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                /*while (!exp_comp.empty()) {
                     item_t tmp;
                     tmp.id = exp_comp.top();
                     item.params.push_back(tmp);
                     exp_comp.pop();
                 }
 
-                ir_obj->items.push_back(item);
+                ir_obj->items.push_back(item);*/
+                blocks.push(item);
         }
         
 	void visit(const NUnaryOperator& node) {
                 node.expression.accept(*this);
+                item_t item;
+                item.label = "UNARY OP";
+                
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                blocks.push(item);
+
         }
 
         void visit(const NAssignment& node) {
                 node.lhs.accept(*this);
                 item_t item;
                 item.label = "ASSIGNMENT";
-                item.id = node.lhs.name;
+                //item.id = node.lhs.name;
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
                 
                 node.rhs.accept(*this);
-                while (!exp_comp.empty()) {
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                /*while (!exp_comp.empty()) {
                     item_t tmp;
                     tmp.id = exp_comp.top();
                     item.params.push_back(tmp);
                     exp_comp.pop();
-                }
-                ir_obj->items.push_back(item);
-
+                }*/
+                //ir_obj->items.push_back(item);
+                blocks.push(item);
         }
         
         void visit(const NBlock &node) {
                 // Everytime we encounter a block, that means a new scope.. so create a new table
                 //*table->initializeScope();
+                item_t item;
+                item.label = "BLOCK";
 
                 for( auto statement : node.statements) {
                         statement->accept(*this);
+                        
+                        while (!blocks.empty()) {
+                            item.params.push_back(blocks.top());
+                            blocks.pop();
+                        }
                 }
-                
+                blocks.push(item);
+
+                ir_obj->blocks = blocks;
                 //table->finalizeScope();
         }
         
         void visit(const NExpressionStatement& node) {
                 node.expression.accept(*this);
+                item_t item;
+                item.label = "EXPRESSION STATEMENT";
+                
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+
+                blocks.push(item);
         }
         
         void visit(const NReturnStatement& node) {
@@ -173,35 +254,110 @@ public:
                 node.expression.accept(*this);
 
                 item.label = "RETURN";
-                while (!exp_comp.empty()) {
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                /*while (!exp_comp.empty()) {
                     item_t tmp;
                     tmp.id = exp_comp.top();
                     //std::cout << "tmp id = " << tmp.id << std::endl;
                     item.params.push_back(tmp);
                     exp_comp.pop();
                 }
-                ir_obj->items.push_back(item);
+                ir_obj->items.push_back(item);*/
+                blocks.push(item);
         }
         
         void visit(const NIfStatement& node) {
+                item_t item;
+                item.label = "IF STATEMENT";
+                node.expression.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+
                 node.block.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                blocks.push(item);
         }
 
 	 void visit(const NElseIfStatement& node) {
+                item_t item;
+                item.label = "ELSE IF STATEMENT";
+                node.expression.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+
                 node.block.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                blocks.push(item);
         }
                 
         void visit(const NWhileStatement& node) {
+                item_t item;
+                item.label = "WHILE STATEMENT";
+                node.expression.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+
                 node.block.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                blocks.push(item);
         }
 
 	void visit(const NForStatement& node) {
+                item_t item;
+                item.label = "FOR STATEMENT";
+                node.expression1.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                node.expression2.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                node.expression3.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+
                 node.block.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                blocks.push(item);
         }
 
         
         void visit(const NElseStatement& node) {
+                item_t item;
+                item.label = "ELSE STATEMENT";
+
                 node.block.accept(*this);
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.top());
+                    blocks.pop();
+                }
+                blocks.push(item);
         }
         
         void visit(const NVariableDeclaration& node) {
@@ -209,25 +365,28 @@ public:
             item.label = "VAR DECL";
             item.type = node.type.name;
             item.id = node.id.name;
-            while (!exp_comp.empty()) {
-                item_t tmp;
-                tmp.id = exp_comp.top();
-                item.params.push_back(tmp);
-                exp_comp.pop();
+            //node.assignmentExpr->accept(*this);
+            while (!blocks.empty()) {
+                item.params.push_back(blocks.top());
+                blocks.pop();
             }
-            ir_obj->items.push_back(item);
+            blocks.push(item);
         }
 
 	void visit(const NGOTO &node) {
                 item_t item;
                 item.label = "GOTO";
-                item.id = node.id.name;
-                ir_obj->items.push_back(item);
+                item.val = node.id.name;
+                blocks.push(item); 
                 return;
         }
 
 	void visit(const NGOTOBlock &node) {
-		return;
+            item_t item;
+            item.label = "GOTO BLOCK";
+            item.val = node.id.name;
+            blocks.push(item); 
+            return;
         }
         
         void visit(const NFunctionDeclaration& node) {
@@ -244,15 +403,29 @@ public:
                     item.params.push_back(tmp);
                 }
             }
+            /*if (node.arguments.size() != 0) {
+                for (auto var : node.arguments) {
+                    item_t tmp;
+                    tmp.type = var->type.name;
+                    tmp.id = var->id.name;
+                    item.params.push_back(tmp);
+                }
+            }
 
-            ir_obj->items.push_back(item);
+            ir_obj->items.push_back(item); */
             node.block.accept(*this);
+            while (!blocks.empty()) {
+                item.params.push_back(blocks.top());
+                blocks.pop();
+            }
+            blocks.push(item);
 
         }
                 
 private:
         ir *ir_obj;
-        std::stack<std::string> exp_comp;
+        //std::stack<std::string> exp_comp;
+        std::stack<item_t> blocks;
 };
 
 

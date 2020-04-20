@@ -10,11 +10,13 @@
 #include "symtable.h"
 #include <stdio.h>
 #include <string>
+#include <stack>
 
 struct item_t {
     std::string label;
     std::string type;
     std::string id;
+    std::string val;
     std::vector<item_t> params;
 };
 
@@ -24,6 +26,7 @@ public:
     ir(Symtable *table);
     ~ir() { };
     std::vector<item_t> items;
+    std::stack<item_t> blocks;
 private:
     Symtable *table;
 };

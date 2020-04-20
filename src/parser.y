@@ -244,7 +244,7 @@ int main(int argc, char **argv)
     IrVisitor irvis(ir_gen);
     root->accept(irvis);
 
-    for (item_t tmp : ir_gen->items) {
+    /*for (item_t tmp : ir_gen->items) {
         if (!tmp.label.empty()) {
             std::cout << tmp.label << ", ";
         }
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
             std::cout << test.id << ", ";
         }
         std::cout << std::endl;
-    }
+    }*/
 
     // Print tree if flag used
     if (p_tree) {
