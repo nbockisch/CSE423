@@ -245,7 +245,16 @@ int main(int argc, char **argv)
     root->accept(irvis);
 
     for (item_t tmp : ir_gen->items) {
-        std::cout << tmp.id << std::endl;
+        if (!tmp.label.empty()) {
+            std::cout << tmp.label << ", ";
+        }
+        if (!tmp.id.empty()) {
+            std::cout << tmp.id << ", ";
+        }
+        for (auto test : tmp.params) {
+            std::cout << test.id << ", ";
+        }
+        std::cout << std::endl;
     }
 
     // Print tree if flag used

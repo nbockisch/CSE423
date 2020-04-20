@@ -107,6 +107,7 @@ public:
         }
         
         void visit(const NVariableDeclaration& node) {
+                //std::cout << "VAR DECL IN SYM" << std::endl;
 
                 record_t entry;
                 entry.name = node.id.name;
