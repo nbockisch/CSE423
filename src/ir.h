@@ -10,7 +10,7 @@
 #include "symtable.h"
 #include <stdio.h>
 #include <string>
-#include <stack>
+#include <deque>
 
 struct item_t {
     std::string label;
@@ -25,9 +25,11 @@ class ir
 public:
     ir(Symtable *table);
     ~ir() { };
-    std::vector<item_t> items;
-    std::stack<item_t> blocks;
+    std::deque<item_t> blocks;
+    std::vector<item_t> cleanIr(std::vector<item_t> items);
+    std::vector<item_t> buildIr();
 private:
+    std::vector<item_t> items;
     Symtable *table;
 };
 

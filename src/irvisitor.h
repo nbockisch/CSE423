@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string>
 #include <stack>
+#include <deque>
 #include <sstream>
 #include "node.h"
 #include "nodevisitor.h"
@@ -23,11 +24,11 @@ public:
                 item_t item;
                 item.label = "EXPRESSION";
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
 
-                blocks.push(item);
+                blocks.push_back(item);
                 return;
         }
         
@@ -35,11 +36,11 @@ public:
                 item_t item;
                 item.label = "STATEMENT";
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
 
-                blocks.push(item);
+                blocks.push_back(item);
                 return;
         }
         
@@ -51,13 +52,16 @@ public:
                 item.label = "INTEGER";
                 item.val = ss.str();
 
-                blocks.push(item);
-                //exp_comp.push(ss.str());
+                blocks.push_back(item);
+                //exp_comp.push_front(ss.str());
 
                 return;
         }
         
 	void visit(const NBreak &node) {
+        item_t item;
+        item.label = "BREAK";
+        blocks.push_back(item);
 		return;
 	}
 
@@ -69,7 +73,7 @@ public:
                 item.label = "DOUBLE";
                 item.val = ss.str();
 
-                blocks.push(item);
+                blocks.push_back(item);
                 return;
         }
         
@@ -79,8 +83,8 @@ public:
                 item.label = "IDENTIFIER";
                 item.id = node.name;
 
-                blocks.push(item);
-                //exp_comp.push(node.name);
+                blocks.push_back(item);
+                //exp_comp.push_front(node.name);
                 return;
         }
         
@@ -90,8 +94,8 @@ public:
                 item.label = "TYPE";
                 item.type = node.name;
 
-                blocks.push(item);
-                //exp_comp.push(node.name);
+                blocks.push_back(item);
+                //exp_comp.push_front(node.name);
                 return;
         }
         
@@ -104,13 +108,13 @@ public:
                     for (auto exp : node.arguments) {
                         exp->accept(*this);
                         while (!blocks.empty()) {
-                            item.params.push_back(blocks.top());
-                            blocks.pop();
+                            item.params.push_back(blocks.front());
+                            blocks.pop_front();
                         }
                     }
                 }
 
-                blocks.push(item);
+                blocks.push_back(item);
                 return;
         }
         
@@ -118,12 +122,13 @@ public:
                 item_t item;
                 item_t op;
                 item.label = "BIN OP";
+                op.label = "OP";
                 
                 node.lhs.accept(*this);
                 
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
 
                 switch (node.op) {
@@ -164,18 +169,18 @@ public:
                 node.rhs.accept(*this);
 
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
                 /*while (!exp_comp.empty()) {
                     item_t tmp;
-                    tmp.id = exp_comp.top();
+                    tmp.id = exp_comp.back();
                     item.params.push_back(tmp);
-                    exp_comp.pop();
+                    exp_comp.pop_back();
                 }
 
                 ir_obj->items.push_back(item);*/
-                blocks.push(item);
+                blocks.push_back(item);
         }
         
 	void visit(const NUnaryOperator& node) {
@@ -183,11 +188,50 @@ public:
                 item_t item;
                 item.label = "UNARY OP";
                 
-                while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                switch (node.op) {
+                    case 278:
+                        item.val = "+";
+                        break;
+                    case 279:
+                        item.val = "-";
+                        break;
+                    case 280:
+                        item.val = "*";
+                        break;
+                    case 281:
+                        item.val = "/";
+                        break;
+                    case 263:
+                        item.val = "==";
+                        break;
+                    case 264:
+                        item.val = "!=";
+                        break;
+                    case 265:
+                        item.val = "<";
+                        break;
+                    case 266:
+                        item.val = "<=";
+                        break;
+                    case 267:
+                        item.val = ">";
+                        break;
+                    case 268:
+                        item.val = ">=";
+                        break;
+                    case 282:
+                        item.val = "++";
+                        break;
+                     case 2833:
+                        item.val = "--";
+                        break;
                 }
-                blocks.push(item);
+                
+                while (!blocks.empty()) {
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
+                }
+                blocks.push_back(item);
 
         }
 
@@ -197,23 +241,23 @@ public:
                 item.label = "ASSIGNMENT";
                 //item.id = node.lhs.name;
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
                 
                 node.rhs.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
                 /*while (!exp_comp.empty()) {
                     item_t tmp;
-                    tmp.id = exp_comp.top();
+                    tmp.id = exp_comp.back();
                     item.params.push_back(tmp);
-                    exp_comp.pop();
+                    exp_comp.pop_back();
                 }*/
                 //ir_obj->items.push_back(item);
-                blocks.push(item);
+                blocks.push_back(item);
         }
         
         void visit(const NBlock &node) {
@@ -226,11 +270,11 @@ public:
                         statement->accept(*this);
                         
                         while (!blocks.empty()) {
-                            item.params.push_back(blocks.top());
-                            blocks.pop();
+                            item.params.push_back(blocks.front());
+                            blocks.pop_front();
                         }
                 }
-                blocks.push(item);
+                blocks.push_back(item);
 
                 ir_obj->blocks = blocks;
                 //table->finalizeScope();
@@ -242,11 +286,11 @@ public:
                 item.label = "EXPRESSION STATEMENT";
                 
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
 
-                blocks.push(item);
+                blocks.push_back(item);
         }
         
         void visit(const NReturnStatement& node) {
@@ -255,18 +299,18 @@ public:
 
                 item.label = "RETURN";
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
                 /*while (!exp_comp.empty()) {
                     item_t tmp;
-                    tmp.id = exp_comp.top();
+                    tmp.id = exp_comp.back();
                     //std::cout << "tmp id = " << tmp.id << std::endl;
                     item.params.push_back(tmp);
-                    exp_comp.pop();
+                    exp_comp.pop_back();
                 }
                 ir_obj->items.push_back(item);*/
-                blocks.push(item);
+                blocks.push_back(item);
         }
         
         void visit(const NIfStatement& node) {
@@ -274,16 +318,16 @@ public:
                 item.label = "IF STATEMENT";
                 node.expression.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
 
                 node.block.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
-                blocks.push(item);
+                blocks.push_back(item);
         }
 
 	 void visit(const NElseIfStatement& node) {
@@ -291,16 +335,16 @@ public:
                 item.label = "ELSE IF STATEMENT";
                 node.expression.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
 
                 node.block.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
-                blocks.push(item);
+                blocks.push_back(item);
         }
                 
         void visit(const NWhileStatement& node) {
@@ -308,16 +352,16 @@ public:
                 item.label = "WHILE STATEMENT";
                 node.expression.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
 
                 node.block.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
-                blocks.push(item);
+                blocks.push_back(item);
         }
 
 	void visit(const NForStatement& node) {
@@ -325,26 +369,26 @@ public:
                 item.label = "FOR STATEMENT";
                 node.expression1.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
                 node.expression2.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
                 node.expression3.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
 
                 node.block.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
-                blocks.push(item);
+                blocks.push_back(item);
         }
 
         
@@ -354,10 +398,10 @@ public:
 
                 node.block.accept(*this);
                 while (!blocks.empty()) {
-                    item.params.push_back(blocks.top());
-                    blocks.pop();
+                    item.params.push_back(blocks.front());
+                    blocks.pop_front();
                 }
-                blocks.push(item);
+                blocks.push_back(item);
         }
         
         void visit(const NVariableDeclaration& node) {
@@ -365,19 +409,21 @@ public:
             item.label = "VAR DECL";
             item.type = node.type.name;
             item.id = node.id.name;
-            //node.assignmentExpr->accept(*this);
-            while (!blocks.empty()) {
-                item.params.push_back(blocks.top());
-                blocks.pop();
+            if (node.assignmentExpr != NULL)  {
+                node.assignmentExpr->accept(*this);
             }
-            blocks.push(item);
+            while (!blocks.empty()) {
+                item.params.push_back(blocks.front());
+                blocks.pop_front();
+            }
+            blocks.push_back(item);
         }
 
 	void visit(const NGOTO &node) {
                 item_t item;
                 item.label = "GOTO";
                 item.val = node.id.name;
-                blocks.push(item); 
+                blocks.push_back(item); 
                 return;
         }
 
@@ -385,7 +431,7 @@ public:
             item_t item;
             item.label = "GOTO BLOCK";
             item.val = node.id.name;
-            blocks.push(item); 
+            blocks.push_back(item); 
             return;
         }
         
@@ -398,6 +444,7 @@ public:
             if (node.arguments.size() != 0) {
                 for (auto var : node.arguments) {
                     item_t tmp;
+                    tmp.label = "FUNC PARAM";
                     tmp.type = var->type.name;
                     tmp.id = var->id.name;
                     item.params.push_back(tmp);
@@ -415,17 +462,17 @@ public:
             ir_obj->items.push_back(item); */
             node.block.accept(*this);
             while (!blocks.empty()) {
-                item.params.push_back(blocks.top());
-                blocks.pop();
+                item.params.push_back(blocks.front());
+                blocks.pop_front();
             }
-            blocks.push(item);
+            blocks.push_back(item);
 
         }
                 
 private:
         ir *ir_obj;
         //std::stack<std::string> exp_comp;
-        std::stack<item_t> blocks;
+        std::deque<item_t> blocks;
 };
 
 

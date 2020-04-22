@@ -243,6 +243,7 @@ int main(int argc, char **argv)
     //ir_list = ir_gen->getIR();
     IrVisitor irvis(ir_gen);
     root->accept(irvis);
+    ir_gen->buildIr();
 
     /*for (item_t tmp : ir_gen->items) {
         if (!tmp.label.empty()) {
