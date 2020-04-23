@@ -11,6 +11,7 @@
     #include "irvisitor.h"
     #include "printvisitor.h"
     #include "ir.h"
+    #include "X86.h"
     #include "symtable.h"
     #include "symvisitor.h"
         #include <cstdio>
@@ -169,6 +170,7 @@ int main(int argc, char **argv)
     int p_tree = 0;
     int p_ir = 0;
     int p_sym = 0;
+    int p_ass = 0;
     int ir_file = 0;
     std::string ir_out_file;
     std::string fname;
@@ -177,7 +179,7 @@ int main(int argc, char **argv)
     Symtable *symtab = NULL;
     FILE *ir_in;
 
-    while ((opt = getopt(argc, argv,  ":ho:r:ptisf:ax"))  != -1) {
+    while ((opt = getopt(argc, argv,  ":ho:r:ptisaf:ax"))  != -1) {
         switch(opt) {
             case 'h':
                 usage(argv[0]);
@@ -219,6 +221,9 @@ int main(int argc, char **argv)
                 // print out the symbol table
                 p_sym = 1;
                 break;
+	    case 'a':
+                // create the assembly file
+                p_ass = 1;
         }
     }
 
@@ -237,6 +242,10 @@ int main(int argc, char **argv)
     symtab = new Symtable();
     SymVisitor symvis(symtab);
     root->accept(symvis);
+
+    //generate assembly file
+    X86 *assembly = new X86();
+    assembly->initVariables(symtab);
     
     // Generate the IR with the parse tree
     ir_gen = new ir(symtab);

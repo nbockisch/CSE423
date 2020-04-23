@@ -3,7 +3,7 @@ CFLAGS=-std=c++11 -Wall -g
 
 TARGETS = lexer compiler
 
-DEPENDS = tokens.o ir.o symtable.o node.h nodevisitor.h printvisitor.h symvisitor.h
+DEPENDS = tokens.o ir.o symtable.o X86.o node.h nodevisitor.h printvisitor.h symvisitor.h
 
 all: $(TARGETS)
 

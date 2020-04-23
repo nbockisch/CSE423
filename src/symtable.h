@@ -49,11 +49,11 @@ public:
         int getNumScopes();
 
         table_t *getScope(int scope);
+	std::string rtype_str(record_type type);
 
         void print();
 
 private:
-        std::string rtype_str(record_type type);
         
         std::vector<table_t*> tables;
         
