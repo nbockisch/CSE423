@@ -17,7 +17,14 @@ struct item_t {
     std::string type;
     std::string id;
     std::string val;
+    int tag;
     std::vector<item_t> params;
+};
+
+struct ssa_rec {
+    std::string orig;
+    std::string cur;
+    std::string prev;
 };
 
 class ir
@@ -27,9 +34,14 @@ public:
     ~ir() { };
     std::deque<item_t> blocks;
     std::vector<item_t> cleanIr(std::vector<item_t> items);
+    void convertBinOp(item_t item);
+    std::vector<item_t> convert3Var(std::vector<item_t> items);
+    std::vector<item_t> convertSSA(std::vector<item_t> items);
     std::vector<item_t> buildIr();
 private:
     std::vector<item_t> items;
+    std::stack<item_t> tv_decl;
+    int v_num;
     Symtable *table;
 };
 
