@@ -10,6 +10,7 @@
 #include <regex>
 #include <stack>
 #include <algorithm>
+#include <iterator>
 #include "ir.h"
 #include "printvisitor.h"
 
@@ -18,19 +19,6 @@ ir::ir(Symtable *table) {
     this->v_num = 1;
 }
 
-void tmpPrint(std::vector<item_t> lol, int level)
-{
-    for (item_t test : lol) {
-        if (test.params.size() != 0) {
-            std::reverse(test.params.begin(), test.params.end());
-            tmpPrint(test.params, level + 1);
-        }
-        for (int i = 0; i < level; i++) {
-            std::cout << " ";
-        }
-        std::cout << "Label: " << test.label << ", type: " << test.type << ", id: " << test.id << ", val: " << test.val << std::endl;
-    }
-}
 
 /**
  * Recursive function that converts the IR representation from the tree 
@@ -65,7 +53,6 @@ void ir::convertBinOp(item_t item)
 
     for (item_t item : item.params) {
         if (item.label == "BIN OP") {
-            //std::cout << "HERE" <<
             convertBinOp(item);
             item_t tmp;
             tmp.label = "IDENTIFIER";
@@ -94,10 +81,8 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
                 if (item2.label == "BIN OP") {
                     std::vector<item_t> tvar_st;
                     convertBinOp(item2);
-                    //std::cout << "=== START TESTING BIN OP ===" << std::endl;
                     
                     while (!this->tv_decl.empty()) {
-                        /*std::cout << "Label: " << this->tv_decl.top().label << ", type: " << this->tv_decl.top().type << ", id: " << this->tv_decl.top().id << ", val: " << this->tv_decl.top().val << std::endl;*/
                         tvar_st.push_back(this->tv_decl.top());
                         this->tv_decl.pop();
                     }
@@ -105,7 +90,6 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
                     for (item_t i : tvar_st) {
                         convert_ir.push_back(i);
                     }
-                    //std::cout << "=== END TESTING BIN OP ===" << std::endl;
                 } else {
                     convert_ir.push_back(item);
                 }
@@ -123,26 +107,160 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
  * @param items a vector of item_t structs with a three variable IR
  * @return a vector of item_t structs in SSA form
  **/
-/*std::vector<item_t> ir::convertSSA(std::vector<item_t> items)
+void ir::convertSSA(std::vector<item_t> &in)
 {
     std::vector<ssa_rec> vars;
+    std::vector<item_t> items;
+    std::vector<item_t>::iterator it;
 
-    for (item_t item : items) {
-        if (item.label == "FUNC DECL") {
-            for (item_t item2 : item.params) {
-                if (item2.label = "FUNC PARAM") {
-                    // Check if var already recorded
-                    for (ssa_rec i : vars) {
-                        if (i.orig == item2.id) {
-                            if 
+    for (int i = 0; i < in.size(); i++) {
+        if (((&in[i])->label == "IF STATEMENT") || ((&in[i])->label == "IF STATEMENT")) {
+            for (int j = 0; j < (&in[i])->params.size(); j++) {
+                if ((&in[i])->params[j].label == "BIN OP") {
+                    for (int k = 0; k < (&in[i])->params[j].params.size(); k++) {
+                        if ((&in[i])->params[j].params[k].label == "IDENTIFIER") {
+                            std::string tmp2 = (&in[i])->params[j].params[k].id;
+                            
+                            for (int l = 0; l < vars.size(); l++) {
+                                if (vars[l].orig == (&in[i])->params[j].params[k].id) {
+                                    (&in[i])->params[j].params[k].id = vars[l].cur; 
+                                }
+                            }
+
+                            if ((&in[i])->params[j].params[k].id == tmp2) {
+                                ssa_rec rec;
+                                rec.orig = (&in[i])->params[j].params[k].id;   
+                                rec.prev = (&in[i])->params[j].params[k].id;   
+                                rec.cur = (&in[i])->params[j].params[k].id;   
+                                vars.push_back(rec);
+                            }
+                        }
+                    }
+                }
+            }
+        } else if ((&in[i])->label == "FUNC DECL") {
+            for (int j = 0; j < (&in[i])->params.size(); j++) {
+                if ((&in[i])->params[j].label == "FUNC PARAM") {
+                    std::string tmp2 = (&in[i])->params[j].id;
+                    
+                    for (int k = 0; k < vars.size(); k++) {
+                        if (vars[k].orig == (&in[i])->params[j].id) {
+                            vars[k].prev = vars[k].cur;
+                            vars[k].v_num++;
+                            vars[k].cur = vars[k].orig + std::to_string(vars[k].v_num);
+                           (&in[i])->params[j].id = vars[k].cur; 
+                        }
+                    }
+                    for (ssa_rec v : vars) {
+                    }
+
+                    if ((&in[i])->params[j].id == tmp2) {
+                        ssa_rec rec;
+                        rec.orig = (&in[i])->params[j].id;   
+                        rec.prev = (&in[i])->params[j].id;   
+                        rec.cur = (&in[i])->params[j].id;   
+                        vars.push_back(rec);
+                    }
+                }
+            }
+        } else if ((&in[i])->label == "VAR DECL") {
+            std::string tmp = (&in[i])->id;
+            for (int j = 0; j < vars.size(); j++) {
+                if (vars[j].orig == (&in[i])->id) {
+                    // Change current variable name
+                    vars[j].prev = vars[j].cur;
+                    vars[j].v_num++;
+                    vars[j].cur = vars[j].orig + std::to_string(vars[j].v_num);
+                    (&in[i])->id = vars[j].cur;
+                }
+            }
+            
+            // Check if var  not in record
+            if ((&in[i])->id == tmp) {
+                ssa_rec rec;
+                rec.orig = (&in[i])->id;
+                rec.prev = (&in[i])->id;
+                rec.cur = (&in[i])->id;
+                vars.push_back(rec);
+            }
+
+            // Update identifiers (if any)
+            for (int j = 0; j < (&in[i])->params.size(); j++) {
+                if ((&in[i])->params[j].label == "IDENTIFIER") {
+                    std::string tmp2 = (&in[i])->params[j].id;
+                    
+                    for (int k = 0; k < vars.size(); k++) {
+                        if (vars[k].orig == (&in[i])->params[j].id) {
+                            if ((&in[i])->params[j].id == (&in[i])->id) {
+                               (&in[i])->params[j].id = vars[k].prev; 
+                            } else {
+                                (&in[i])->params[j].id = vars[k].cur; 
+                            }
                         }
                     }
 
+                    if ((&in[i])->params[j].id == tmp2) {
+                        ssa_rec rec;
+                        rec.orig = (&in[i])->params[j].id;   
+                        rec.prev = (&in[i])->params[j].id;   
+                        rec.cur = (&in[i])->params[j].id;   
+                        vars.push_back(rec);
+                    }
                 }
             }
+        } else if ((&in[i])->label == "ASSIGNMENT") {
+            // Update identifiers (if any)
+            for (int j = 0; j < (&in[i])->params.size(); j++) {
+                if ((&in[i])->params[j].label == "IDENTIFIER") {
+                    std::string tmp2 = (&in[i])->params[j].id;
+                    
+                    for (int k = 0; k < vars.size(); k++) {
+                        if (vars[k].orig == (&in[i])->params[j].id) {
+                            vars[k].prev = vars[k].cur;
+                            vars[k].v_num++;
+                            vars[k].cur = vars[k].orig + std::to_string(vars[k].v_num);
+                           (&in[i])->params[j].id = vars[k].cur; 
+                        }
+                    }
+
+                    if ((&in[i])->params[j].id == tmp2) {
+                        ssa_rec rec;
+                        rec.orig = (&in[i])->params[j].id;   
+                        rec.prev = (&in[i])->params[j].id;   
+                        rec.cur = (&in[i])->params[j].id;   
+                        vars.push_back(rec);
+                    }
+                }
+            }
+            
+        } else if ((&in[i])->label == "UNARY OP") {
+            // Update identifiers (if any)
+            for (int j = 0; j < (&in[i])->params.size(); j++) {
+                if ((&in[i])->params[j].label == "IDENTIFIER") {
+                    std::string tmp2 = (&in[i])->params[j].id;
+                    
+                    for (int k = 0; k < vars.size(); k++) {
+                        if (vars[k].orig == (&in[i])->params[j].id) {
+                            vars[k].prev = vars[k].cur;
+                            vars[k].v_num++;
+                            vars[k].cur = vars[k].orig + std::to_string(vars[k].v_num);
+                           (&in[i])->params[j].id = vars[k].cur; 
+                        }
+                    }
+
+                    if ((&in[i])->params[j].id == tmp2) {
+                        ssa_rec rec;
+                        rec.orig = (&in[i])->params[j].id;   
+                        rec.prev = (&in[i])->params[j].id;   
+                        rec.cur = (&in[i])->params[j].id;   
+                        vars.push_back(rec);
+                    }
+                }
+            }
+
         }
-    }
-}*/
+    } 
+}
 
 /**
  * Take the nodes gathered from the parse tree and construct the final IR
@@ -150,7 +268,6 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
  **/
 std::vector<item_t> ir::buildIr()
 {
-    std::vector<item_t> fin_ir;
     std::vector<item_t> tmp_list;
 
 
@@ -162,42 +279,7 @@ std::vector<item_t> ir::buildIr()
 
     tmp_list = convert3Var(cleanIr(tmp_list));
 
-    //tmpPrint(tmp_list, 0);
-    /*for (item_t test : cleanIr(tmp_list)) {
-        //std::cout << "Label: " << test.label << ", type: " << test.type << ", id: " << test.id << ", val: " << test.val << std::endl;
-    }*/
-
-    /*std::cout << "LOL THIS WILL FAIL!!!" << std::endl;
-    for (item_t test2 : convert3Var(cleanIr(tmp_list))) {
-        std::cout << "Label: " << test2.label << ", type: " << test2.type << ", id: " << test2.id << ", val: " << test2.val << std::endl;
-            for (item_t test : test2.params) {
-               std::cout << "- Label: " << test.label << ", type: " << test.type << ", id: " << test.id << ", val: " << test.val << std::endl;
-            }
-        if (test2.label == "VAR DECL") {
-            for (item_t test : test2.params) {
-               std::cout << "- Label: " << test.label << ", type: " << test.type << ", id: " << test.id << ", val: " << test.val << std::endl;
-            }
-
-        }
-    }*/
-
-    /* for (item_t item : cleanIr(tmp_list)) {
-        if (item.label == "FUNC DECL") {
-            first_param = 1;
-            std::cout << item.type << " " << item.id << "(";
-            for (item_t item2 : item.params) {
-                if (item2.label == "FUNC PARAM") {
-                    if (first_param == 1) {
-                        std::cout << item2.type << " " << item2.id;
-                        first_param = 0;
-                    } else {
-                        std::cout << ", " << item2.type << " " << item2.id;
-                    }
-                }
-            }
-            std::cout << ")" << std::endl;
-        }
-    } */
-
+    convertSSA(tmp_list);
+    
     return tmp_list;
 }

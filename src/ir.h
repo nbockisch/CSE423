@@ -25,6 +25,7 @@ struct ssa_rec {
     std::string orig;
     std::string cur;
     std::string prev;
+    int v_num = 0;
 };
 
 class ir
@@ -36,7 +37,7 @@ public:
     std::vector<item_t> cleanIr(std::vector<item_t> items);
     void convertBinOp(item_t item);
     std::vector<item_t> convert3Var(std::vector<item_t> items);
-    std::vector<item_t> convertSSA(std::vector<item_t> items);
+    void convertSSA(std::vector<item_t> &in);
     std::vector<item_t> buildIr();
 private:
     std::vector<item_t> items;
