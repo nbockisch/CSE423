@@ -243,18 +243,16 @@ int main(int argc, char **argv)
     SymVisitor symvis(symtab);
     root->accept(symvis);
 
-    //generate assembly file
-    X86 *assembly = new X86();
-    assembly->initVariables(symtab);
     
     // Generate the IR with the parse tree
     ir_gen = new ir(symtab);
     //ir_list = ir_gen->getIR();
     IrVisitor irvis(ir_gen);
     root->accept(irvis);
-    ir_gen->buildIr();
+    
 
-    /*for (item_t tmp : ir_gen->items) {
+
+   /* for (item_t tmp : ir_gen->items) {
         if (!tmp.label.empty()) {
             std::cout << tmp.label << ", ";
         }
@@ -302,6 +300,12 @@ int main(int argc, char **argv)
         printf("-----------------------------\n");
         symtab->print();
         printf("-----------------------------\n");
+    }
+
+    if (p_ass) {
+    	//generate assembly file
+	X86 *assembly = new X86();
+	assembly->initVariables(symtab, ir_gen->buildIr());
     }
     
     fclose(yyin);

@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string>
 #include <deque>
+#include <stack>
 
 struct item_t {
     std::string label;
@@ -39,8 +40,9 @@ public:
     std::vector<item_t> convert3Var(std::vector<item_t> items);
     void convertSSA(std::vector<item_t> &in);
     std::vector<item_t> buildIr();
-private:
     std::vector<item_t> items;
+private:
+    
     std::stack<item_t> tv_decl;
     int v_num;
     Symtable *table;
