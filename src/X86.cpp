@@ -167,10 +167,10 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 		    std::cout << "Value: " << tmp.val << "\n";
 		}
 		for (auto test : tmp.params) {
-		     std::cout << "Value: " << test.val << "\n";
+		     std::cout << "Param Value: " << test.val << "\n";
 		}
 		for (auto test : tmp.params) {
-		     std::cout << "ID: " << test.id << "\n";
+		     std::cout << "Param ID: " << test.id << "\n";
 		}
 		std::cout << std::endl;
 	}
