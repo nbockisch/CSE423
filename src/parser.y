@@ -31,13 +31,15 @@
     extern int p_tokens;
     extern int yylineno;
     extern int yycolumn;
+    #define YYERROR_VERBOSE 1
 	void yyerror(const char *s) {
                 std::printf("Error (line %d:%d): %s at '%s'\n", yylineno, yycolumn, s, yytext);
-                std::exit(1);
+                //std::exit(1);
         }
-        
+     
    #define YYPARSE_PARAM scanner
    #define YYLEX_PARAM scanner
+
 %}
 
 %locations
@@ -90,12 +92,12 @@
 program : declist { root = $1; };
 		
 declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaration>1); }
-	  | declist declaration { $1->statements.push_back($<declaration>2); };
+          | declist declaration { $1->statements.push_back($<declaration>2); };
 
 declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new 				NReturnStatement(*$2); } | if_decl | else_decl | elseif_decl | 
 			TWHILE TLPAREN expr TRPAREN block {$$ = new NWhileStatement(*$3, *$5); } 
 		| TFOR TLPAREN expr1 expr2 expr3 TRPAREN block {$$ = new NForStatement(*$3, *$4, *$5, *$7); } 
-		| TBREAK TSEMI {$$ = new NBreak();} | TGOTO ident TSEMI {$$ = new NGOTO(*$2);} | ident TCOLON {$$ = new NGOTOBlock(*$1);};
+                | TBREAK TSEMI {$$ = new NBreak();} | TGOTO ident TSEMI {$$ = new NGOTO(*$2);} | ident TCOLON {$$ = new NGOTOBlock(*$1);};
 
 block : TLBRACE declist TRBRACE { $$ = $2; }
 	  | TLBRACE TRBRACE { $$ = new NBlock(); };
@@ -161,6 +163,12 @@ compare : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE;
 
 
 %%
+          //#define RUN_TESTS
+#ifdef RUN_TESTS
+#define CATCH_CONFIG_RUNNER
+#include "catch.hpp"
+#endif
+
 void usage(const char *name);
 
 int main(int argc, char **argv)
@@ -178,6 +186,13 @@ int main(int argc, char **argv)
     ir *ir_gen = NULL;
     Symtable *symtab = NULL;
     FILE *ir_in;
+
+    #ifdef RUN_TESTS
+    printf("Setting up catch\n");
+    Catch::Session session;
+    session.run();
+    return 0;
+    #endif
 
     while ((opt = getopt(argc, argv,  ":ho:r:ptisaf:ax"))  != -1) {
         switch(opt) {
@@ -330,3 +345,27 @@ void usage(const char *name) {
         printf("  -o file     Output ir to a file.\n");
         printf("  -h          Display this help message.\n");
 }
+
+#ifdef RUN_TESTS
+TEST_CASE("Testing language features", "[lang]") {
+        SECTION( "testing function declarations" ) {
+                char *text = "int main() { }";
+
+                FILE *in = fmemopen(text, strlen(text), "r");
+                yyin = in;
+
+                REQUIRE(yyparse() == 0);
+
+                fclose(in);
+        }
+
+        SECTION( "testing variable declarations" ) {
+                char *text = "int main() { int x = 0; }";
+
+                FILE *in = fmemopen(text, strlen(text), "r");
+                yyin = in;
+
+                REQUIRE(yyparse() == 0);
+        }
+}
+#endif
