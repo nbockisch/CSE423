@@ -163,7 +163,7 @@ compare : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE;
 
 
 %%
-          //#define RUN_TESTS
+
 #ifdef RUN_TESTS
 #define CATCH_CONFIG_RUNNER
 #include "catch.hpp"
@@ -347,25 +347,88 @@ void usage(const char *name) {
 }
 
 #ifdef RUN_TESTS
+/*
+ * Helper function to open the given string as a file pointer for read only.
+ */
+FILE *strToFile(char *str) {
+        return fmemopen(str, strlen(str), "r");
+}
+
 TEST_CASE("Testing language features", "[lang]") {
         SECTION( "testing function declarations" ) {
                 char *text = "int main() { }";
-
-                FILE *in = fmemopen(text, strlen(text), "r");
-                yyin = in;
-
+                yyin = strToFile(text);
                 REQUIRE(yyparse() == 0);
-
-                fclose(in);
+                fclose(yyin);
         }
 
         SECTION( "testing variable declarations" ) {
                 char *text = "int main() { int x = 0; }";
-
-                FILE *in = fmemopen(text, strlen(text), "r");
-                yyin = in;
-
+                yyin = strToFile(text);
                 REQUIRE(yyparse() == 0);
+                fclose(yyin);
+        }
+}
+TEST_CASE("Testing language semantics") {
+        SECTION("seeing if assigning non-integer (character) to integer throws an error") {
+                char *text = "int main() { int x = 't'; }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 1);
+                fclose(yyin);
+        }
+        SECTION("seeing if assigning non-integer (double) to integer throws an error") {
+                char *text = "int main() { int x = 5.999; }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 1);
+                fclose(yyin);
+        }
+        SECTION("seeing if assigning non-integer (undefined ref) to integer throws an error") {
+                char *text = "int main() { int x = garbage; }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 1);
+                fclose(yyin);
+        }
+        SECTION("seeing if unsupported type throws an error") {
+                char *text = "int main() { newtype y; }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 1);
+                fclose(yyin);
+        }
+        SECTION("seeing if random undefined reference in code throws an error") {
+                char *text = "int main() { int x = 0; nonsense }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 1);
+                fclose(yyin);
+        }
+        SECTION("seeing if calling undefined function throws an error") {
+                char *text = "int main() { func(); }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 1);
+                fclose(yyin);
+        }
+        SECTION("seeing if calling function with mismatched args throws an error") {
+                char *text = "int func(int x, int y) { return x + y; } int main() { int x = func(2); }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 1);
+                fclose(yyin);
+        }
+        SECTION("seeing if redeclaring existing variable throws an error") {
+                char *text = "int main() { int x = 1; int x = 2; }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 1);
+                fclose(yyin);
+        }
+        SECTION("seeing if redeclaring existing function throws an error") {
+                char *text = "int func(int x, int y) { return 0; } int func(int x, int y) { return x + y; }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 1);
+                fclose(yyin);
+        }
+        SECTION("seeing if referencing undeclared variables throw an error") {
+                char *text = "int main() { int x = 5; x = y + 2; }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 1); // Make sure parser returns ERROR!
+                fclose(yyin);
         }
 }
 #endif
