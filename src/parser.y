@@ -40,6 +40,8 @@
    #define YYPARSE_PARAM scanner
    #define YYLEX_PARAM scanner
 
+        Symtable *symtab = new Symtable();
+
 %}
 
 %locations
@@ -94,13 +96,12 @@ program : declist { root = $1; };
 declist : declaration { $$ = new NBlock(); $$->statements.push_back($<declaration>1); }
           | declist declaration { $1->statements.push_back($<declaration>2); };
 
-declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new 				NReturnStatement(*$2); } | if_decl | else_decl | elseif_decl | 
-			TWHILE TLPAREN expr TRPAREN block {$$ = new NWhileStatement(*$3, *$5); } 
+declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); } | TRETURN expr TSEMI { $$ = new NReturnStatement(*$2); } | if_decl | else_decl | elseif_decl | TWHILE TLPAREN expr TRPAREN block {$$ = new NWhileStatement(*$3, *$5); } 
 		| TFOR TLPAREN expr1 expr2 expr3 TRPAREN block {$$ = new NForStatement(*$3, *$4, *$5, *$7); } 
                 | TBREAK TSEMI {$$ = new NBreak();} | TGOTO ident TSEMI {$$ = new NGOTO(*$2);} | ident TCOLON {$$ = new NGOTOBlock(*$1);};
 
-block : TLBRACE declist TRBRACE { $$ = $2; }
-	  | TLBRACE TRBRACE { $$ = new NBlock(); };
+block : TLBRACE { printf("Creating new scope..\n"); symtab->initializeScope(); } declist TRBRACE { $$ = $3; printf("Finalizing scope..\n"); symtab->finalizeScope(); }
+       | TLBRACE TRBRACE { /* Dont need new scope since empty block? */ $$ = new NBlock(); };
 
 if_decl : TIF TLPAREN expr TRPAREN block block {$$ = new NIfStatement(*$3, *$5); } | TIF TLPAREN expr TRPAREN block 
 	{$$ = new NIfStatement(*$3, *$5); };
@@ -110,14 +111,92 @@ elseif_decl : TELSE TIF TLPAREN expr TRPAREN block block {$$ = new NElseIfStatem
 
 else_decl : TELSE block {$$ = new NElseStatement(*$2); };
 
-var_decl : type ident TSEMI { $$ = new NVariableDeclaration(*$1, *$2); } | 
-		type ident TEQUAL expr TSEMI { $$ = new NVariableDeclaration(*$1, *$2, $4); };
+var_decl : type ident TSEMI
+           {
+                   /* Check if defined in symtable first */
+                   printf("Checking symtable for name '%s'\n", $2->name.c_str());
+                   if(symtab->lookup($2->name) == NULL) {
+                           record_t entry;
+                           entry.name = $2->name;
+                           entry.rtype = record_type::variable;
+                           entry.type = $1->name;
+                                              
+                           $$ = new NVariableDeclaration(*$1, *$2);
+                           entry.node = $$;
+
+                           symtab->insert(entry.name, entry);
+                   } else {
+                           std::string str("redeclaration of variable '"+$2->name+"'");
+                           yyerror(str.c_str());
+                           YYABORT;
+                   }
+           } | type ident TEQUAL expr TSEMI
+           {
+                   /* Check if defined in symtable first */
+                   printf("Checking symtable for name '%s'\n", $2->name.c_str());
+                   if(symtab->lookup($2->name) == NULL) {
+                           record_t entry;
+                           entry.name = $2->name;
+                           entry.rtype = record_type::variable;
+                           entry.type = $1->name;
+                                              
+                           $$ = new NVariableDeclaration(*$1, *$2, $4);
+                           entry.node = $$;
+
+                           symtab->insert(entry.name, entry);
+                   } else {
+                           std::string str("redeclaration of variable '"+$2->name+"'");
+                           yyerror(str.c_str());
+                           YYABORT;
+                   }
+           };
 
 func_var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); };
 		
 
-func_decl : type ident TLPAREN func_decl_args TRPAREN block { $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; }
-		| type ident TLPAREN func_decl_args TRPAREN block block { $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6); delete $4; };
+func_decl : type ident TLPAREN func_decl_args TRPAREN block
+            {
+                    /* Check if defined in symtable first */
+                    printf("Checking symtable for function name '%s'\n", $2->name.c_str());
+                    if(symtab->lookup($2->name) == NULL) {
+                            record_t entry;
+                            entry.name = $2->name;
+                            entry.rtype = record_type::function;
+                            entry.type = $1->name;
+
+                            $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6);
+                            
+                            entry.node = $$;
+
+                            symtab->insert(entry.name, entry);
+
+                            if($4->size() != 0) {
+                                    symtab->initializeScope();
+                                    for (auto var : *$4) {
+                                            record_t entry;
+                                            entry.name = var->id.name;
+                                            entry.rtype = record_type::funcarg;
+                                            entry.type = var->type.name;
+                                            entry.node = var;
+                                
+                                            symtab->insert(entry.name, entry);
+                                    }
+                                    symtab->finalizeScope();
+                            }
+
+                            delete $4;
+                    } else {
+                            std::string str("redeclaration of function '"+$2->name+"'");
+                            yyerror(str.c_str());
+                            YYABORT;
+                    }
+            }
+	    | type ident TLPAREN func_decl_args TRPAREN block block
+            {
+                    printf("matching double block on func\n");
+                    $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6);
+                    delete $4;
+            };
 
 func_decl_args : /*blank*/ %empty { $$ = new VariableList(); }
 		  | func_var_decl { $$ = new VariableList(); $$->push_back($<var_decl>1); }
@@ -136,9 +215,43 @@ expr2: expr compare expr TSEMI { $$ = new NBinaryOperator(*$1, $2, *$3); };
 
 expr3: expr postfix { $$ = new NUnaryOperator($2, *$1); };
 
-expr : ident TEQUAL expr TSEMI { $$ = new NAssignment(*$<ident>1, *$3); }
-	 | ident TLPAREN call_args TRPAREN TSEMI { $$ = new NMethodCall(*$1, *$3); delete $3; }
-	 | ident { $<ident>$ = $1; } 
+expr : ident TEQUAL expr TSEMI
+       {
+               /* See if the identifier exists in the symbol table, if it doesnt, then throw error */
+               printf("expr: checking symtable for '%s'\n", $1->name.c_str());
+               if(symtab->lookup($1->name) == NULL) {
+                       std::string str("undefined reference to name '"+$1->name+"'");
+                       yyerror(str.c_str());
+                       YYABORT;
+               } else {
+                       $$ = new NAssignment(*$<ident>1, *$3);
+               }
+       }
+         | ident TLPAREN call_args TRPAREN TSEMI
+         {
+               /* See if the function call exists in the symbol table, if it doesnt, then throw error */
+               printf("expr: checking symtable for function call '%s'\n", $1->name.c_str());
+               if(symtab->lookup($1->name) == NULL) {
+                       std::string str("undefined reference to function '"+$1->name+"'");
+                       yyerror(str.c_str());
+                       YYABORT;
+               } else {
+                       $$ = new NMethodCall(*$1, *$3);
+                       delete $3;
+               }
+         }
+	 | ident
+         {
+                 /* See if the identifier exists in the symbol table, if it doesnt, then throw error */
+                 printf("expr ident: checking symtable for '%s'\n", $1->name.c_str());
+                 if(symtab->lookup($1->name) == NULL) {
+                         std::string str("undefined reference to name '"+$1->name+"'");
+                         yyerror(str.c_str());
+                         YYABORT;
+                 } else {
+                         $<ident>$ = $1;
+                 }
+         } 
 	 | TMINUS expr { $$ = new NUnaryOperator($1, *$2); }
 	 | number
          | expr TMUL expr { $$ = new NBinaryOperator(*$1, $2, *$3); }
@@ -184,7 +297,7 @@ int main(int argc, char **argv)
     std::string fname;
     std::vector<std::string> ir_list;
     ir *ir_gen = NULL;
-    Symtable *symtab = NULL;
+    //Symtable *symtab = NULL;
     FILE *ir_in;
 
     #ifdef RUN_TESTS
@@ -254,9 +367,9 @@ int main(int argc, char **argv)
     yyparse();
    
     // Create the symbol table using the tree visitor
-    symtab = new Symtable();
-    SymVisitor symvis(symtab);
-    root->accept(symvis);
+    //symtab = new Symtable();
+    //SymVisitor symvis(symtab);
+    //root->accept(symvis);
 
     
     // Generate the IR with the parse tree
@@ -355,6 +468,8 @@ FILE *strToFile(char *str) {
 }
 
 TEST_CASE("Testing language features", "[lang]") {
+        symtab = new Symtable();
+        
         SECTION( "testing function declarations" ) {
                 char *text = "int main() { }";
                 yyin = strToFile(text);

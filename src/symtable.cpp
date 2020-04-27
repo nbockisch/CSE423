@@ -22,14 +22,19 @@ Symtable::~Symtable() {
  * @returns Pointer to record object if found, NULL if record not in table
  */
 record_t *Symtable::lookup(std::string name) {
-
-        auto it = tables[cur_table]->find(name);
-        if(it == tables[cur_table]->end()) {
-                printf("Error: table (%d) lookup  of '%s' failed!\n", cur_table, name.c_str());
-                return NULL;
+        if(cur_table < 0) {
+                initializeScope();
         }
+        if(!tables[cur_table]->empty()) {
+                auto it = tables[cur_table]->find(name);
+                if(it == tables[cur_table]->end()) {
+                        printf("Error: table (%d) lookup  of '%s' failed!\n", cur_table, name.c_str());
+                        return NULL;
+                }
 
-        return &(it->second);
+                return &(it->second);
+        }
+        return NULL;
 }
 
 /**
@@ -39,14 +44,19 @@ record_t *Symtable::lookup(std::string name) {
  * @returns Pointer to record object if found, NULL if record not in table
  */
 record_t *Symtable::lookup(std::string name, int scope) {
-
-        auto it = tables[scope]->find(name);
-        if(it == tables[scope]->end()) {
-                printf("Error: table (%d) lookup  of '%s' failed!\n", scope, name.c_str());
-                return NULL;
+        if(cur_table < 0) {
+                initializeScope();
         }
+        if(!tables[cur_table]->empty()) {
+                auto it = tables[scope]->find(name);
+                if(it == tables[scope]->end()) {
+                        printf("Error: table (%d) lookup  of '%s' failed!\n", scope, name.c_str());
+                        return NULL;
+                }
 
-        return &(it->second);
+                return &(it->second);
+        }
+        return NULL;
 }
 
 /**
