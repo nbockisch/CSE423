@@ -41,6 +41,8 @@
    #define YYLEX_PARAM scanner
 
         Symtable *symtab = new Symtable();
+        int skip_newscope = 0;
+        record_t *tmp_entry = NULL;
 
 %}
 
@@ -100,7 +102,22 @@ declaration : var_decl | func_decl | expr { $$ = new NExpressionStatement(*$1); 
 		| TFOR TLPAREN expr1 expr2 expr3 TRPAREN block {$$ = new NForStatement(*$3, *$4, *$5, *$7); } 
                 | TBREAK TSEMI {$$ = new NBreak();} | TGOTO ident TSEMI {$$ = new NGOTO(*$2);} | ident TCOLON {$$ = new NGOTOBlock(*$1);};
 
-block : TLBRACE { printf("Creating new scope..\n"); symtab->initializeScope(); } declist TRBRACE { $$ = $3; printf("Finalizing scope..\n"); symtab->finalizeScope(); }
+block : TLBRACE
+        {
+                /* Check if this flag set.. skips making new scope when making functions.. see func_decl */
+                if(!skip_newscope) {
+                        printf("Creating new scope..\n");
+                        symtab->initializeScope();
+                }
+        }
+        declist TRBRACE
+        {
+                $$ = $3;
+                if(!skip_newscope) {
+                        printf("Finalizing scope..\n");
+                        symtab->finalizeScope();
+                }
+        }
        | TLBRACE TRBRACE { /* Dont need new scope since empty block? */ $$ = new NBlock(); };
 
 if_decl : TIF TLPAREN expr TRPAREN block block {$$ = new NIfStatement(*$3, *$5); } | TIF TLPAREN expr TRPAREN block 
@@ -154,24 +171,26 @@ var_decl : type ident TSEMI
 func_var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); };
 		
 
-func_decl : type ident TLPAREN func_decl_args TRPAREN block
+func_decl : type ident TLPAREN func_decl_args TRPAREN 
             {
                     /* Check if defined in symtable first */
                     printf("Checking symtable for function name '%s'\n", $2->name.c_str());
                     if(symtab->lookup($2->name) == NULL) {
-                            record_t entry;
-                            entry.name = $2->name;
-                            entry.rtype = record_type::function;
-                            entry.type = $1->name;
 
-                            $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6);
-                            
-                            entry.node = $$;
+                            tmp_entry = new record_t();
+                            tmp_entry->name = $2->name;
+                            tmp_entry->rtype = record_type::function;
+                            tmp_entry->type = $1->name;
 
-                            symtab->insert(entry.name, entry);
+                            symtab->insert(tmp_entry->name, *tmp_entry);
 
+                            /* Create a scope for the function. We do this here since the
+                               function block always creates a scope, but if the function has
+                               arguments, then we want the block to be in the same scope as
+                               the arguments. */
+                            symtab->initializeScope();
                             if($4->size() != 0) {
-                                    symtab->initializeScope();
+                                    /* Add all function arguments to the function's scope */
                                     for (auto var : *$4) {
                                             record_t entry;
                                             entry.name = var->id.name;
@@ -181,22 +200,42 @@ func_decl : type ident TLPAREN func_decl_args TRPAREN block
                                 
                                             symtab->insert(entry.name, entry);
                                     }
-                                    symtab->finalizeScope();
                             }
-
-                            delete $4;
+                            
+                            /* If function name is unique, then we are going to set 
+                               symbol table skip_newscope flag to true, so that 
+                               processing the block does not create a new scope.
+                               There is probably a better way to do this.. but it works for now. */
+                            skip_newscope = 1;
                     } else {
                             std::string str("redeclaration of function '"+$2->name+"'");
                             yyerror(str.c_str());
                             YYABORT;
                     }
             }
+            block
+            {
+                    $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$7);
+                    
+                    tmp_entry->node = $$;
+                    
+                    /* After the block has been processed, we need to finish the function's scope */
+                    symtab->finalizeScope();
+
+                    skip_newscope = 0;
+
+                    delete tmp_entry;
+
+                    delete $4;
+
+            };
+/** // Is this rule even needed? 
 	    | type ident TLPAREN func_decl_args TRPAREN block block
             {
                     printf("matching double block on func\n");
                     $$ = new NFunctionDeclaration(*$1, *$2, *$4, *$6);
                     delete $4;
-            };
+                    }; **/
 
 func_decl_args : /*blank*/ %empty { $$ = new VariableList(); }
 		  | func_var_decl { $$ = new VariableList(); $$->push_back($<var_decl>1); }
@@ -483,8 +522,23 @@ TEST_CASE("Testing language features", "[lang]") {
                 REQUIRE(yyparse() == 0);
                 fclose(yyin);
         }
+
+        SECTION( "testing variable usage inside function") {
+                char *text = "int main(int x) { return x; }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 0);
+                fclose(yyin);
+        }
+        SECTION( "testing multiple function declarations") {
+                char *text = "int test(int x) { return x; } int main(int argc) { return test(5); }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 0);
+                fclose(yyin);
+        }
 }
 TEST_CASE("Testing language semantics") {
+        symtab = new Symtable();
+        
         SECTION("seeing if assigning non-integer (character) to integer throws an error") {
                 char *text = "int main() { int x = 't'; }";
                 yyin = strToFile(text);
