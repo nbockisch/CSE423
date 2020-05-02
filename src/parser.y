@@ -335,6 +335,7 @@ int main(int argc, char **argv)
     std::string ir_out_file;
     std::string fname;
     std::vector<std::string> ir_list;
+    std::vector<item_t> generated_ir;
     ir *ir_gen = NULL;
     //Symtable *symtab = NULL;
     FILE *ir_in;
@@ -416,8 +417,11 @@ int main(int argc, char **argv)
     //ir_list = ir_gen->getIR();
     IrVisitor irvis(ir_gen);
     root->accept(irvis);
-    
 
+    generated_ir = ir_gen->buildIr();
+    std::string ir_out = ir_gen->printIR(generated_ir);
+    printf("%s\n", ir_out.c_str());
+    
 
    /* for (item_t tmp : ir_gen->items) {
         if (!tmp.label.empty()) {
