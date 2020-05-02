@@ -262,6 +262,38 @@ void ir::convertSSA(std::vector<item_t> &in)
     } 
 }
 
+int const_fold(item_t* block)
+{
+    val = 0;
+    for (item_t i: block->params) {
+    }
+    return val;
+}
+
+int const_prop(item_t* block)
+{
+    val = 0;
+    for (item_t i: block->params) {
+    }
+    return val;
+}
+
+/**
+Change to work for the implementation of the list
+*/
+void optimization_1(std::vector<item_t> list)
+{
+    for (item_t i: list) {
+        if (i.label == "BLOCK") {
+            int f,p = 0;
+            while (f || p) {
+                f = const_fold(&i);
+                p = const_prop(&i);
+            }
+        }
+    }
+}
+
 /**
  * Take the nodes gathered from the parse tree and construct the final IR
  * @return a vector of item_t objects holding the components of the final IR
