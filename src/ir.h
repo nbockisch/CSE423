@@ -41,11 +41,16 @@ public:
     void convertSSA(std::vector<item_t> &in);
     std::vector<item_t> buildIr();
     std::vector<item_t> items;
+
+    std::string printIR(std::vector<item_t> items);
+    void writeIR(const char *fname, std::vector<item_t> items);
 private:
     
     std::stack<item_t> tv_decl;
     int v_num;
     Symtable *table;
+
+    std::string itemPrint(item_t *item);
 };
 
 #endif

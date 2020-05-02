@@ -315,3 +315,53 @@ std::vector<item_t> ir::buildIr()
     
     return tmp_list;
 }
+
+std::string ir::itemPrint(item_t *item) {
+        std::string out;
+
+        out.append("Label: "+item->label+"\n");
+        out.append("Type: "+item->type+"\n");
+        out.append("ID: "+item->id+"\n");
+        out.append("Val: "+item->val+"\n");
+        out.append("Tag: "+std::to_string(item->tag)+"\n");
+
+        //Print the number of parameters to keep track
+        out.append("Params: "+std::to_string(item->params.size())+"\n");
+
+        if(item->params.size() > 0) {
+                for(uint i = 0; i < item->params.size(); i++) {
+                        out.append(itemPrint(&(item->params[i])));
+                }
+        }
+        
+        return out;
+}
+
+std::string ir::printIR(std::vector<item_t> items) {
+        std::string out;
+        
+        for(uint i = 0; i < items.size(); i++) {
+                item_t item = items[i];
+                
+                out.append(itemPrint(&item));
+        }
+
+        return out;
+        
+}
+
+void ir::writeIR(const char *fname, std::vector<item_t> items) {
+        FILE *fp = fopen(fname, "w");
+        if(fp == NULL) {
+                printf("Error: Cannot open file '%s' to write IR.\n", fname);
+                exit(-1);
+        }
+        
+        for(uint i = 0; i < items.size(); i++) {
+                item_t item = items[i];
+                fprintf(fp, "%s", itemPrint(&item).c_str());
+        }
+
+        fprintf(fp, "\n");
+        fclose(fp);
+}
