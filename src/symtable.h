@@ -56,8 +56,10 @@ public:
 private:
         
         std::vector<table_t*> tables;
+
+        std::vector<std::vector<int>*> schain; //Holds scope chain, the sequence of nested scopes.
         
-        int prev_table = -1; //Holds index of prev table, probably not needed..
+        int prev_table = 0; //Holds index of prev table, probably not needed..
         int cur_table = -1;
 };
 

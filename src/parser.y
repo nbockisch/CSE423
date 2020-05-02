@@ -106,7 +106,7 @@ block : TLBRACE
         {
                 /* Check if this flag set.. skips making new scope when making functions.. see func_decl */
                 if(!skip_newscope) {
-                        printf("Creating new scope..\n");
+                        //printf("Creating new scope..\n");
                         symtab->initializeScope();
                 }
         }
@@ -114,7 +114,7 @@ block : TLBRACE
         {
                 $$ = $3;
                 if(!skip_newscope) {
-                        printf("Finalizing scope..\n");
+                        //printf("Finalizing scope..\n");
                         symtab->finalizeScope();
                 }
         }
@@ -131,7 +131,7 @@ else_decl : TELSE block {$$ = new NElseStatement(*$2); };
 var_decl : type ident TSEMI
            {
                    /* Check if defined in symtable first */
-                   printf("Checking symtable for name '%s'\n", $2->name.c_str());
+                   //printf("Checking symtable for name '%s'\n", $2->name.c_str());
                    if(symtab->lookup($2->name) == NULL) {
                            record_t entry;
                            entry.name = $2->name;
@@ -150,7 +150,7 @@ var_decl : type ident TSEMI
            } | type ident TEQUAL expr TSEMI
            {
                    /* Check if defined in symtable first */
-                   printf("Checking symtable for name '%s'\n", $2->name.c_str());
+                   //printf("Checking symtable for name '%s'\n", $2->name.c_str());
                    if(symtab->lookup($2->name) == NULL) {
                            record_t entry;
                            entry.name = $2->name;
@@ -174,7 +174,7 @@ func_var_decl : type ident { $$ = new NVariableDeclaration(*$1, *$2); };
 func_decl : type ident TLPAREN func_decl_args TRPAREN 
             {
                     /* Check if defined in symtable first */
-                    printf("Checking symtable for function name '%s'\n", $2->name.c_str());
+                    //printf("Checking symtable for function name '%s'\n", $2->name.c_str());
                     if(symtab->lookup($2->name) == NULL) {
 
                             tmp_entry = new record_t();
@@ -257,7 +257,7 @@ expr3: expr postfix { $$ = new NUnaryOperator($2, *$1); };
 expr : ident TEQUAL expr TSEMI
        {
                /* See if the identifier exists in the symbol table, if it doesnt, then throw error */
-               printf("expr: checking symtable for '%s'\n", $1->name.c_str());
+               //printf("expr: checking symtable for '%s'\n", $1->name.c_str());
                if(symtab->lookup($1->name) == NULL) {
                        std::string str("undefined reference to name '"+$1->name+"'");
                        yyerror(str.c_str());
@@ -269,7 +269,7 @@ expr : ident TEQUAL expr TSEMI
          | ident TLPAREN call_args TRPAREN TSEMI
          {
                /* See if the function call exists in the symbol table, if it doesnt, then throw error */
-               printf("expr: checking symtable for function call '%s'\n", $1->name.c_str());
+               //printf("expr: checking symtable for function call '%s'\n", $1->name.c_str());
                if(symtab->lookup($1->name) == NULL) {
                        std::string str("undefined reference to function '"+$1->name+"'");
                        yyerror(str.c_str());
@@ -282,7 +282,7 @@ expr : ident TEQUAL expr TSEMI
 	 | ident
          {
                  /* See if the identifier exists in the symbol table, if it doesnt, then throw error */
-                 printf("expr ident: checking symtable for '%s'\n", $1->name.c_str());
+                 //printf("expr ident: checking symtable for '%s'\n", $1->name.c_str());
                  if(symtab->lookup($1->name) == NULL) {
                          std::string str("undefined reference to name '"+$1->name+"'");
                          yyerror(str.c_str());
@@ -413,6 +413,7 @@ int main(int argc, char **argv)
 
     
     // Generate the IR with the parse tree
+/**
     ir_gen = new ir(symtab);
     //ir_list = ir_gen->getIR();
     IrVisitor irvis(ir_gen);
@@ -420,7 +421,7 @@ int main(int argc, char **argv)
 
     generated_ir = ir_gen->buildIr();
     std::string ir_out = ir_gen->printIR(generated_ir);
-    printf("%s\n", ir_out.c_str());
+    printf("%s\n", ir_out.c_str());**/
     
 
    /* for (item_t tmp : ir_gen->items) {
@@ -534,7 +535,13 @@ TEST_CASE("Testing language features", "[lang]") {
                 fclose(yyin);
         }
         SECTION( "testing multiple function declarations") {
-                char *text = "int test(int x) { return x; } int main(int argc) { return test(5); }";
+                char *text = "int test(int x) { return x; } int main(int argc) { test(5); }";
+                yyin = strToFile(text);
+                REQUIRE(yyparse() == 0);
+                fclose(yyin);
+        }
+        SECTION( "testing function call from nested scopes") {
+                char *text = "int test(int x) { return x; } int main(int argc) { int x = 1; if (x == 1) { x = test(5); } }";
                 yyin = strToFile(text);
                 REQUIRE(yyparse() == 0);
                 fclose(yyin);

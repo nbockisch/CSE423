@@ -22,14 +22,20 @@ Symtable::~Symtable() {
  * @returns Pointer to record object if found, NULL if record not in table
  */
 record_t *Symtable::lookup(std::string name) {
+        //printf("Table (%d) lookup  of '%s'\n", cur_table, name.c_str());
         if(cur_table < 0) {
                 initializeScope();
         }
         if(!tables[cur_table]->empty()) {
                 auto it = tables[cur_table]->find(name);
                 if(it == tables[cur_table]->end()) {
-                        printf("Error: table (%d) lookup  of '%s' failed!\n", cur_table, name.c_str());
-                        return NULL;
+                        //printf("Error: table (%d) lookup  of '%s' failed!\n", cur_table, name.c_str());
+
+                        if(cur_table == 0) {
+                                return NULL;
+                        }
+                        return lookup(name, prev_table);
+                        //return NULL;
                 }
 
                 return &(it->second);
@@ -44,13 +50,14 @@ record_t *Symtable::lookup(std::string name) {
  * @returns Pointer to record object if found, NULL if record not in table
  */
 record_t *Symtable::lookup(std::string name, int scope) {
-        if(cur_table < 0) {
+        //printf("Table (%d) specific lookup  of '%s'\n", scope, name.c_str());
+        if(scope < 0) {
                 initializeScope();
         }
-        if(!tables[cur_table]->empty()) {
+        if(!tables[scope]->empty()) {
                 auto it = tables[scope]->find(name);
                 if(it == tables[scope]->end()) {
-                        printf("Error: table (%d) lookup  of '%s' failed!\n", scope, name.c_str());
+                        //printf("Error: table (%d) lookup  of '%s' failed!\n", scope, name.c_str());
                         return NULL;
                 }
 
@@ -71,7 +78,7 @@ int Symtable::insert(std::string name, record_t record) {
         auto check = tables[cur_table]->find(name);
         if(check != tables[cur_table]->end()) {
                 // Name already exists in table, so throw error
-                printf("Error: name '%s' already exists in symbol table (%d).\n", name.c_str(), cur_table);
+                //printf("Error: name '%s' already exists in symbol table (%d).\n", name.c_str(), cur_table);
                 return -1;
         }
 
@@ -82,7 +89,7 @@ int Symtable::insert(std::string name, record_t record) {
                 return 0;
         }
         
-        printf("Error: error inserting name '%s' into table.\n", name.c_str());
+        //printf("Error: error inserting name '%s' into table.\n", name.c_str());
         
         return -1;
 }
@@ -99,7 +106,7 @@ int Symtable::insert(std::string name, record_t record, int scope) {
         auto check = tables[scope]->find(name);
         if(check != tables[scope]->end()) {
                 // Name already exists in table, so throw error
-                printf("Error: name '%s' already exists in symbol table (%d).\n", name.c_str(), scope);
+                //printf("Error: name '%s' already exists in symbol table (%d).\n", name.c_str(), scope);
                 return -1;
         }
 
@@ -110,7 +117,7 @@ int Symtable::insert(std::string name, record_t record, int scope) {
                 return 0;
         }
         
-        printf("Error: error inserting name '%s' into table.\n", name.c_str());
+        //printf("Error: error inserting name '%s' into table.\n", name.c_str());
         
         return -1;
 }
@@ -122,9 +129,31 @@ void Symtable::initializeScope() {
         table_t *root = new table_t();
         tables.push_back(root);
 
+        //printf("Init Scope: Current = %d Prev = %d\n", cur_table, prev_table);
+
+        if(this->cur_table == 0) {
+                //If we were at the root, then start a new chain off the root level
+                schain.push_back(new std::vector<int>());
+
+                //printf("-----> Creating chain %d starting with scope number %d\n", schain.size()-1, tables.size()-1);
+                schain[schain.size()-1]->push_back(tables.size()-1);
+                
+        }
+
         // Save a pointer to the previous scope
         this->prev_table = this->cur_table;
         this->cur_table = tables.size()-1;
+
+        if(this->prev_table < 0) {
+                this->prev_table = 0;
+        }
+        
+        if(this->cur_table < 0) {
+                this->cur_table = 0;
+        }
+
+        //printf("\tInit Scope done: New Cur = %d New Prev = %d\n", cur_table, prev_table);
+                
 }
 
 /**
@@ -136,6 +165,8 @@ void Symtable::finalizeScope() {
                 //printf("Error: Symbol table can't finalize scope since it is already on root scope.\n");
                 return;
         }
+
+        //printf("Final Scope: Current = %d Prev = %d\n", cur_table, prev_table);
         this->cur_table = this->prev_table;
         this->prev_table = this->cur_table - 1;
 }
