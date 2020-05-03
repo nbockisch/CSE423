@@ -24,6 +24,8 @@ public:
         void initVariables(Symtable *table, std::vector<item_t> IR);
 
 
+        void generate(std::vector<item_t> IR);
+        
         void genFunc(item_t tmp);
         void genVarDecl(item_t tmp);
         void genReturn(item_t tmp);
@@ -36,6 +38,7 @@ private:
         std::vector<std::string> reg;
         std::map<std::string, int> stackVars;
         std::vector<int> varCount;
+        std::vector<std::string> ifs;
         int stack = 1;
         int perc = 37;
 	int len = 0;

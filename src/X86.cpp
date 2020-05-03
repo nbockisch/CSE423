@@ -22,7 +22,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 	int x1;
 	int x2;
 	 
-	/* dictionary to look up where variable was placed on stack */
+	/* registers used for param passing */
 	reg.push_back("edi");
 	reg.push_back("esi");
 	reg.push_back("edx");
@@ -46,15 +46,12 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
                 }
 		if (variable == 1) {
 			varCount.push_back(table->getCount(i));
+			printf("%d\n", table->getCount(i));
 			len++;
 			variable = 0;
-		}
-                // Quick fix to fix segfault when accessing varCount if function has no args (like int main() )?
-                else {
-                        varCount.push_back(0);
-                }
+		} 
+                
         }
-	printf("%d\n", varCount[0]);
 	
 	file.open("assembly_output.s");
 
@@ -65,7 +62,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 			if (x == 0) {
 				genFunc(tmp);
 			}
-			/*setting up variable declaration*/
+			/*setting up variable declaration*/ /* still need to deal with function calls */ /*need negative numbers */
 			x = (tmp.label).compare("VAR DECL");
 			if (x == 0) {
 				genVarDecl(tmp);
@@ -114,6 +111,42 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 	file.close();
 }
 
+void X86::generate(std::vector<item_t> IR) {
+        int x;
+        //Function processes a block
+        for (item_t tmp : IR) {
+		if (!tmp.label.empty()) {
+			x = (tmp.label).compare("FUNC DECL");
+			/*setting up functions*/
+			if (x == 0) {
+				genFunc(tmp);
+			}
+			/*setting up variable declaration*/
+			x = (tmp.label).compare("VAR DECL");
+			if (x == 0) {
+				genVarDecl(tmp);
+			}
+			/*set up return statements*/
+			x = (tmp.label).compare("RETURN");
+			if (x == 0) {
+				genReturn(tmp);
+			}
+
+			/*set up function calls*/
+			x = (tmp.label).compare("FUNCTION CALL");
+			if (x == 0) {
+				genFuncCall(tmp);
+			}
+
+                        x = (tmp.label).compare("IF STATEMENT");
+			if (x == 0) {
+                                genIfStatement(tmp);
+                                
+                        }
+		}
+	}
+}
+
 
 void X86::genFunc(item_t tmp) {
         int x1;
@@ -142,11 +175,13 @@ void X86::genFunc(item_t tmp) {
                         file << "rsp, ";
                         file << char(perc);
                         file <<"rbp\n";
-                        file << "\tsubq $";
-                        file << (varCount[len - 1] + 1) * 4;
-                        file <<", ";
-                        file << char(perc);
-                        file << "rbp\n";
+			if (len != 0) {
+		                file << "\tsubq $";
+		                file << (varCount[len - 1] + 1) * 4;
+		                file <<", ";
+		                file << char(perc);
+		                file << "rbp\n";
+			}
                 } else {
                         std::cout << "Unable to open file";
                 }
@@ -517,23 +552,97 @@ void X86::genIfStatement(item_t tmp) {
 
         int count = 0;
         int count2 = 0;
-        std::vector<std::string> dec; 
-        std::vector<int> flag; 
+        std::vector<std::string> vars; 
+        std::vector<std::string> literals;
+        std::string op;
         for (auto test : tmp.params) {
-                printf("PARAMSSSSSS = %s\n", test.label.c_str());
-                if (!test.val.empty()) {
-                        dec.push_back(test.val); 
-                        flag.push_back(0);
-                        printf("dec test val = %s\n", test.val.c_str());
-                        count++;
+                if(!test.label.compare("BIN OP")) {
+                        printf("BIN OP FOUND: var = %s\n", test.id.c_str());
+
+
+                        printf("Label: %s\n", test.label.c_str());
+                        printf("Type: %s\n", test.type.c_str());
+                        printf("ID: %s\n", test.id.c_str());
+                        printf("Val: %s\n", test.val.c_str());
+                        //printf("Tag: %s\n", test.tag.c_str());
+
+                        //Print the number of parameters to keep track
+                        printf("Params: %d\n", test.params.size());
+
+                        for (auto expr : test.params) {
+
+                                printf("SUB PARAM %s\n", expr.label.c_str());
+
+                                if (!expr.label.compare("OP")) {
+                                        op = expr.val;
+                                        continue;
+                                }
+                                
+                                if (!expr.val.empty()) {
+                                        literals.push_back(expr.val);
+                                        printf("incrementing cnt with val '%s'\n", expr.val.c_str());
+                                        //flag.push_back(0);
+                                        count++;
+                                }
+                                if (!expr.id.empty()) {
+                                        printf("incrementing cnt 2 with id '%s'\n", expr.id.c_str());
+                                        vars.push_back(expr.id); 
+                                        //flag.push_back(1);
+                                        count2++;
+                                }
+                        }
+
+                        printf("count = %d\n", count);
+                        printf("count2 = %d\n", count2);
+
+
+                        printf("Variables\n");
+                        for(auto d : vars) {
+                                printf("---'%s'---\n", d.c_str());
+                        }
+
+                        printf("Literals\n");
+                        for(auto d : literals) {
+                                printf("---'%s'---\n", d.c_str());
+                        }
+
+
+
+                        printf("stack vars:\n");
+                        printf("stack vars[%s]: ", vars[0].c_str());
+                        std::cout << stackVars[vars[0]];
+
+
+                        // compare literal value with the value on the stack
+                        file << "\tcmpl $" << literals[0] << ", " << stackVars[vars[0]] * -4 << "(" << char(perc) << "rbp)\n";
+
+                        std::string if_lab;
+                        if(ifs.empty()) {
+                                if_lab = std::string(".IF0");
+                        } else {
+                                if_lab = std::string(".IF"+std::to_string(ifs.size()-1));
+                        }
+                        printf("IF LABEL: '%s'\n", if_lab.c_str());
+                        ifs.push_back(if_lab);
+                        file << "\tjne " << ifs[ifs.size()-1] << "\n";
+
+                        // Rest of the if block generated here
+                        
+
+                        // Ending label to jump to if the statement was false
+                        file << ifs[ifs.size()-1] << ":\n";
+                        
+                               
+                        
                 }
-                if (!test.id.empty()) {
-                        printf("dec test id = %s\n", test.id.c_str());
-                        dec.push_back(test.id); 
-                        flag.push_back(1);
-                        count2++;
-                }
+                       
+
+                        
+
         }
+
+        
+        
                                 
         
 }

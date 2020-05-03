@@ -26,7 +26,7 @@ record_t *Symtable::lookup(std::string name) {
         if(cur_table < 0) {
                 initializeScope();
         }
-        if(!tables[cur_table]->empty()) {
+        //if(!tables[cur_table]->empty()) {
                 auto it = tables[cur_table]->find(name);
                 if(it == tables[cur_table]->end()) {
                         //printf("Error: table (%d) lookup  of '%s' failed!\n", cur_table, name.c_str());
@@ -39,7 +39,8 @@ record_t *Symtable::lookup(std::string name) {
                 }
 
                 return &(it->second);
-        }
+                //}
+
         return NULL;
 }
 

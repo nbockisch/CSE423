@@ -266,7 +266,7 @@ expr : ident TEQUAL expr TSEMI
                        $$ = new NAssignment(*$<ident>1, *$3);
                }
        }
-         | ident TLPAREN call_args TRPAREN TSEMI
+	 | ident TLPAREN call_args TRPAREN TSEMI
          {
                /* See if the function call exists in the symbol table, if it doesnt, then throw error */
                //printf("expr: checking symtable for function call '%s'\n", $1->name.c_str());
@@ -407,9 +407,9 @@ int main(int argc, char **argv)
     yyparse();
    
     // Create the symbol table using the tree visitor
-    //symtab = new Symtable();
-    //SymVisitor symvis(symtab);
-    //root->accept(symvis);
+    symtab = new Symtable();
+    SymVisitor symvis(symtab);
+    root->accept(symvis);
 
     
     // Generate the IR with the parse tree
