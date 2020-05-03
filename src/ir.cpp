@@ -86,6 +86,15 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
                         tvar_st.push_back(this->tv_decl.top());
                         this->tv_decl.pop();
                     }
+                    //std::cout << tvar_st.front().id << std::endl;
+
+                    item_t tmp;
+                    tmp.label = item.label;
+                    tmp.id = item.id;
+                    tmp.type = item.type;
+                    tmp.val = item.val;
+                    tmp.params.push_back(tvar_st.front());
+                    tvar_st.push_back(tmp);
                     std::reverse(tvar_st.begin(), tvar_st.end());
                     for (item_t i : tvar_st) {
                         convert_ir.push_back(i);
@@ -236,7 +245,7 @@ void ir::convertSSA(std::vector<item_t> &in)
         } else if (((&in[i])->label == "RETURN") || ((&in[i])->label == "UNARY OP")) {
             // Update identifiers (if any)
             for (int j = 0; j < (&in[i])->params.size(); j++) {
-                if ((&in[i])->params[j].label == "IDENTIFIER") {
+                if ((&in[i])->params[j].label == "IDENTIFIER" && ((&in[i])->label != "RETURN")) {
                     std::string tmp2 = (&in[i])->params[j].id;
                     
                     for (int k = 0; k < vars.size(); k++) {
@@ -330,6 +339,16 @@ std::vector<item_t> ir::buildIr()
     tmp_list = convert3Var(cleanIr(tmp_list));
 
     convertSSA(tmp_list);
+
+    for (item_t a : tmp_list) {
+        std::cout << "label = " << a.label << ", type = " << a.type << ", id = " << a.id << ", val = " << a.val << std::endl;
+        for (item_t b : a.params) {
+            std::cout << "- label = " << b.label << ", type = " << b.type << ", id = " << b.id << ", val = " << b.val << std::endl;
+            for (item_t c : b.params) {
+                std::cout << "-- label = " << c.label << ", type = " << c.type << ", id = " << c.id << ", val = " << c.val << std::endl;
+            }
+        }
+    }
     
     return tmp_list;
 }
