@@ -208,7 +208,7 @@ void ir::convertSSA(std::vector<item_t> &in)
                     }
                 }
             }
-        } else if ((&in[i])->label == "ASSIGNMENT") {
+        } else if (((&in[i])->label == "ASSIGNMENT")) {
             // Update identifiers (if any)
             for (int j = 0; j < (&in[i])->params.size(); j++) {
                 if ((&in[i])->params[j].label == "IDENTIFIER") {
@@ -233,7 +233,7 @@ void ir::convertSSA(std::vector<item_t> &in)
                 }
             }
             
-        } else if ((&in[i])->label == "UNARY OP") {
+        } else if (((&in[i])->label == "RETURN") || ((&in[i])->label == "UNARY OP")) {
             // Update identifiers (if any)
             for (int j = 0; j < (&in[i])->params.size(); j++) {
                 if ((&in[i])->params[j].label == "IDENTIFIER") {
@@ -256,12 +256,33 @@ void ir::convertSSA(std::vector<item_t> &in)
                         vars.push_back(rec);
                     }
                 }
+                if ((&in[i])->params[j].label == "BIN OP") {
+                    for (int k = 0; k < (&in[i])->params[j].params.size(); k++) {
+                        if ((&in[i])->params[j].params[k].label == "IDENTIFIER") {
+                            std::string tmp2 = (&in[i])->params[j].params[k].id;
+                            
+                            for (int l = 0; l < vars.size(); l++) {
+                                if (vars[l].orig == (&in[i])->params[j].params[k].id) {
+                                    (&in[i])->params[j].params[k].id = vars[l].cur; 
+                                }
+                            }
+
+                            if ((&in[i])->params[j].params[k].id == tmp2) {
+                                ssa_rec rec;
+                                rec.orig = (&in[i])->params[j].params[k].id;   
+                                rec.prev = (&in[i])->params[j].params[k].id;   
+                                rec.cur = (&in[i])->params[j].params[k].id;   
+                                vars.push_back(rec);
+                            }
+                        }
+                    }
+                }
             }
 
         }
     } 
 }
-
+/*
 int const_fold(item_t* block)
 {
     val = 0;
@@ -278,9 +299,6 @@ int const_prop(item_t* block)
     return val;
 }
 
-/**
-Change to work for the implementation of the list
-*/
 void optimization_1(std::vector<item_t> list)
 {
     for (item_t i: list) {
@@ -293,7 +311,7 @@ void optimization_1(std::vector<item_t> list)
         }
     }
 }
-
+*/
 /**
  * Take the nodes gathered from the parse tree and construct the final IR
  * @return a vector of item_t objects holding the components of the final IR

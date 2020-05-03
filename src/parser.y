@@ -413,7 +413,7 @@ int main(int argc, char **argv)
 
     
     // Generate the IR with the parse tree
-/**
+
     ir_gen = new ir(symtab);
     //ir_list = ir_gen->getIR();
     IrVisitor irvis(ir_gen);
@@ -421,8 +421,7 @@ int main(int argc, char **argv)
 
     generated_ir = ir_gen->buildIr();
     std::string ir_out = ir_gen->printIR(generated_ir);
-    printf("%s\n", ir_out.c_str());**/
-    
+    //printf("%s\n", ir_out.c_str());    
 
    /* for (item_t tmp : ir_gen->items) {
         if (!tmp.label.empty()) {
@@ -477,7 +476,7 @@ int main(int argc, char **argv)
     if (p_ass) {
     	//generate assembly file
 	X86 *assembly = new X86();
-	assembly->initVariables(symtab, ir_gen->buildIr());
+	assembly->initVariables(symtab, generated_ir);
     }
     
     fclose(yyin);
