@@ -44,8 +44,8 @@ int yycolumn = 1;
 "void"						PRINT_TOK("TVOID"); SAVE_TOKEN; return TVOID;
 "int"						PRINT_TOK("TINT"); SAVE_TOKEN; return TINT;
 [a-zA-Z_][a-zA-Z0-9_]*  			PRINT_TOK("TIDENTIFIER"); SAVE_TOKEN; return TIDENTIFIER;
-[0-9]+\.[0-9]* 			    		PRINT_TOK("TDOUBLE"); SAVE_TOKEN; return TDOUBLE;
-[0-9]+					        PRINT_TOK("TINTEGER"); SAVE_TOKEN; return TINTEGER;
+[-]?[0-9]+\.[0-9]* 			    		PRINT_TOK("TDOUBLE"); SAVE_TOKEN; return TDOUBLE;
+[-]?[0-9]+					        PRINT_TOK("TINTEGER"); SAVE_TOKEN; return TINTEGER;
 
 "="						PRINT_TOK("TEQUAL"); return TOKEN(TEQUAL);
 "=="				          	PRINT_TOK("TCEQ"); return TOKEN(TCEQ);
