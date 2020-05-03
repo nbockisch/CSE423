@@ -30,7 +30,10 @@ public:
         void genVarDecl(item_t tmp);
         void genReturn(item_t tmp);
         void genFuncCall(item_t tmp);
-        void genIfStatement(item_t tmp);
+        int genIfStatement(item_t tmp);
+
+
+        std::string getJumpInstr(std::string op);
 
 private:
         Symtable *table;
@@ -38,7 +41,7 @@ private:
         std::vector<std::string> reg;
         std::map<std::string, int> stackVars;
         std::vector<int> varCount;
-        std::vector<std::string> ifs;
+        std::vector<std::string> ifs; //Holds labels of all if statements (format: .IF#)
         int stack = 1;
         int perc = 37;
 	int len = 0;

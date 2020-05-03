@@ -55,7 +55,11 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 	printf("hey2\n");
 	file.open("assembly_output.s");
 
-	for (item_t tmp : IR) {
+
+        // changed loop to this way so we can skip over items that have already been processed
+        for(int i = 0; i < IR.size(); i++) {
+                item_t tmp = IR[i];
+                        //for (item_t tmp : IR) {
 		if (!tmp.label.empty()) {
 			x = (tmp.label).compare("FUNC DECL");
 			/*setting up functions*/
@@ -81,7 +85,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 
                         x = (tmp.label).compare("IF STATEMENT");
 			if (x == 0) {
-                                genIfStatement(tmp);
+                                i+=genIfStatement(tmp);
                                 
                         }
 		}
@@ -116,6 +120,12 @@ void X86::generate(std::vector<item_t> IR) {
         //Function processes a block
         for (item_t tmp : IR) {
 		if (!tmp.label.empty()) {
+                        x = (tmp.label).compare("BLOCK END");
+                        if(x == 0) {
+                                printf("HIT END BLOCK -- RETURNING FROM BLOCK GEN\n");
+                                return;
+                        }
+                        
 			x = (tmp.label).compare("FUNC DECL");
 			/*setting up functions*/
 			if (x == 0) {
@@ -553,16 +563,20 @@ void X86::genFuncCall(item_t tmp) {
         }
 }
 
-void X86::genIfStatement(item_t tmp) {
+int X86::genIfStatement(item_t tmp) {
         printf("IF STATEMENT\n");
 
         int count = 0;
         int count2 = 0;
         std::vector<std::string> vars; 
         std::vector<std::string> literals;
+        std::vector<item_t> ifblock;
         std::string op;
+        int hasconditional = 0;
         for (auto test : tmp.params) {
+                printf("!!!!IF PARAM: %s\n", test.label.c_str());
                 if(!test.label.compare("BIN OP")) {
+                        /**
                         printf("BIN OP FOUND: var = %s\n", test.id.c_str());
 
 
@@ -571,7 +585,7 @@ void X86::genIfStatement(item_t tmp) {
                         printf("ID: %s\n", test.id.c_str());
                         printf("Val: %s\n", test.val.c_str());
                         //printf("Tag: %s\n", test.tag.c_str());
-
+                        **/
                         //Print the number of parameters to keep track
                         //printf("Params: %d\n", test.params.size());
 
@@ -612,16 +626,29 @@ void X86::genIfStatement(item_t tmp) {
                                 printf("---'%s'---\n", d.c_str());
                         }
 
-
-
                         printf("stack vars:\n");
                         printf("stack vars[%s]: ", vars[0].c_str());
                         std::cout << stackVars[vars[0]];
 
-
                         // compare literal value with the value on the stack
                         file << "\tcmpl $" << literals[0] << ", " << stackVars[vars[0]] * -4 << "(" << char(perc) << "rbp)\n";
 
+                        hasconditional = 1;
+                } else if(!test.label.compare("IDENTIFIER")) {
+
+                        printf("WARNING =----=-- not supported yet\n");
+
+                        hasconditional = 1;
+                        
+                } else {
+                        if(!hasconditional) {
+                                printf("Error - unrecognized if statement condition '%s'\n", test.label.c_str());
+                                exit(-1);
+                        }
+
+
+                        /* This should be a BLOCK now */
+                        // Set up the IF statement label
                         std::string if_lab;
                         if(ifs.empty()) {
                                 if_lab = std::string(".IF0");
@@ -630,25 +657,51 @@ void X86::genIfStatement(item_t tmp) {
                         }
                         printf("IF LABEL: '%s'\n", if_lab.c_str());
                         ifs.push_back(if_lab);
-                        file << "\tjne " << ifs[ifs.size()-1] << "\n";
 
-                        // Rest of the if block generated here
+
+                        // Figure which jump op to use based on operator
+                        std::string jump = getJumpInstr(op);
+                        
+                        file << "\t" << jump << " " << ifs[ifs.size()-1] << "\n";
+
+                        // Generate instructions for rest of the if block here
+                        if(!test.label.compare("BLOCK")) {
+                                
+                                for(auto subitem : test.params) {
+                                        printf(" --------> Appending subitem label '%s' to ifblock\n", subitem.label.c_str());
+                                        ifblock.push_back(subitem);
+                                }
+
+                                printf("CALLING IF BLOCK SUB GENERATION\n");
+                                generate(ifblock);
+                        }
                         
 
                         // Ending label to jump to if the statement was false
                         file << ifs[ifs.size()-1] << ":\n";
-                        
-                               
-                        
+                
                 }
-                       
-
-                        
-
         }
 
-        
-        
-                                
-        
+        return ifblock.size()+1;
+                
+}
+
+/**
+ * Based on the operation, return corresponding X86 opposite jump instr (i.e for skipping over if statement blocks, etc)
+ */
+std::string X86::getJumpInstr(std::string op) {
+        std::string compinstr;
+        if(!op.compare("==")) {
+                compinstr = std::string("jne");
+        } else if(!op.compare(">")) {
+                compinstr = std::string("jle");
+        } else if(!op.compare(">=")) {
+                compinstr = std::string("js");
+        } else if(!op.compare("<")) {
+                compinstr = std::string("jns");
+        } else if(!op.compare("<=")) {
+                compinstr = std::string("jg");
+        }
+        return compinstr;
 }
