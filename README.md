@@ -92,3 +92,19 @@ The symbol table is roughly implemented following the section in the textbook. I
 The symbol table is filled by traversing the AST using the visitor pattern. When an AST node containing a block node is visited, a new symbol table scope is created via `initializeScope()`. When a variable declaration or function declaration is visited, a new record is created and inserted into the active symbol table scope. After a block node is done being visited, the active scope is switched to the previous scope via `finalizeScope()`.
 
 If there are blocks in the input with no variable definitions, then a scope level is still created but is empty (it contains no records).
+
+### Assembly
+Assembly follows gcc x86 assembly. 
+
+Checklist of required features for the Parser:
+- [x] Identifiers, variables, functions
+- [x] Keywords
+- [x] Arithmetic expressions
+- [x] Assignment
+- [] Boolean expressions
+- [] Goto statements
+- [] If / Else control flow (supports Else If as well)
+- [] Unary operators (++, --, &, and -)
+- [] Return statements
+- [] Break statements
+- [] While loops
