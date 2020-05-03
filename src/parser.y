@@ -420,8 +420,7 @@ int main(int argc, char **argv)
     root->accept(irvis);
 
     generated_ir = ir_gen->buildIr();
-    std::string ir_out = ir_gen->printIR(generated_ir);
-    //printf("%s\n", ir_out.c_str());    
+        
 
    /* for (item_t tmp : ir_gen->items) {
         if (!tmp.label.empty()) {
@@ -448,22 +447,22 @@ int main(int argc, char **argv)
         printf("-----------------------------\n");
     }
 
-    /*if (p_ir) {
+    if (p_ir) {
+            /**
         if (ir_file == 1) {
             std::ofstream ir_out(ir_out_file);
             for (std::string ir_line : ir_list) {
                 ir_out << ir_line << std::endl;
             }
             ir_out.close();
-        }
+            }**/
         printf("-----------------------------\n");
         std::cout << "IR:" << std::endl;
         printf("-----------------------------\n");
-        for (std::string ir_line : ir_list) {
-            std::cout << ir_line << std::endl;
-        }
+        std::string ir_out = ir_gen->printIR(generated_ir);
+        printf("%s\n", ir_out.c_str());
         printf("-----------------------------\n");
-    } */
+    } 
 
     if (p_sym) {
         printf("-----------------------------\n");

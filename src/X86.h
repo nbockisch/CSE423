@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <iostream> 
 #include <string>
+#include<map>
 #include "symtable.h"
 #include "node.h"
 #include <fstream>
@@ -21,6 +22,23 @@ public:
         ~X86();
   
         void initVariables(Symtable *table, std::vector<item_t> IR);
+
+
+        void genFunc(item_t tmp);
+        void genVarDecl(item_t tmp);
+        void genReturn(item_t tmp);
+        void genFuncCall(item_t tmp);
+        void genIfStatement(item_t tmp);
+
+private:
+        Symtable *table;
+        std::ofstream file;
+        std::vector<std::string> reg;
+        std::map<std::string, int> stackVars;
+        std::vector<int> varCount;
+        int stack = 1;
+        int perc = 37;
+	int len = 0;
 
 };
 
