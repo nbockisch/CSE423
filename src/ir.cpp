@@ -208,7 +208,7 @@ void ir::convertSSA(std::vector<item_t> &in)
                     }
                 }
             }
-        } else if ((&in[i])->label == "ASSIGNMENT") {
+        } else if (((&in[i])->label == "ASSIGNMENT")) {
             // Update identifiers (if any)
             for (int j = 0; j < (&in[i])->params.size(); j++) {
                 if ((&in[i])->params[j].label == "IDENTIFIER") {
@@ -233,7 +233,7 @@ void ir::convertSSA(std::vector<item_t> &in)
                 }
             }
             
-        } else if ((&in[i])->label == "UNARY OP") {
+        } else if (((&in[i])->label == "RETURN") || ((&in[i])->label == "UNARY OP")) {
             // Update identifiers (if any)
             for (int j = 0; j < (&in[i])->params.size(); j++) {
                 if ((&in[i])->params[j].label == "IDENTIFIER") {
