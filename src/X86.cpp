@@ -23,6 +23,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 	int x1;
 	int x2;
 	int perc = 37;
+	int len = 0;
 	std::vector<std::string> reg; 
 	/* dictionary to look up where variable was placed on stack */
 	std::map<std::string, int> stackVars;
@@ -30,8 +31,8 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 	reg.push_back("esi");
 	reg.push_back("edx");
 	reg.push_back("ecx");
-	reg.push_back("r8");
-	reg.push_back("r9");
+	reg.push_back("r8d");
+	reg.push_back("r9d");
 
 	int functions = table->getCount(0);
 
@@ -49,10 +50,11 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
                 }
 		if (variable == 1) {
 			varCount.push_back(table->getCount(i));
+			len++;
 			variable = 0;
-			break;
 		}
         }
+	printf("%d\n", varCount[0]);
 	
 	std::ofstream file ("assembly_output.s");
 
@@ -85,7 +87,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 						file << char(perc);
 						file <<"rbp\n";
 						file << "\tsubq $";
-						file << (varCount[0] + 1) * 4;
+						file << (varCount[len - 1] + 1) * 4;
 						file <<", ";
 						file << char(perc);
 						file << "rbp\n";
@@ -119,9 +121,11 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 						file << char(perc);
 						file <<"rbp\n";
 						for (i = 0; i < count; i++) {
-							file << "\tmovl " << char(perc) << reg[i] << ", " << -(((varCount[0] + 1) * 4) + (4 * 								inc)) << "(" << char(perc) << "rbp)\n";
+							stackVars.insert(std::pair<std::string, int>(dec[i], i + 4));
+							file << "\tmovl " << char(perc) << reg[i] << ", " << -(((varCount[len - 1] + 1) * 4) + (4 * 								inc)) << "(" << char(perc) << "rbp)\n";
 							inc++;
 						}
+
 				  	} else {
 						std::cout << "Unable to open file";
 					}
@@ -159,7 +163,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 							<< "rbp)" << ", " << char(perc) << "eax\n";
 							file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
 							<< "rbp)" << ", " << char(perc) << "edx\n";
-							file << "\taddl $" << char(perc) << "edx" << ", " << char(perc) << "eax\n";
+							file << "\taddl " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
 							file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
 							<< "rbp)\n";
 							stack++;
@@ -170,7 +174,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 							<< "rbp)" << ", " << char(perc) << "eax\n";
 							file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
 							<< "rbp)" << ", " << char(perc) << "edx\n";
-							file << "\tsubl $" << char(perc) << "edx" << ", " << char(perc) << "eax\n";
+							file << "\tsubl " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
 							file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
 							<< "rbp)\n";
 							stack++;
@@ -181,7 +185,17 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 							<< "rbp)" << ", " << char(perc) << "eax\n";
 							file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
 							<< "rbp)" << ", " << char(perc) << "edx\n";
-							file << "\timull $" << char(perc) << "edx" << ", " << char(perc) << "eax\n";
+							file << "\timull " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
+							file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+							<< "rbp)\n";
+							stack++;
+						}
+						x1 = (dec[0]).compare("/");
+						if (x1 == 0) {
+							file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+							<< "rbp)" << ", " << char(perc) << "eax\n";
+							file << "\tidivl " << stackVars[var[1]] * -4 << "(" << char(perc) 
+							<< "rbp)" << "\n";
 							file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
 							<< "rbp)\n";
 							stack++;
@@ -226,6 +240,14 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 							<< "rbp)\n";
 							stack++;
 						}
+						x1 = (dec[1]).compare("/");
+						if (x1 == 0) {
+							file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+							file << "\tidivl $" << dec[2] << "\n";
+							file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+							<< "rbp)\n";
+							stack++;
+						}
 					} else {
 						std::cout << "Unable to open file";
 					}
@@ -244,9 +266,9 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 						}
 						x1 = (dec[1]).compare("-");
 						if (x1 == 0) {
-							file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+							file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+							file << "\tsubl " << stackVars[var[0]] * -4 << "(" << char(perc) 
 							<< "rbp)" << ", " << char(perc) << "eax\n";
-							file << "\tsubl $" << dec[0] << ", " << char(perc) << "eax\n";
 							file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
 							<< "rbp)\n";
 							stack++;
@@ -256,6 +278,15 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 							file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
 							<< "rbp)" << ", " << char(perc) << "eax\n";
 							file << "\timull $" << dec[0] << ", " << char(perc) << "eax\n";
+							file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+							<< "rbp)\n";
+							stack++;
+						}
+						x1 = (dec[1]).compare("/");
+						if (x1 == 0) {
+							file << "\tmovl " << dec[0] << ", " << char(perc) << "eax\n";
+							file << "\tidivl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+							<< "rbp)" << "\n";
 							file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
 							<< "rbp)\n";
 							stack++;
@@ -283,6 +314,15 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 							file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
 							<< "rbp)" << ", " << char(perc) << "eax\n";
 							file << "\timull $" << dec[1] << ", " << char(perc) << "eax\n";
+							file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+							<< "rbp)\n";
+							stack++;
+						}
+						x1 = (dec[0]).compare("/");
+						if (x1 == 0) {
+							file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+							<< "rbp)" << ", " << char(perc) << "eax\n";
+							file << "\tidivl $" << dec[1] << "\n";
 							file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
 							<< "rbp)\n";
 							stack++;
@@ -343,34 +383,60 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 			x = (tmp.label).compare("FUNCTION CALL");
 			if (x == 0) {
 				int count = 0;
+				int count2 = 0;
+				int count3 = 0;
 				std::vector<std::string> dec; 
+				std::vector<int> flag; 
 				for (auto test : tmp.params) {
 					if (!test.val.empty()) {
 						dec.push_back(test.val); 
+						flag.push_back(0);
 						count++;
 					}
+					if (!test.id.empty()) {
+						dec.push_back(test.id); 
+						flag.push_back(1);
+						count2++;
+					}
 				}
+
+				count3 = count + count2;
 				/*function call with 0 params*/
-				if (count == 0) {
+				if (count3 == 0) {
 					if (file.is_open()) {
 						file << "\tcall " << tmp.id << "\n";
 					} else {
 						std::cout << "Unable to open file";
 					}
 				/* function call with 1 param */
-				} else if (count == 1) {
+				} else if (count3 == 1) {
 					if (file.is_open()) {
-						file << "\tmovl $" << dec[0] << ", " << char(perc) << "edi\n";
+						/*passed in number */
+						if (count == 1) {
+							file << "\tmovl $" << dec[0] << ", " << char(perc) << "edi\n";
+						/* passed in variable */
+						} else if (count2 == 1) {
+							file << "\tmovl " << stackVars[dec[0]] * -4 << "(" << char(perc) 
+							<< "rbp)" << ", " << char(perc) << "edi\n";
+						}
 						file << "\tcall " << tmp.id << "\n";
 					} else {
 						std::cout << "Unable to open file";
 					}
 				/*function call with 2 to 6 params*/
-				} else if ((count > 1) && (count <= 6)) {
+				} else if ((count3 > 1) && (count3 <= 6)) {
 					int i = 0;
 					if (file.is_open()) {
-						for (i = 0; i < count; i++) {
-							file << "\tmovl $" << dec[i] << ", " << char(perc) << reg[i] << "\n";
+
+						for (i = 0; i < count3; i++) {
+							/* passed in numbers */
+							if (flag[i] == 0) {
+								file << "\tmovl $" << dec[i] << ", " << char(perc) << reg[i] << "\n";
+							/* passed in variables */
+							} else if (flag[i] == 1) {
+								file << "\tmovl " << stackVars[dec[i]] * -4 << "(" << char(perc) 
+								<< "rbp)" << ", " << char(perc) << reg[i] << "\n";
+							}						
 						}
 						file << "\tcall " << tmp.id << "\n";
 					} else {
