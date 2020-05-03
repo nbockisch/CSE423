@@ -133,7 +133,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 
 				}
 			}
-			/*setting up variable declaration*/
+			/*setting up variable declaration*/ /* still need to deal with function calls */ /*need negative numbers */
 			x = (tmp.label).compare("VAR DECL");
 			if (x == 0) {
 				int count = 0;
