@@ -44,14 +44,14 @@ std::vector<item_t> ir::cleanIr(std::vector<item_t> items)
     return ir_list;
 }
 
-void ir::convertBinOp(item_t item)
+void ir::convertBinOp(item_t in_item)
 {
     item_t assignment;
     assignment.label = "VAR DECL";
     assignment.id = "X" + std::to_string(this->v_num);
     this->v_num++;
 
-    for (item_t item : item.params) {
+    for (item_t item : in_item.params) {
         if (item.label == "BIN OP") {
             convertBinOp(item);
             item_t tmp;
@@ -340,7 +340,7 @@ std::vector<item_t> ir::buildIr()
 
     convertSSA(tmp_list);
 
-    for (item_t a : tmp_list) {
+    /*for (item_t a : tmp_list) {
         std::cout << "label = " << a.label << ", type = " << a.type << ", id = " << a.id << ", val = " << a.val << std::endl;
         for (item_t b : a.params) {
             std::cout << "- label = " << b.label << ", type = " << b.type << ", id = " << b.id << ", val = " << b.val << std::endl;
@@ -348,7 +348,7 @@ std::vector<item_t> ir::buildIr()
                 std::cout << "-- label = " << c.label << ", type = " << c.type << ", id = " << c.id << ", val = " << c.val << std::endl;
             }
         }
-    }
+    }*/
     
     return tmp_list;
 }
