@@ -147,16 +147,16 @@ void ir::convertSSA(std::vector<item_t> &in)
                     }
                 }
             }
-        } else if ((&in[i])->label == "FUNC DECL") {
+        } else if ((&in[i])->label == "FUNCTION CALL" || (&in[i])->label == "FUNC DECL") {
             for (int j = 0; j < (&in[i])->params.size(); j++) {
-                if ((&in[i])->params[j].label == "FUNC PARAM") {
+                if ((&in[i])->params[j].label == "IDENTIFIER" || (&in[i])->params[j].label == "FUNC PARAM") {
                     std::string tmp2 = (&in[i])->params[j].id;
                     
                     for (int k = 0; k < vars.size(); k++) {
                         if (vars[k].orig == (&in[i])->params[j].id) {
-                            vars[k].prev = vars[k].cur;
+                            /*vars[k].prev = vars[k].cur;
                             vars[k].v_num++;
-                            vars[k].cur = vars[k].orig + std::to_string(vars[k].v_num);
+                            vars[k].cur = vars[k].orig + std::to_string(vars[k].v_num);*/
                            (&in[i])->params[j].id = vars[k].cur; 
                         }
                     }
