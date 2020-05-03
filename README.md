@@ -104,7 +104,7 @@ Checklist of required features for the Parser:
 - [] Boolean expressions
 - [] Goto statements
 - [] If / Else control flow (supports Else If as well)
-- [] Unary operators (++, --, &, and -)
+- [x] Unary operators (negative numbers)
 - [] Return statements
 - [] Break statements
 - [] While loops
