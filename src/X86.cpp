@@ -22,7 +22,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 	int x1;
 	int x2;
 	 
-	/* dictionary to look up where variable was placed on stack */
+	/* registers used for param passing */
 	reg.push_back("edi");
 	reg.push_back("esi");
 	reg.push_back("edx");
@@ -46,15 +46,12 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
                 }
 		if (variable == 1) {
 			varCount.push_back(table->getCount(i));
+			printf("%d\n", table->getCount(i));
 			len++;
 			variable = 0;
-		}
-                // Quick fix to fix segfault when accessing varCount if function has no args (like int main() )?
-                else {
-                        varCount.push_back(0);
-                }
+		} 
+                
         }
-	printf("%d\n", varCount[0]);
 	
 	file.open("assembly_output.s");
 
@@ -142,11 +139,13 @@ void X86::genFunc(item_t tmp) {
                         file << "rsp, ";
                         file << char(perc);
                         file <<"rbp\n";
-                        file << "\tsubq $";
-                        file << (varCount[len - 1] + 1) * 4;
-                        file <<", ";
-                        file << char(perc);
-                        file << "rbp\n";
+			if (len != 0) {
+		                file << "\tsubq $";
+		                file << (varCount[len - 1] + 1) * 4;
+		                file <<", ";
+		                file << char(perc);
+		                file << "rbp\n";
+			}
                 } else {
                         std::cout << "Unable to open file";
                 }
