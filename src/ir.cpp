@@ -256,6 +256,27 @@ void ir::convertSSA(std::vector<item_t> &in)
                         vars.push_back(rec);
                     }
                 }
+                if ((&in[i])->params[j].label == "BIN OP") {
+                    for (int k = 0; k < (&in[i])->params[j].params.size(); k++) {
+                        if ((&in[i])->params[j].params[k].label == "IDENTIFIER") {
+                            std::string tmp2 = (&in[i])->params[j].params[k].id;
+                            
+                            for (int l = 0; l < vars.size(); l++) {
+                                if (vars[l].orig == (&in[i])->params[j].params[k].id) {
+                                    (&in[i])->params[j].params[k].id = vars[l].cur; 
+                                }
+                            }
+
+                            if ((&in[i])->params[j].params[k].id == tmp2) {
+                                ssa_rec rec;
+                                rec.orig = (&in[i])->params[j].params[k].id;   
+                                rec.prev = (&in[i])->params[j].params[k].id;   
+                                rec.cur = (&in[i])->params[j].params[k].id;   
+                                vars.push_back(rec);
+                            }
+                        }
+                    }
+                }
             }
 
         }
