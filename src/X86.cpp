@@ -120,6 +120,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 						file << "rsp, ";
 						file << char(perc);
 						file <<"rbp\n";
+						/* put passed in variables onto stack */
 						for (i = 0; i < count; i++) {
 							stackVars.insert(std::pair<std::string, int>(dec[i], i + 4));
 							file << "\tmovl " << char(perc) << reg[i] << ", " << -(((varCount[len - 1] + 1) * 4) + (4 * 								inc)) << "(" << char(perc) << "rbp)\n";
@@ -329,8 +330,18 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 						}
 					} else {
 						std::cout << "Unable to open file";
+					} 
+				/* expression such as int x = b */
+				} else if (count2 == 1) {
+					if (file.is_open()) {
+						file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+						<< "rbp)" << ", " << stack * -4 << "(" << char(perc) << "rbp)\n";
+						stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
+						stack++;
+					} else {
+						std::cout << "Unable to open file";
 					}
-				} 
+				}
 			}
 			/*set up return statements*/
 			x = (tmp.label).compare("RETURN");
@@ -423,7 +434,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 					} else {
 						std::cout << "Unable to open file";
 					}
-				/*function call with 2 to 6 params*/
+				/*function call with 2 to 6 params*/ /* need more than 6 params */
 				} else if ((count3 > 1) && (count3 <= 6)) {
 					int i = 0;
 					if (file.is_open()) {
