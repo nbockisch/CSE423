@@ -242,7 +242,7 @@ void ir::convertSSA(std::vector<item_t> &in)
                 }
             }
             
-        } else if (((&in[i])->label == "RETURN") || ((&in[i])->label == "UNARY OP")) {
+        } else if (((&in[i])->label == "RETURN") || ((&in[i])->label == "UNARY OP") || ((&in[i])->label == "WHILE STATEMENT")) {
             // Update identifiers (if any)
             for (int j = 0; j < (&in[i])->params.size(); j++) {
                 if ((&in[i])->params[j].label == "IDENTIFIER" && ((&in[i])->label != "RETURN")) {
@@ -340,7 +340,7 @@ std::vector<item_t> ir::buildIr()
 
     convertSSA(tmp_list);
 
-    /*for (item_t a : tmp_list) {
+    for (item_t a : tmp_list) {
         std::cout << "label = " << a.label << ", type = " << a.type << ", id = " << a.id << ", val = " << a.val << std::endl;
         for (item_t b : a.params) {
             std::cout << "- label = " << b.label << ", type = " << b.type << ", id = " << b.id << ", val = " << b.val << std::endl;
@@ -348,7 +348,7 @@ std::vector<item_t> ir::buildIr()
                 std::cout << "-- label = " << c.label << ", type = " << c.type << ", id = " << c.id << ", val = " << c.val << std::endl;
             }
         }
-    }*/
+    }
     
     return tmp_list;
 }
