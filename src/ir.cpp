@@ -39,6 +39,11 @@ std::vector<item_t> ir::cleanIr(std::vector<item_t> items)
                 }
             }
         }
+        if (item.label == "BLOCK") {
+            item_t tmp;
+            tmp.label = "BLOCK END";
+            ir_list.push_back(tmp);
+        }
     }
 
     return ir_list;
