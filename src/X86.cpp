@@ -52,7 +52,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 		} 
                 
         }
-	
+	printf("hey2\n");
 	file.open("assembly_output.s");
 
 	for (item_t tmp : IR) {
@@ -157,6 +157,7 @@ void X86::genFunc(item_t tmp) {
         if (x1 == 0) {
                 type = 1;
         }
+	printf("len %d\n", len);
         /*setting up main function*/
         if (!tmp.id.empty())
                 x2 = (tmp.id).compare("main");
@@ -214,8 +215,13 @@ void X86::genFunc(item_t tmp) {
                         /* put passed in variables onto stack */
                         for (i = 0; i < count; i++) {
                                 stackVars.insert(std::pair<std::string, int>(dec[i], i + 4));
-                                file << "\tmovl " << char(perc) << reg[i] << ", " << -(((varCount[len - 1] + 1) * 4) + (4 * 								inc)) << "(" << char(perc) << "rbp)\n";
-                                inc++;
+				if (len != 0) {
+		                        file << "\tmovl " << char(perc) << reg[i] << ", " << -(((varCount[len - 1] + 1) * 4) + (4 * 								inc)) << "(" << char(perc) << "rbp)\n";
+		                        inc++;
+				} else if (len == 0) {
+					file << "\tmovl " << char(perc) << reg[i] << ", " << stack * -4 << "(" << char(perc) << "rbp)\n";
+					stack++;
+				}
                         }
 
                 } else {
@@ -567,7 +573,7 @@ void X86::genIfStatement(item_t tmp) {
                         //printf("Tag: %s\n", test.tag.c_str());
 
                         //Print the number of parameters to keep track
-                        printf("Params: %d\n", test.params.size());
+                        //printf("Params: %d\n", test.params.size());
 
                         for (auto expr : test.params) {
 
