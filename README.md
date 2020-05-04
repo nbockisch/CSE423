@@ -109,7 +109,7 @@ Variable declarations without assignment are not supported, such as this:
 `int i;
 i = 5;`
 
-Return statements can handle complex expressions but only with binary options. return x + y works, but return x + y + z will fail.
+Return statements can handle complex expressions but only with binary options. return 3 + 4 works, but return 3 + 4 + 5 will fail. Return statements with variables may not work because variable memory location lookup is buggy.
 
 Variables cannot be set equal to function calls, such as int x = test(). Function calls have to be done alone such as test();
 
