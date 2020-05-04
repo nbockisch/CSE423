@@ -1,6 +1,4 @@
 build/
 parser
-src/parser.cpp
-src/parser.hpp
 src/*.o
 src/compiler

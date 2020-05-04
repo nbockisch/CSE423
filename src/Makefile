@@ -5,7 +5,7 @@ ifdef RUN_TESTS
 CPPFLAGS := $(CPPFLAGS) -DRUN_TESTS
 endif
 
-TARGETS = lexer compiler
+TARGETS = compiler
 
 DEPENDS = tokens.cpp ir.cpp symtable.cpp X86.cpp node.h nodevisitor.h printvisitor.h symvisitor.h
 
@@ -21,7 +21,7 @@ tests:
 	$(MAKE) RUN_TESTS=1 all
 
 parser.o: parser.y
-	bison -Wall -d -o parser.cpp parser.y
+	#bison -Wall -d -o parser.cpp parser.y
 	$(CC) $(CPPFLAGS) -c parser.cpp
 
 #%.o : %.cpp
@@ -30,7 +30,5 @@ parser.o: parser.y
 clean:
 	rm *.o
 #Remove auto generated BISON files to force re-generation next time
-	rm parser.hpp
-	rm parser.cpp
 	rm $(TARGETS)
 
