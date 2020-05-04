@@ -323,6 +323,7 @@ compare : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE;
 
 void usage(const char *name);
 
+int p_opt = 0;
 int main(int argc, char **argv)
 {
     int opt;
@@ -392,6 +393,10 @@ int main(int argc, char **argv)
 	    case 'a':
                 // create the assembly file
                 p_ass = 1;
+		
+	    case 'z':
+	    	//runs optimization code
+		p_opt = 1;
         }
     }
 
