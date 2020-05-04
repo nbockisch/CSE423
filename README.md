@@ -113,14 +113,16 @@ Return statements can handle complex expressions but only with binary options. r
 
 Variables cannot be set equal to function calls, such as int x = test(). Function calls have to be done alone such as test();
 
+Variable declarations do not fully support other variables within them. For instance, int y = 3 + x may or may not work correctly. Variable memory location look up is buggy. Variables that are passed into functions may also not work.They work sometimes. Variable declarations and function calls with all numbers are fully supported. 
+
 Checklist of required features for the Parser:
 - [x] Identifiers, variables, functions
 - [x] Keywords
 - [x] Arithmetic expressions
 - [x] Assignment
-- [] Boolean expressions
+- [x] Boolean expressions
 - [x] Goto statements
-- [] If / Else control flow (supports Else If as well)
+- [x] If / Else control flow (supports Else If as well)
 - [x] Unary operators (negative numbers)
 - [x] Return statements
 - [x] Break statements
