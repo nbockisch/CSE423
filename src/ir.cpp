@@ -377,6 +377,7 @@ std::vector<item_t> ir::buildIr()
             }
         }
     }*/
+    optimization_1(tmp_list);
     
     return tmp_list;
 }
