@@ -25,7 +25,7 @@ There are some compilation warnings that pop up from other things that are being
 `-r <ir file>`: Read in an IR file as an argument  
 `-f <source file>`: Pass in a source file as an argument  
 `-o <ir file>`: Output the IR results to a file  
-`-z: Activates Constant Folding and Propagation optimization
+
 
 ## Design Decisions and Implementation
 ### Lexer
@@ -109,17 +109,21 @@ Variable declarations without assignment are not supported, such as this:
 `int i;
 i = 5;`
 
-Return statements can handle complex expressions but only with binary options. return x + y works, but return x + y + z will fail.
+Return statements can handle complex expressions but only with binary options. return 3 + 4 works, but return 3 + 4 + 5 will fail. Return statements with variables may not work because variable memory location lookup is buggy.
+
+Variables cannot be set equal to function calls, such as int x = test(). Function calls have to be done alone such as test();
+
+Variable declarations do not fully support other variables within them. For instance, int y = 3 + x may or may not work correctly. Variable memory location look up is buggy. Variables that are passed into functions may also not work.They work sometimes. Variable declarations and function calls with all numbers are fully supported. 
 
 Checklist of required features for the Parser:
 - [x] Identifiers, variables, functions
 - [x] Keywords
 - [x] Arithmetic expressions
 - [x] Assignment
-- [] Boolean expressions
+- [x] Boolean expressions
 - [x] Goto statements
-- [] If / Else control flow (supports Else If as well)
+- [x] If / Else control flow (supports Else If as well)
 - [x] Unary operators (negative numbers)
 - [x] Return statements
 - [x] Break statements
-- [] While loops
+- [ ] While loops

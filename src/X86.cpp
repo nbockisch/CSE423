@@ -81,7 +81,42 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 			/* set up if statements */
                         x = (tmp.label).compare("IF STATEMENT");
 			if (x == 0) {
-                                i+=genIfStatement(tmp);
+                                int hasElse = 0;
+                                item_t *elseb = NULL;
+                                if(IR.size() > i+1) {
+                                        
+                                
+                                        //        elseb = &(IR[i+2]);
+                                        //        if(!elseb->label.empty())
+
+                                        for(int j = i+1; j < IR.size(); j++) {
+                                                if(!IR[j].label.compare("IF STATEMENT")) {
+                                                        //Stop if we hit another if
+                                                        break;
+                                                }
+                                                if(!IR[j].label.compare("ELSE STATEMENT")) {
+                                                        //Stop when we hit an else
+                                                        hasElse = 1;
+                                                        elseb = &IR[j];
+                                                        break;
+                                                }
+                                        }
+                                
+                                        /*
+                                        if(!elseb->label.compare("ELSE STATEMENT"))  {
+                                                hasElse = 1;
+                                                printf("potential else label '%s'\n", elseb->label.c_str());
+                                                printf("detected else\n");
+                                        }
+                                        */
+                                }
+                                
+                                // This call returns an int to skip over the next item_t's so that this loop doesn't double-process them.
+                                if(!hasElse) {
+                                        i+=genIfStatement(tmp, NULL);
+                                } else {
+                                        i+=genIfStatement(tmp, elseb);
+                                }
                                 
                         }
 			/* set up break statements */
@@ -111,6 +146,11 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 	file.close();
 }
 
+/**
+ * This function is needed when a inner block is hit (like an if statement block)
+ * Since initVars setups up the stack and things, this one should just generate instrs
+ * for a small subset of item_t's.
+ */
 void X86::generate(std::vector<item_t> IR) {
         int x;
         //Function processes a block
@@ -118,7 +158,7 @@ void X86::generate(std::vector<item_t> IR) {
 		if (!tmp.label.empty()) {
                         x = (tmp.label).compare("BLOCK END");
                         if(x == 0) {
-                                printf("HIT END BLOCK -- RETURNING FROM BLOCK GEN\n");
+                                //printf("HIT END BLOCK -- RETURNING FROM BLOCK GEN\n");
                                 return;
                         }
                         
@@ -146,9 +186,29 @@ void X86::generate(std::vector<item_t> IR) {
 
                         x = (tmp.label).compare("IF STATEMENT");
 			if (x == 0) {
-                                genIfStatement(tmp);
+                                genIfStatement(tmp, NULL);
+                        }
+
+                        /* set up break statements */
+			x = (tmp.label).compare("BREAK");
+			if (x == 0) {
+                                genBreakStatement(tmp);
                                 
                         }
+
+			/* set up goto blocks */
+			x = (tmp.label).compare("GOTO BLOCK");
+			if (x == 0) {
+                                genGoToBlock(tmp);
+                                
+                        }
+			
+			/* set up goto */
+			x = (tmp.label).compare("GOTO");
+			if (x == 0) {
+                                genGoTo(tmp);
+                                
+                        }	
 		}
 	}
 }
@@ -799,12 +859,15 @@ void X86::genFuncCall(item_t tmp) {
         }
 }
 
-int X86::genIfStatement(item_t tmp) {
+int X86::genIfStatement(item_t tmp, item_t *elseb) {
         std::vector<std::string> vars; 
         std::vector<std::string> literals;
         std::vector<item_t> ifblock;
+        std::vector<item_t> elseblock;
         std::string op;
+        std::string instr = std::string("");
         int hasconditional = 0;
+       
         for (auto test : tmp.params) {
                 //printf("IF --- test.label = %s\n", test.label.c_str());
                 if(!test.label.compare("BIN OP")) {
@@ -824,21 +887,6 @@ int X86::genIfStatement(item_t tmp) {
                                         vars.push_back(expr.id); 
                                 }
                         }
-                        /**
-                        printf("Variables\n");
-                        for(auto d : vars) {
-                                printf("---'%s'---\n", d.c_str());
-                        }
-
-                        printf("Literals\n");
-                        for(auto d : literals) {
-                                printf("---'%s'---\n", d.c_str());
-                        }
-
-                        printf("stack vars:\n");
-                        printf("stack vars[%s]: ", vars[0].c_str());
-                        std::cout << stackVars[vars[0]];
-                        **/
                         
                         // compare literal value with the value on the stack
                         file << "\tcmpl $" << literals[0] << ", " << stackVars[vars[0]] * -4 << "(" << char(perc) << "rbp)\n";
@@ -864,6 +912,17 @@ int X86::genIfStatement(item_t tmp) {
                         }
 
                         /* This should be a BLOCK now */
+                        std::string else_lab;
+                        if(elseb != NULL) {
+                                if(ifs.empty()) {
+                                        else_lab = std::string(".IF0");
+                                } else {
+                                        else_lab = std::string(".IF"+std::to_string(ifs.size()));
+                                }
+                                ifs.push_back(else_lab);
+                        }
+                       
+                        
                         // Set up the IF statement label
                         std::string if_lab;
                         if(ifs.empty()) {
@@ -877,9 +936,12 @@ int X86::genIfStatement(item_t tmp) {
 
                         // Figure which jump op to use based on operator
                         std::string jump = getJumpInstr(op);
-                        
-                        file << "\t" << jump << " " << ifs[ifs.size()-1] << "\n";
 
+                        if(elseb != NULL) {
+                                file << "\t" << jump << " " << ifs[ifs.size()-2] << "\n";
+                        } else {
+                                file << "\t" << jump << " " << ifs[ifs.size()-1] << "\n";
+                        }
                         // Generate instructions for rest of the if block here
                         if(!test.label.compare("BLOCK")) {
                                 
@@ -891,6 +953,26 @@ int X86::genIfStatement(item_t tmp) {
                                 //printf("CALLING IF BLOCK SUB GENERATION\n");
                                 generate(ifblock);
                         }
+
+                        if(elseb != NULL) {
+                                file << "\tjmp " << ifs[ifs.size()-1] << "\n";
+
+                                // Ending label to jump to if the statement was false
+                                file << ifs[ifs.size()-2] << ":\n";
+                                
+                                if(!elseb->params[0].label.compare("BLOCK")) {
+
+                                        //
+                                        for(auto subitem : elseb->params[0].params) {
+                                                //printf(" --------> Appending subitem label '%s' to ifblock\n", subitem.label.c_str());
+                                                elseblock.push_back(subitem);
+                                        }
+                                        
+                                        //printf("CALLING ELSE BLOCK SUB GENERATION\n");
+                                        generate(elseblock);
+                                }
+                        }
+
                         
 
                         // Ending label to jump to if the statement was false
@@ -900,7 +982,12 @@ int X86::genIfStatement(item_t tmp) {
         }
 
         // Return number of item_t's to skip so the block items dont get duplicated after this function
-        return ifblock.size()+1;
+        int nskip = ifblock.size() + 1;
+        if(elseb!=NULL) {
+                nskip += elseblock.size();
+        }
+        
+        return nskip;
                 
 }
 
