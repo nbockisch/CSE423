@@ -66,24 +66,32 @@ Checklist of required features by the IR:
 - [x] Identifiers, variables, functions
 - [x] Keywords
 - [x] Arithmetic expressions
-- [x] Assignment
+- [x] Assignment (partial)
 - [ ] Boolean expressions
 - [ ] Goto statements
-- [ ] If / Else control flow
-- [ ] Unary operators
+- [x] If / Else control flow
+- [x] Unary operators
 - [x] Return statements
 - [ ] Break statements
-- [ ] While loops
+- [x] While loops
 
 Checklist of optional features for the parser:
 - [x] Types other than integers (supports void for functions)
 - [ ] binary operators
 - [ ] for loops
 - [ ] switch statements
-- [ ] ++, —, &, !, sizeof
-- [ ] -=, +=, *=, /=
+- [x] ++, —, &, !, sizeof
+- [x] -=, +=, *=, /=
 
-The IR was implemented by reading in the string form of the parse tree and parsing that information. This was done due to difficulties traversing the tree, however going forward this issue should be resolved and the IR will be changed to use this method instead. The string parsing method is not ideal, as it does give unexpected results in certain edge cases.
+The IR works by using the visitor pattern to traverse the parse tree. It stores the contents of the tree in structs called item\_t which are found in ir.h. These structs hold the item's label (e.g. RETURN, VAR DECL), its type (e.g. int), its value (e.g. 5), and its id (e.g. x). It also contains a vector called params which is used to store item\_t objects that are leafs to an object in the tree. For example, a VAR DECL object may have in its params an IDENTIFIER assignment.
+
+In its current state, the IR supports most required features in SSA format. There are exceptions, however. There are errors with SSA when creating an assignment to a binary operation for example. 
+
+It should also be noted that reading in an IR file produces an IR representation internally in the program which is significantly inaccurate. This is due to an issue in the recursive function traverseIrFile in ir.cpp. Outputting the IR to a file produces mostly accurate results however. The IR representation appears as a series of lines for each line of the IR, where each line is represented in the following format:
+
+<tree level>,<label>,<type>,<id>,<val>,
+
+They are separated by commas for ease of processing when reading the IR files in.
 
 ### Symbol Table
 
