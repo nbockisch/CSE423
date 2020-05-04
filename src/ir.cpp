@@ -86,7 +86,6 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
         if ((item.label == "ASSIGNMENT") || (item.label == "VAR DECL")) {
             for (item_t item2 : item.params) {
                 if (item2.label == "BIN OP") {
-                    item.tag = 100;
                     std::vector<item_t> tvar_st;
                     convertBinOp(item2);
                     
