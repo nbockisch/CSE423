@@ -31,6 +31,7 @@ public:
         void genReturn(item_t tmp);
         void genFuncCall(item_t tmp);
         int genIfStatement(item_t tmp);
+	void genBreakStatement(item_t tmp);
 
 
         std::string getJumpInstr(std::string op);

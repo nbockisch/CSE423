@@ -82,10 +82,16 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 			if (x == 0) {
 				genFuncCall(tmp);
 			}
-
+			/* set up if statements */
                         x = (tmp.label).compare("IF STATEMENT");
 			if (x == 0) {
                                 i+=genIfStatement(tmp);
+                                
+                        }
+
+			x = (tmp.label).compare("BREAK");
+			if (x == 0) {
+                                genBreakStatement(tmp);
                                 
                         }
 		}
@@ -251,6 +257,15 @@ void X86::genFunc(item_t tmp) {
 
         }
         
+}
+
+void X86::genBreakStatement(item_t tmp) {
+	if (file.is_open()) {
+                file << "\tjmp .L2 \n";
+		file << ".L2: \n";
+        } else {
+                std::cout << "Unable to open file";
+        }
 }
 
 void X86::genVarDecl(item_t tmp) {
