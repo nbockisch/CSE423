@@ -14,6 +14,7 @@
 #include <fstream>
 #include "ir.h"
 #include "printvisitor.h"
+extern int p_opt;
 
 ir::ir(Symtable *table) {
     this->table = table;
@@ -297,19 +298,56 @@ void ir::convertSSA(std::vector<item_t> &in)
         }
     } 
 }
-/*
-int const_fold(item_t* block)
+
+bool const_fold(item_t* block)
 {
-    val = 0;
+    bool val = false;
     for (item_t i: block->params) {
+        if (i.label == "VAR DECL") {
+            if (i.params.size() == 3 && std::isdigit(i.params[0].val[0]) && std::isdigit(i.params[2].val[2])) {
+                val = true;
+                switch(i.params[0].val[0]) {
+                    case '+':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) + atoi(i.params[2].val.c_str()));
+                        break;
+                    case '-':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) - atoi(i.params[2].val.c_str()));
+                        break;
+                    case '*':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) * atoi(i.params[2].val.c_str()));
+                        break;
+                    case '/':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) / atoi(i.params[2].val.c_str()));
+                        break;
+                    case '%':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) % atoi(i.params[2].val.c_str()));
+                        break;
+                }
+                i.params.pop_back();
+            }
+        }
     }
     return val;
 }
 
-int const_prop(item_t* block)
+bool const_prop(item_t* block)
 {
-    val = 0;
+    std::string tmp = "";
+    std::string tmp1 = "";
+    bool val = false;
     for (item_t i: block->params) {
+        if (i.label == "VAR DECL") {
+            if (i.params.size() == 1 && std::isdigit(i.params[0].val[0])) {
+                tmp = i.id;
+                tmp1 = i.params[0].val;
+            }
+        }
+        for (int j = 0; j < i.params.size(); j++) {
+            if (i.params[j].id == tmp) {
+                val = true;
+                i.params[j].val = tmp1;
+            }
+        }
     }
     return val;
 }
@@ -318,15 +356,17 @@ void optimization_1(std::vector<item_t> list)
 {
     for (item_t i: list) {
         if (i.label == "BLOCK") {
-            int f,p = 0;
+            bool f,p = false;
             while (f || p) {
                 f = const_fold(&i);
                 p = const_prop(&i);
             }
+        } else if (!i.params.empty()) {
+            optimization_1(i.params);
         }
     }
 }
-*/
+
 /**
  * Take the nodes gathered from the parse tree and construct the final IR
  * @return a vector of item_t objects holding the components of the final IR
@@ -346,6 +386,9 @@ std::vector<item_t> ir::buildIr()
 
     convertSSA(tmp_list);
 
+    if (p_opt == 1) { //waiting on command line setting
+        optimization_1(tmp_list);
+    }
     
     return tmp_list;
 }

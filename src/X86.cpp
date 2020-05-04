@@ -52,17 +52,21 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 		} 
                 
         }
-	
+
 	file.open("assembly_output.s");
 
-	for (item_t tmp : IR) {
+
+        // changed loop to this way so we can skip over items that have already been processed
+        for(int i = 0; i < IR.size(); i++) {
+                item_t tmp = IR[i];
+                        //for (item_t tmp : IR) {
 		if (!tmp.label.empty()) {
 			x = (tmp.label).compare("FUNC DECL");
 			/*setting up functions*/
 			if (x == 0) {
 				genFunc(tmp);
 			}
-			/*setting up variable declaration*/ /* still need to deal with function calls */ /*need negative numbers */
+			/*setting up variable declaration*/ /* still need to deal with function calls */
 			x = (tmp.label).compare("VAR DECL");
 			if (x == 0) {
 				genVarDecl(tmp);
@@ -78,12 +82,32 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 			if (x == 0) {
 				genFuncCall(tmp);
 			}
-
+			/* set up if statements */
                         x = (tmp.label).compare("IF STATEMENT");
 			if (x == 0) {
-                                genIfStatement(tmp);
+                                i+=genIfStatement(tmp);
                                 
                         }
+			/* set up break statements */
+			x = (tmp.label).compare("BREAK");
+			if (x == 0) {
+                                genBreakStatement(tmp);
+                                
+                        }
+
+			/* set up goto blocks */
+			x = (tmp.label).compare("GOTO BLOCK");
+			if (x == 0) {
+                                genGoToBlock(tmp);
+                                
+                        }
+			
+			/* set up goto */
+			x = (tmp.label).compare("GOTO");
+			if (x == 0) {
+                                genGoTo(tmp);
+                                
+                        }	
 		}
 	}
 
@@ -101,7 +125,13 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 		    std::cout << "Value: " << tmp.val << "\n";
 		}
 		for (auto test : tmp.params) {
-		     std::cout << "Param Value: " << test.val << "\n";
+		     int i;
+		     std::cout << "Param Label: " << test.label << "\n";
+		     for (auto test2 : test.params) {
+		     	std::cout << "Param ID: " << test2.id << "\n";
+			std::cout << "Param Val: " << test2.val << "\n";
+		       // std::cout << "Param var: " << tes2.val << "\n";
+		     }
 		}
 		for (auto test : tmp.params) {
 		     std::cout << "Param ID: " << test.id << "\n";
@@ -116,6 +146,12 @@ void X86::generate(std::vector<item_t> IR) {
         //Function processes a block
         for (item_t tmp : IR) {
 		if (!tmp.label.empty()) {
+                        x = (tmp.label).compare("BLOCK END");
+                        if(x == 0) {
+                                printf("HIT END BLOCK -- RETURNING FROM BLOCK GEN\n");
+                                return;
+                        }
+                        
 			x = (tmp.label).compare("FUNC DECL");
 			/*setting up functions*/
 			if (x == 0) {
@@ -212,10 +248,21 @@ void X86::genFunc(item_t tmp) {
                         file << char(perc);
                         file <<"rbp\n";
                         /* put passed in variables onto stack */
+			int inc2 = 0;
                         for (i = 0; i < count; i++) {
-                                stackVars.insert(std::pair<std::string, int>(dec[i], i + 4));
-                                file << "\tmovl " << char(perc) << reg[i] << ", " << -(((varCount[len - 1] + 1) * 4) + (4 * 								inc)) << "(" << char(perc) << "rbp)\n";
-                                inc++;
+				if (i < 6) {
+		                        stackVars.insert(std::pair<std::string, int>(dec[i], i + 4));
+					if (len != 0) {
+				                file << "\tmovl " << char(perc) << reg[i] << ", " << -(((varCount[len - 1] + 1) * 4) + (4 * 								inc)) << "(" << char(perc) << "rbp)\n";
+				                inc++;
+					} else if (len == 0) {
+						file << "\tmovl " << char(perc) << reg[i] << ", " << stack * -4 << "(" << char(perc) << "rbp)\n";
+						stack++;
+					}
+				} else if (i > 5) {
+					stackVars.insert(std::pair<std::string, int>(dec[i], 16 + (8 * inc2)));
+					inc++;
+				}
                         }
 
                 } else {
@@ -224,6 +271,31 @@ void X86::genFunc(item_t tmp) {
 
         }
         
+}
+
+void X86::genBreakStatement(item_t tmp) {
+	if (file.is_open()) {
+		file << "\tjmp .L2\n";
+		file << ".L2:\n";
+        } else {
+                std::cout << "Unable to open file";
+        }
+}
+
+void X86::genGoToBlock(item_t tmp) {
+	if (file.is_open()) {
+		file << "." << tmp.val << ":\n";
+        } else {
+                std::cout << "Unable to open file";
+        }
+}
+
+void X86::genGoTo(item_t tmp) {
+	if (file.is_open()) {
+		file << "\tjmp " << "." << tmp.val << "\n";
+        } else {
+                std::cout << "Unable to open file";
+        }
 }
 
 void X86::genVarDecl(item_t tmp) {
@@ -441,6 +513,7 @@ void X86::genVarDecl(item_t tmp) {
 void X86::genReturn(item_t tmp) {
         int count = 0;
         int count2 = 0;
+	int x1;
         std::vector<std::string> dec; 
         std::vector<std::string> var; 
         for (auto test : tmp.params) {
@@ -448,6 +521,12 @@ void X86::genReturn(item_t tmp) {
                         dec.push_back(test.val); 
                         count++;
                 }
+		for (auto test2 : test.params) {
+			if (!test2.val.empty()) {
+		                dec.push_back(test2.val); 
+		                count++;
+		        }
+		}
         }
 
         for (auto test : tmp.params) {
@@ -455,10 +534,69 @@ void X86::genReturn(item_t tmp) {
                         var.push_back(test.id); 
                         count2++;
                 }
+		for (auto test2 : test.params) {
+			if (!test2.id.empty()) {
+		                var.push_back(test2.id); 
+		                count2++;
+		        }
+		}
         }
-
-        /*basic return statement with no complex expression such as return 0*/
-        if (count == 1) {
+	/* expression such as return a + b */
+	if (count2 == 2) {
+                if (file.is_open()) {
+                        stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
+                        x1 = (dec[0]).compare("+");
+                        if (x1 == 0) {
+                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "edx\n";
+                                file << "\taddl " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[0]).compare("-");
+                        if (x1 == 0) {
+                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "edx\n";
+                                file << "\tsubl " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[0]).compare("*");
+                        if (x1 == 0) {
+                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "edx\n";
+                                file << "\timull " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[0]).compare("/");
+                        if (x1 == 0) {
+                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\tidivl " << stackVars[var[1]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << "\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                } else {
+                        std::cout << "Unable to open file";
+                }
+                /*basic return statement with no complex expression such as return 0*/
+        } else if (count == 1) {
                 if (file.is_open()) {
                         file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
                         file << "\tpopq ";
@@ -468,7 +606,136 @@ void X86::genReturn(item_t tmp) {
                 } else {
                         std::cout << "Unable to open file";
                 }
-                /* expression such as return x */
+                /*expression such as return 7 + 8 */
+        }  else if (count == 3) {
+                if (file.is_open()) {
+                        x1 = (dec[1]).compare("+");
+                        
+                        if (x1 == 0) {
+                                file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+                                file << "\taddl $" << dec[2] << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[1]).compare("-");
+                        if (x1 == 0) {
+                                file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+                                file << "\tsubl $" << dec[2] << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[1]).compare("*");
+                        if (x1 == 0) {
+                                file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+                                file << "\timull $" << dec[2] << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[1]).compare("/");
+                        if (x1 == 0) {
+                                file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+                                file << "\tidivl $" << dec[2] << "\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                } else {
+                        std::cout << "Unable to open file";
+                }
+                /*expression such as return y + 2 */
+        } else if (count == 2) {
+                if (file.is_open()) {
+                        x1 = (dec[1]).compare("+");
+                        if (x1 == 0) {
+                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\taddl $" << dec[0] << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[1]).compare("-");
+                        if (x1 == 0) {
+                                file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+                                file << "\tsubl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[1]).compare("*");
+                        if (x1 == 0) {
+                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\timull $" << dec[0] << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[1]).compare("/");
+                        if (x1 == 0) {
+                                file << "\tmovl " << dec[0] << ", " << char(perc) << "eax\n";
+                                file << "\tidivl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << "\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[0]).compare("+");
+                        if (x1 == 0) {
+                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\taddl $" << dec[1] << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[0]).compare("-");
+                        if (x1 == 0) {
+                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\tsubl $" << dec[1] << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[0]).compare("*");
+                        if (x1 == 0) {
+                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\timull $" << dec[1] << ", " << char(perc) << "eax\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                        x1 = (dec[0]).compare("/");
+                        if (x1 == 0) {
+                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+                                     << "rbp)" << ", " << char(perc) << "eax\n";
+                                file << "\tidivl $" << dec[1] << "\n";
+                                file << "\tpopq ";
+		                file << char(perc);
+		                file <<"rbp\n";
+		                file <<"\tret\n";
+                        }
+                } else {
+                        std::cout << "Unable to open file";
+                } 
+	/* expression such as return x */
         } else if (count2 == 1) {
                 if (file.is_open()) {
                         file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
@@ -480,7 +747,7 @@ void X86::genReturn(item_t tmp) {
                 } else {
                         std::cout << "Unable to open file";
                 }
-        }
+	}
 }
 
 void X86::genFuncCall(item_t tmp) {
@@ -525,14 +792,23 @@ void X86::genFuncCall(item_t tmp) {
                 } else {
                         std::cout << "Unable to open file";
                 }
-                /*function call with 2 to 6 params*/ /* need more than 6 params */
-        } else if ((count3 > 1) && (count3 <= 6)) {
+                /*function call with 2 or more params*/ 
+        } else if (count3 > 1) {
                 int i = 0;
                 if (file.is_open()) {
-
+			int pushed = 0;
                         for (i = 0; i < count3; i++) {
-                                /* passed in numbers */
-                                if (flag[i] == 0) {
+				/* for more than six params push onto stack */
+				if (i > 5) {
+					if (flag[i] == 0) {
+						file << "\tpushq $" << dec[i] << "\n";
+					} else if (flag[i] == 1) {
+						file << "\tpushq " << stackVars[dec[i]] * -4 << "(" << char(perc) 
+                                             	<< "rbp)" << "\n";
+					}
+					pushed++;
+					/*pass in numbers*/
+				} else if (flag[i] == 0) {
                                         file << "\tmovl $" << dec[i] << ", " << char(perc) << reg[i] << "\n";
                                         /* passed in variables */
                                 } else if (flag[i] == 1) {
@@ -541,37 +817,29 @@ void X86::genFuncCall(item_t tmp) {
                                 }						
                         }
                         file << "\tcall " << tmp.id << "\n";
+			/* if params were pushed onto stack */
+			if (i > 5) {
+				file << "\taddq $" << (pushed * 8) << ", " << char(perc) << "rsp" << "\n";
+
+			}
                 } else {
                         std::cout << "Unable to open file";
                 }
         }
 }
 
-void X86::genIfStatement(item_t tmp) {
-        printf("IF STATEMENT\n");
-
-        int count = 0;
-        int count2 = 0;
+int X86::genIfStatement(item_t tmp) {
         std::vector<std::string> vars; 
         std::vector<std::string> literals;
+        std::vector<item_t> ifblock;
         std::string op;
+        int hasconditional = 0;
         for (auto test : tmp.params) {
+                //printf("IF --- test.label = %s\n", test.label.c_str());
                 if(!test.label.compare("BIN OP")) {
-                        printf("BIN OP FOUND: var = %s\n", test.id.c_str());
-
-
-                        printf("Label: %s\n", test.label.c_str());
-                        printf("Type: %s\n", test.type.c_str());
-                        printf("ID: %s\n", test.id.c_str());
-                        printf("Val: %s\n", test.val.c_str());
-                        //printf("Tag: %s\n", test.tag.c_str());
-
-                        //Print the number of parameters to keep track
-                        printf("Params: %d\n", test.params.size());
-
                         for (auto expr : test.params) {
 
-                                printf("SUB PARAM %s\n", expr.label.c_str());
+                                // printf("SUB PARAM %s\n", expr.label.c_str());
 
                                 if (!expr.label.compare("OP")) {
                                         op = expr.val;
@@ -580,22 +848,12 @@ void X86::genIfStatement(item_t tmp) {
                                 
                                 if (!expr.val.empty()) {
                                         literals.push_back(expr.val);
-                                        printf("incrementing cnt with val '%s'\n", expr.val.c_str());
-                                        //flag.push_back(0);
-                                        count++;
                                 }
                                 if (!expr.id.empty()) {
-                                        printf("incrementing cnt 2 with id '%s'\n", expr.id.c_str());
                                         vars.push_back(expr.id); 
-                                        //flag.push_back(1);
-                                        count2++;
                                 }
                         }
-
-                        printf("count = %d\n", count);
-                        printf("count2 = %d\n", count2);
-
-
+                        /**
                         printf("Variables\n");
                         for(auto d : vars) {
                                 printf("---'%s'---\n", d.c_str());
@@ -606,43 +864,92 @@ void X86::genIfStatement(item_t tmp) {
                                 printf("---'%s'---\n", d.c_str());
                         }
 
-
-
                         printf("stack vars:\n");
                         printf("stack vars[%s]: ", vars[0].c_str());
                         std::cout << stackVars[vars[0]];
-
-
+                        **/
+                        
                         // compare literal value with the value on the stack
                         file << "\tcmpl $" << literals[0] << ", " << stackVars[vars[0]] * -4 << "(" << char(perc) << "rbp)\n";
 
+                        hasconditional = 1;
+                } else if(!test.label.compare("IDENTIFIER")) {
+
+                        //printf("ident.id = %s\n", test.id.c_str());
+
+                        // Statements like "if (x)" should just resolve to cmpl $0 x, jne.
+                        //printf("stack vars:\n");
+                        std::cout << stackVars[test.id];
+
+                        // compare implied literal with the value on the stack
+                        file << "\tcmpl $0, " << stackVars[test.id] * -4 << "(" << char(perc) << "rbp)\n";
+                                                
+                        hasconditional = 1;
+                        
+                } else {
+                        if(!hasconditional) {
+                                printf("Error - unrecognized if statement condition '%s'\n", test.label.c_str());
+                                exit(-1);
+                        }
+
+                        /* This should be a BLOCK now */
+                        // Set up the IF statement label
                         std::string if_lab;
                         if(ifs.empty()) {
                                 if_lab = std::string(".IF0");
                         } else {
-                                if_lab = std::string(".IF"+std::to_string(ifs.size()-1));
+                                if_lab = std::string(".IF"+std::to_string(ifs.size()));
                         }
-                        printf("IF LABEL: '%s'\n", if_lab.c_str());
+                        //printf("IF LABEL: '%s'\n", if_lab.c_str());
                         ifs.push_back(if_lab);
-                        file << "\tjne " << ifs[ifs.size()-1] << "\n";
 
-                        // Rest of the if block generated here
+
+                        // Figure which jump op to use based on operator
+                        std::string jump = getJumpInstr(op);
+                        
+                        file << "\t" << jump << " " << ifs[ifs.size()-1] << "\n";
+
+                        // Generate instructions for rest of the if block here
+                        if(!test.label.compare("BLOCK")) {
+                                
+                                for(auto subitem : test.params) {
+                                        //printf(" --------> Appending subitem label '%s' to ifblock\n", subitem.label.c_str());
+                                        ifblock.push_back(subitem);
+                                }
+
+                                //printf("CALLING IF BLOCK SUB GENERATION\n");
+                                generate(ifblock);
+                        }
                         
 
                         // Ending label to jump to if the statement was false
                         file << ifs[ifs.size()-1] << ":\n";
-                        
-                               
-                        
+                
                 }
-                       
-
-                        
-
         }
 
-        
-        
-                                
-        
+        // Return number of item_t's to skip so the block items dont get duplicated after this function
+        return ifblock.size()+1;
+                
+}
+
+/**
+ * Based on the operation, return corresponding X86 opposite jump instr (i.e for skipping over if statement blocks, etc)
+ */
+std::string X86::getJumpInstr(std::string op) {
+        std::string compinstr;
+        if(!op.compare("==")) {
+                compinstr = std::string("jne");
+        } else if(!op.compare(">")) {
+                compinstr = std::string("jle");
+        } else if(!op.compare(">=")) {
+                compinstr = std::string("js");
+        } else if(!op.compare("<")) {
+                compinstr = std::string("jns");
+        } else if(!op.compare("<=")) {
+                compinstr = std::string("jg");
+        } else {
+                compinstr = std::string("je");
+        }
+        return compinstr;
 }

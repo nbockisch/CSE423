@@ -323,6 +323,7 @@ compare : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE;
 
 void usage(const char *name);
 
+int p_opt = 0;
 int main(int argc, char **argv)
 {
     int opt;
@@ -390,6 +391,10 @@ int main(int argc, char **argv)
 	    case 'a':
                 // create the assembly file
                 p_ass = 1;
+		
+	    case 'z':
+	    	//runs optimization code
+		p_opt = 1;
         }
     }
 
@@ -417,16 +422,16 @@ int main(int argc, char **argv)
     IrVisitor irvis(ir_gen);
     root->accept(irvis);
 
-
-    if (ir_file) {
-        ir_gen->writeIR(ir_out_file, generated_ir);
-    }
-
     if (r_ir) {
         generated_ir = ir_gen->readIR(ir_in);
     } else {
         generated_ir = ir_gen->buildIr();
     }
+
+    if (ir_file) {
+        ir_gen->writeIR(ir_out_file, generated_ir);
+    }
+
         
 
    /* for (item_t tmp : ir_gen->items) {

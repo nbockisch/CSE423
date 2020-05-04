@@ -25,6 +25,7 @@ There are some compilation warnings that pop up from other things that are being
 `-r <ir file>`: Read in an IR file as an argument  
 `-f <source file>`: Pass in a source file as an argument  
 `-o <ir file>`: Output the IR results to a file  
+`-z: Activates Constant Folding and Propagation optimization
 
 ## Design Decisions and Implementation
 ### Lexer
@@ -66,13 +67,13 @@ Checklist of required features by the IR:
 - [x] Identifiers, variables, functions
 - [x] Keywords
 - [x] Arithmetic expressions
-- [x] Assignment (partial)
-- [ ] Boolean expressions
-- [ ] Goto statements
+- [x] Assignment
+- [x] Boolean expressions
+- [x] Goto statements
 - [x] If / Else control flow
 - [x] Unary operators
 - [x] Return statements
-- [ ] Break statements
+- [x] Break statements
 - [x] While loops
 
 Checklist of optional features for the parser:
@@ -102,7 +103,13 @@ The symbol table is filled by traversing the AST using the visitor pattern. When
 If there are blocks in the input with no variable definitions, then a scope level is still created but is empty (it contains no records).
 
 ### Assembly
-Assembly follows gcc x86 assembly. 
+Assembly follows gcc x86 assembly. A file called assembly_output.s is created. Variables must be declared like this: 
+`int i = 5; `
+Variable declarations without assignment are not supported, such as this:
+`int i;
+i = 5;`
+
+Return statements can handle complex expressions but only with binary options. return x + y works, but return x + y + z will fail.
 
 Checklist of required features for the Parser:
 - [x] Identifiers, variables, functions
@@ -110,9 +117,9 @@ Checklist of required features for the Parser:
 - [x] Arithmetic expressions
 - [x] Assignment
 - [] Boolean expressions
-- [] Goto statements
+- [x] Goto statements
 - [] If / Else control flow (supports Else If as well)
-- [] Unary operators (++, --, &, and -)
-- [] Return statements
-- [] Break statements
+- [x] Unary operators (negative numbers)
+- [x] Return statements
+- [x] Break statements
 - [] While loops
