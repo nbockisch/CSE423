@@ -86,6 +86,7 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
         if ((item.label == "ASSIGNMENT") || (item.label == "VAR DECL")) {
             for (item_t item2 : item.params) {
                 if (item2.label == "BIN OP") {
+
                     std::vector<item_t> tvar_st;
                     convertBinOp(item2);
                     
@@ -101,6 +102,7 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
                     tmp.type = item.type;
                     tmp.val = item.val;
                     tmp.params.push_back(tvar_st.front());
+                    tmp.tag = -100;
                     tvar_st.push_back(tmp);
                     std::reverse(tvar_st.begin(), tvar_st.end());
                     for (item_t i : tvar_st) {
@@ -389,7 +391,16 @@ std::vector<item_t> ir::buildIr()
     if (p_opt == 1) { //waiting on command line setting
         optimization_1(tmp_list);
     }
-    
+
+    for (item_t a : tmp_list)  {
+        std::cout << "label = " << a.label << ", type = " << a.type << ", id = " << a.id << ", val = " << a.val << std::endl;
+        for (item_t b : a.params) {
+            std::cout << "-label = " << b.label << ", type = " << b.type << ", id = " << b.id << ", val = " << b.val << std::endl;
+            for (item_t c : b.params) {
+                std::cout << "--label = " << c.label << ", type = " << c.type << ", id = " << c.id << ", val = " << c.val << std::endl;
+            }
+        }
+    }    
     return tmp_list;
 }
 
