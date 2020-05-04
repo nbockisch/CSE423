@@ -98,7 +98,9 @@ They are separated by commas for ease of processing when reading the IR files in
 
 The symbol table is roughly implemented following the section in the textbook. It uses an unordered map to store records containing the variable name, record type (variable, function, function argument, label), variable type, and the AST node. To support multiple scopes, the symbol table is an array of unordered maps, where each element represents a new scope.
 
-The symbol table is filled by traversing the AST using the visitor pattern. When an AST node containing a block node is visited, a new symbol table scope is created via `initializeScope()`. When a variable declaration or function declaration is visited, a new record is created and inserted into the active symbol table scope. After a block node is done being visited, the active scope is switched to the previous scope via `finalizeScope()`.
+The symbol table was adjusted to be included within the grammar. This allowed for runtime semantic checking, such as whether a variable was previously defined or not. Variable and function references are able to be checked by the symbol table during the parsing of the grammar, which results in better syntax errors for re-declared, or unreferenced types.
+
+Furthermore, the symbol table can check a previously defined scope for a name if it is not found within the current scope (such as for global functions). However, this feature is still limited and does not quite fully support many nested scope levels due to time considerations.
 
 If there are blocks in the input with no variable definitions, then a scope level is still created but is empty (it contains no records).
 
@@ -113,7 +115,11 @@ Return statements can handle complex expressions but only with binary options. r
 
 Variables cannot be set equal to function calls, such as int x = test(). Function calls have to be done alone such as test();
 
-Variable declarations do not fully support other variables within them. For instance, int y = 3 + x may or may not work correctly. Variable memory location look up is buggy. Variables that are passed into functions may also not work.They work sometimes. Variable declarations and function calls with all numbers are fully supported. 
+Variable declarations do not fully support other variables within them. For instance, int y = 3 + x may or may not work correctly. Variable memory location look up is buggy. Variables that are passed into functions may also not work.They work sometimes. Variable declarations and function calls with all numbers are fully supported.
+
+There are some potential problems with assembly instructions being duplicated during an else block. Potential issues could arise when if/else statements are nested within each other as well.
+
+If statements should be supported for comparisons like "if (x == 1)" "if (x >= 0)" and so on. if(x) is also handled. Complex statements such as "if(x == y + z)" are not likely to be supported, so it is recommended to pull these binary ops out before a conditional statement.
 
 Checklist of required features for the Parser:
 - [x] Identifiers, variables, functions
@@ -122,7 +128,7 @@ Checklist of required features for the Parser:
 - [x] Assignment
 - [x] Boolean expressions
 - [x] Goto statements
-- [x] If / Else control flow (supports Else If as well)
+- [x] If / Else control flow (else support not quite fully implemented - assembly labels for else blocks are not quite correct)
 - [x] Unary operators (negative numbers)
 - [x] Return statements
 - [x] Break statements
