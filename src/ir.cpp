@@ -302,9 +302,9 @@ bool const_fold(item_t* block)
     bool val = false;
     for (item_t i: block->params) {
         if (i.label == "ASSIGNMENT") {
-            if (i.params.size() == 3 && std::isdigit(i.params[1].value[0]) && std::isdigit(i.params[2].value[0])) {
+            if (i.params.size() == 3 && std::isdigit(i.params[1].val[0]) && std::isdigit(i.params[2].val[0])) {
                 val = true;
-                i.params[1].value = std::to_string(atoi(i.params[1].value) + atoi(i.params[2].value));
+                i.params[1].val = std::to_string(atoi(i.params[1].val) + atoi(i.params[2].val));
                 i.params.pop_back();
             }
         }
@@ -319,15 +319,15 @@ bool const_prop(item_t* block)
     bool val = false;
     for (item_t i: block->params) {
         if (i.label == "ASSIGNMENT") {
-            if (i.params.size() == 2 && std::isdigit(i.params[1].value[0])) {
-                tmp = i.params[0].value;
-                tmp1 = i.params[1].value;
+            if (i.params.size() == 2 && std::isdigit(i.params[1].val[0])) {
+                tmp = i.params[0].val;
+                tmp1 = i.params[1].val;
             }
         }
         for (int j = 1; j < i.params.size(); j++) {
-            if (i.params[j].value == tmp) {
+            if (i.params[j].val == tmp) {
                 val = true;
-                i.params[j].value = tmp1;
+                i.params[j].val = tmp1;
             }
         }
     }
