@@ -309,7 +309,7 @@ bool const_fold(item_t* block)
                     case '+':
                         i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) + atoi(i.params[2].val.c_str()));
                         break;
-                    case '-:
+                    case '-':
                         i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) - atoi(i.params[2].val.c_str()));
                         break;
                     case '*':
