@@ -94,11 +94,13 @@ The symbol table is filled by traversing the AST using the visitor pattern. When
 If there are blocks in the input with no variable definitions, then a scope level is still created but is empty (it contains no records).
 
 ### Assembly
-Assembly follows gcc x86 assembly. Variables must be declared like this: 
+Assembly follows gcc x86 assembly. A file called assembly_output.s is created. Variables must be declared like this: 
 `int i = 5; `
 Variable declarations without assignment are not supported, such as this:
 `int i;
 i = 5;`
+
+Return statements can handle complex expressions but only with binary options. return x + y works, but return x + y + z will fail.
 
 Checklist of required features for the Parser:
 - [x] Identifiers, variables, functions
@@ -109,6 +111,6 @@ Checklist of required features for the Parser:
 - [] Goto statements
 - [] If / Else control flow (supports Else If as well)
 - [x] Unary operators (negative numbers)
-- [] Return statements
-- [] Break statements
+- [x] Return statements
+- [x] Break statements
 - [] While loops
