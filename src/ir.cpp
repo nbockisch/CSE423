@@ -302,10 +302,26 @@ bool const_fold(item_t* block)
 {
     bool val = false;
     for (item_t i: block->params) {
-        if (i.label == "ASSIGNMENT") {
-            if (i.params.size() == 3 && std::isdigit(i.params[1].val[0]) && std::isdigit(i.params[2].val[0])) {
+        if (i.label == "VAR DECL") {
+            if (i.params.size() == 3 && std::isdigit(i.params[0].val[0]) && std::isdigit(i.params[2].val[2])) {
                 val = true;
-                i.params[1].val = std::to_string(atoi(i.params[1].val.c_str()) + atoi(i.params[2].val.c_str()));
+                switch(i.params[0].val[0]) {
+                    case '+':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) + atoi(i.params[2].val.c_str()));
+                        break;
+                    case '-:
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) - atoi(i.params[2].val.c_str()));
+                        break;
+                    case '*':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) * atoi(i.params[2].val.c_str()));
+                        break;
+                    case '/':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) / atoi(i.params[2].val.c_str()));
+                        break;
+                    case '%':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) % atoi(i.params[2].val.c_str()));
+                        break;
+                }
                 i.params.pop_back();
             }
         }
@@ -319,14 +335,14 @@ bool const_prop(item_t* block)
     std::string tmp1 = "";
     bool val = false;
     for (item_t i: block->params) {
-        if (i.label == "ASSIGNMENT") {
-            if (i.params.size() == 2 && std::isdigit(i.params[1].val[0])) {
-                tmp = i.params[0].val;
-                tmp1 = i.params[1].val;
+        if (i.label == "VAR DECL") {
+            if (i.params.size() == 1 && std::isdigit(i.params[0].val[0])) {
+                tmp = i.id;
+                tmp1 = i.params[0].val;
             }
         }
-        for (int j = 1; j < i.params.size(); j++) {
-            if (i.params[j].val == tmp) {
+        for (int j = 0; j < i.params.size(); j++) {
+            if (i.params[j].id == tmp) {
                 val = true;
                 i.params[j].val = tmp1;
             }
