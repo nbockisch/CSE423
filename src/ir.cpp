@@ -343,7 +343,7 @@ void optimization_1(std::vector<item_t> list)
                 f = const_fold(&i);
                 p = const_prop(&i);
             }
-        } else if (i.params != NULL) {
+        } else if (!i.params.empty()) {
             optimization_1(i.params);
         }
     }
