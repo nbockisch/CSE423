@@ -30,10 +30,12 @@ public:
         void genVarDecl(item_t tmp);
         void genReturn(item_t tmp);
         void genFuncCall(item_t tmp);
-        int genIfStatement(item_t tmp);
+        int genIfStatement(item_t tmp, item_t *elseb);
 	void genBreakStatement(item_t tmp);
 	void genGoToBlock(item_t tmp);
 	void genGoTo(item_t tmp);
+
+        void genAssignment(item_t tmp);
 
         std::string getJumpInstr(std::string op);
 
