@@ -66,7 +66,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 			if (x == 0) {
 				genFunc(tmp);
 			}
-			/*setting up variable declaration*/ /* still need to deal with function calls */ /*need negative numbers */
+			/*setting up variable declaration*/ /* still need to deal with function calls */
 			x = (tmp.label).compare("VAR DECL");
 			if (x == 0) {
 				genVarDecl(tmp);
@@ -88,12 +88,26 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
                                 i+=genIfStatement(tmp);
                                 
                         }
-
+			/* set up break statements */
 			x = (tmp.label).compare("BREAK");
 			if (x == 0) {
                                 genBreakStatement(tmp);
                                 
                         }
+
+			/* set up goto blocks */
+			x = (tmp.label).compare("GOTO BLOCK");
+			if (x == 0) {
+                                genGoToBlock(tmp);
+                                
+                        }
+			
+			/* set up goto */
+			x = (tmp.label).compare("GOTO");
+			if (x == 0) {
+                                genGoTo(tmp);
+                                
+                        }	
 		}
 	}
 
@@ -261,8 +275,24 @@ void X86::genFunc(item_t tmp) {
 
 void X86::genBreakStatement(item_t tmp) {
 	if (file.is_open()) {
-                file << "\tjmp .L2 \n";
-		file << ".L2: \n";
+		file << "\tjmp .L2\n";
+		file << ".L2:\n";
+        } else {
+                std::cout << "Unable to open file";
+        }
+}
+
+void X86::genGoToBlock(item_t tmp) {
+	if (file.is_open()) {
+		file << "." << tmp.val << ":\n";
+        } else {
+                std::cout << "Unable to open file";
+        }
+}
+
+void X86::genGoTo(item_t tmp) {
+	if (file.is_open()) {
+		file << "\tjmp " << "." << tmp.val << "\n";
         } else {
                 std::cout << "Unable to open file";
         }
