@@ -304,7 +304,7 @@ bool const_fold(item_t* block)
         if (i.label == "ASSIGNMENT") {
             if (i.params.size() == 3 && std::isdigit(i.params[1].val[0]) && std::isdigit(i.params[2].val[0])) {
                 val = true;
-                i.params[1].val = std::to_string(atoi(i.params[1].val) + atoi(i.params[2].val));
+                i.params[1].val = std::to_string(atoi(i.params[1].val.c_str()) + atoi(i.params[2].val.c_str()));
                 i.params.pop_back();
             }
         }
