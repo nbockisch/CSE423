@@ -296,19 +296,40 @@ void ir::convertSSA(std::vector<item_t> &in)
         }
     } 
 }
-/*
-int const_fold(item_t* block)
+
+bool const_fold(item_t* block)
 {
-    val = 0;
+    bool val = false;
     for (item_t i: block->params) {
+        if (i.label == "ASSIGNMENT") {
+            if (i.params.size() == 3 && std::isdigit(i.params[1].value[0]) && std::isdigit(i.params[2].value[0])) {
+                val = true;
+                i.params[1].value = std::to_string(atoi(i.params[1].value) + atoi(i.params[2].value));
+                i.params.pop_back();
+            }
+        }
     }
     return val;
 }
 
-int const_prop(item_t* block)
+bool const_prop(item_t* block)
 {
-    val = 0;
+    std::string tmp = "";
+    std::string tmp1 = "";
+    bool val = false;
     for (item_t i: block->params) {
+        if (i.label == "ASSIGNMENT") {
+            if (i.params.size() == 2 && std::isdigit(i.params[1].value[0])) {
+                tmp = i.params[0].value;
+                tmp1 = i.params[1].value;
+            }
+        }
+        for (int j = 1; j < i.params.size(); j++) {
+            if (i.params[j].value == tmp) {
+                val = true;
+                i.params[j].value = tmp1;
+            }
+        }
     }
     return val;
 }
@@ -317,15 +338,17 @@ void optimization_1(std::vector<item_t> list)
 {
     for (item_t i: list) {
         if (i.label == "BLOCK") {
-            int f,p = 0;
+            bool f,p = false;
             while (f || p) {
                 f = const_fold(&i);
                 p = const_prop(&i);
             }
+        } else if (i.params != NULL) {
+            optimization_1(i.params);
         }
     }
 }
-*/
+
 /**
  * Take the nodes gathered from the parse tree and construct the final IR
  * @return a vector of item_t objects holding the components of the final IR
