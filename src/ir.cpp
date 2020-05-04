@@ -86,6 +86,7 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
         if ((item.label == "ASSIGNMENT") || (item.label == "VAR DECL")) {
             for (item_t item2 : item.params) {
                 if (item2.label == "BIN OP") {
+                    item.tag = 100;
                     std::vector<item_t> tvar_st;
                     convertBinOp(item2);
                     
@@ -184,9 +185,9 @@ void ir::convertSSA(std::vector<item_t> &in)
             for (int j = 0; j < vars.size(); j++) {
                 if (vars[j].orig == (&in[i])->id) {
                     // Change current variable name
-                    vars[j].prev = vars[j].cur;
+                    /*vars[j].prev = vars[j].cur;
                     vars[j].v_num++;
-                    vars[j].cur = vars[j].orig + std::to_string(vars[j].v_num);
+                    vars[j].cur = vars[j].orig + std::to_string(vars[j].v_num);*/
                     (&in[i])->id = vars[j].cur;
                 }
             }
