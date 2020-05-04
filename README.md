@@ -67,13 +67,13 @@ Checklist of required features by the IR:
 - [x] Keywords
 - [x] Arithmetic expressions
 - [x] Assignment
-- [ ] Boolean expressions
-- [ ] Goto statements
-- [ ] If / Else control flow
-- [ ] Unary operators
+- [x] Boolean expressions
+- [x] Goto statements
+- [x] If / Else control flow
+- [x] Unary operators
 - [x] Return statements
-- [ ] Break statements
-- [ ] While loops
+- [x] Break statements
+- [x] While loops
 
 Checklist of optional features for the parser:
 - [x] Types other than integers (supports void for functions)
@@ -108,7 +108,7 @@ Checklist of required features for the Parser:
 - [x] Arithmetic expressions
 - [x] Assignment
 - [] Boolean expressions
-- [] Goto statements
+- [x] Goto statements
 - [] If / Else control flow (supports Else If as well)
 - [x] Unary operators (negative numbers)
 - [x] Return statements
