@@ -17,10 +17,7 @@ X86::~X86() {
 void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
         this->table = table;
 	int variable = 0;
-	int type = 0;
 	int x;
-	int x1;
-	int x2;
 	 
 	/* registers used for param passing */
 	reg.push_back("edi");
@@ -46,7 +43,6 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
                 }
 		if (variable == 1) {
 			varCount.push_back(table->getCount(i));
-			printf("%d\n", table->getCount(i));
 			len++;
 			variable = 0;
 		} 
@@ -111,33 +107,7 @@ void X86::initVariables(Symtable *table, std::vector<item_t> IR) {
 		}
 	}
 
-	for (item_t tmp : IR) {
-		if (!tmp.label.empty()) {
-		    std::cout << "Label: " << tmp.label << "\n";
-		}
-		if (!tmp.id.empty()) {
-		    std::cout << "ID: " << tmp.id << "\n";
-		}
-		if (!tmp.type.empty()) {
-		    std::cout << "Type: " << tmp.type << "\n";
-		}
-		if (!tmp.val.empty()) {
-		    std::cout << "Value: " << tmp.val << "\n";
-		}
-		for (auto test : tmp.params) {
-		     int i;
-		     std::cout << "Param Label: " << test.label << "\n";
-		     for (auto test2 : test.params) {
-		     	std::cout << "Param ID: " << test2.id << "\n";
-			std::cout << "Param Val: " << test2.val << "\n";
-		       // std::cout << "Param var: " << tes2.val << "\n";
-		     }
-		}
-		for (auto test : tmp.params) {
-		     std::cout << "Param ID: " << test.id << "\n";
-		}
-		std::cout << std::endl;
-	}
+	
 	file.close();
 }
 
@@ -187,7 +157,7 @@ void X86::generate(std::vector<item_t> IR) {
 void X86::genFunc(item_t tmp) {
         int x1;
         int x2;
-        int type;
+	int type;
         if (!tmp.type.empty())
                 x1 = (tmp.type).compare("int");
         if (x1 == 0) {
@@ -317,195 +287,196 @@ void X86::genVarDecl(item_t tmp) {
                         count2++;
                 }
         }
-
-        /* expressions such as int x = a + b */
-        if (count2 == 2) {
-                if (file.is_open()) {
-                        stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
-                        x1 = (dec[0]).compare("+");
-                        if (x1 == 0) {
-                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "edx\n";
-                                file << "\taddl " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[0]).compare("-");
-                        if (x1 == 0) {
-                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "edx\n";
-                                file << "\tsubl " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[0]).compare("*");
-                        if (x1 == 0) {
-                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "edx\n";
-                                file << "\timull " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[0]).compare("/");
-                        if (x1 == 0) {
-                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\tidivl " << stackVars[var[1]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << "\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                } else {
-                        std::cout << "Unable to open file";
-                }
-                /*basic variable declaration such as int x = 5*/
-        } else if (count == 1) {
-                if (file.is_open()) {
-                        file << "\tmovl $" << dec[0] << ", " << stack * -4 << "(" << char(perc) << "rbp)\n";
-                        stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
-                        stack++;
-                } else {
-                        std::cout << "Unable to open file";
-                }
-                /*variable declarations such as int x = 7 + 8 */
-        } else if (count == 3) {
-                if (file.is_open()) {
-                        x1 = (dec[1]).compare("+");
-                        stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
-                        if (x1 == 0) {
-                                file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
-                                file << "\taddl $" << dec[2] << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[1]).compare("-");
-                        if (x1 == 0) {
-                                file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
-                                file << "\tsubl $" << dec[2] << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[1]).compare("*");
-                        if (x1 == 0) {
-                                file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
-                                file << "\timull $" << dec[2] << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[1]).compare("/");
-                        if (x1 == 0) {
-                                file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
-                                file << "\tidivl $" << dec[2] << "\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                } else {
-                        std::cout << "Unable to open file";
-                }
-                /*variable declarations such as int x = y + 2 */
-        } else if (count == 2) {
-                if (file.is_open()) {
-                        stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
-                        x1 = (dec[1]).compare("+");
-                        if (x1 == 0) {
-                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\taddl $" << dec[0] << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[1]).compare("-");
-                        if (x1 == 0) {
-                                file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
-                                file << "\tsubl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[1]).compare("*");
-                        if (x1 == 0) {
-                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\timull $" << dec[0] << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[1]).compare("/");
-                        if (x1 == 0) {
-                                file << "\tmovl " << dec[0] << ", " << char(perc) << "eax\n";
-                                file << "\tidivl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << "\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[0]).compare("+");
-                        if (x1 == 0) {
-                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\taddl $" << dec[1] << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[0]).compare("-");
-                        if (x1 == 0) {
-                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\tsubl $" << dec[1] << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[0]).compare("*");
-                        if (x1 == 0) {
-                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\timull $" << dec[1] << ", " << char(perc) << "eax\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                        x1 = (dec[0]).compare("/");
-                        if (x1 == 0) {
-                                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                                     << "rbp)" << ", " << char(perc) << "eax\n";
-                                file << "\tidivl $" << dec[1] << "\n";
-                                file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
-                                     << "rbp)\n";
-                                stack++;
-                        }
-                } else {
-                        std::cout << "Unable to open file";
-                } 
-                /* expression such as int x = b */
-        } else if (count2 == 1) {
-                if (file.is_open()) {
-                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
-                             << "rbp)" << ", " << stack * -4 << "(" << char(perc) << "rbp)\n";
-                        stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
-                        stack++;
-                } else {
-                        std::cout << "Unable to open file";
-                }
-        }
+	if (tmp.tag != -100) {
+		/* expressions such as int x = a + b */
+		if (count2 == 2) {
+		        if (file.is_open()) {
+		                stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
+		                x1 = (dec[0]).compare("+");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "edx\n";
+		                        file << "\taddl " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[0]).compare("-");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "edx\n";
+		                        file << "\tsubl " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[0]).compare("*");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << stackVars[var[1]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "edx\n";
+		                        file << "\timull " << char(perc) << "edx" << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[0]).compare("/");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\tidivl " << stackVars[var[1]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << "\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		        } else {
+		                std::cout << "Unable to open file";
+		        }
+		        /*basic variable declaration such as int x = 5*/
+		} else if (count == 1) {
+		        if (file.is_open()) {
+		                file << "\tmovl $" << dec[0] << ", " << stack * -4 << "(" << char(perc) << "rbp)\n";
+		                stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
+		                stack++;
+		        } else {
+		                std::cout << "Unable to open file";
+		        }
+		        /*variable declarations such as int x = 7 + 8 */
+		} else if (count == 3) {
+		        if (file.is_open()) {
+		                x1 = (dec[1]).compare("+");
+		                stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
+		                if (x1 == 0) {
+		                        file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+		                        file << "\taddl $" << dec[2] << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[1]).compare("-");
+		                if (x1 == 0) {
+		                        file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+		                        file << "\tsubl $" << dec[2] << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[1]).compare("*");
+		                if (x1 == 0) {
+		                        file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+		                        file << "\timull $" << dec[2] << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[1]).compare("/");
+		                if (x1 == 0) {
+		                        file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+		                        file << "\tidivl $" << dec[2] << "\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		        } else {
+		                std::cout << "Unable to open file";
+		        }
+		        /*variable declarations such as int x = y + 2 */
+		} else if (count == 2) {
+		        if (file.is_open()) {
+		                stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
+		                x1 = (dec[1]).compare("+");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\taddl $" << dec[0] << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[1]).compare("-");
+		                if (x1 == 0) {
+		                        file << "\tmovl $" << dec[0] << ", " << char(perc) << "eax\n";
+		                        file << "\tsubl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[1]).compare("*");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\timull $" << dec[0] << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[1]).compare("/");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << dec[0] << ", " << char(perc) << "eax\n";
+		                        file << "\tidivl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << "\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[0]).compare("+");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\taddl $" << dec[1] << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[0]).compare("-");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\tsubl $" << dec[1] << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[0]).compare("*");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\timull $" << dec[1] << ", " << char(perc) << "eax\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		                x1 = (dec[0]).compare("/");
+		                if (x1 == 0) {
+		                        file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                             << "rbp)" << ", " << char(perc) << "eax\n";
+		                        file << "\tidivl $" << dec[1] << "\n";
+		                        file << "\tmovl " << char(perc) << "eax" << ", " << stack * -4 << "(" << char(perc) 
+		                             << "rbp)\n";
+		                        stack++;
+		                }
+		        } else {
+		                std::cout << "Unable to open file";
+		        } 
+		        /* expression such as int x = b */
+		} else if (count2 == 1) {
+		        if (file.is_open()) {
+		                file << "\tmovl " << stackVars[var[0]] * -4 << "(" << char(perc) 
+		                     << "rbp)" << ", " << stack * -4 << "(" << char(perc) << "rbp)\n";
+		                stackVars.insert(std::pair<std::string, int>(tmp.id, stack));
+		                stack++;
+		        } else {
+		                std::cout << "Unable to open file";
+		        }
+		}
+	}
         
 }
 

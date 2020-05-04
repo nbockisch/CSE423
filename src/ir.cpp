@@ -392,15 +392,7 @@ std::vector<item_t> ir::buildIr()
         optimization_1(tmp_list);
     }
 
-    for (item_t a : tmp_list)  {
-        std::cout << "label = " << a.label << ", type = " << a.type << ", id = " << a.id << ", val = " << a.val << std::endl;
-        for (item_t b : a.params) {
-            std::cout << "-label = " << b.label << ", type = " << b.type << ", id = " << b.id << ", val = " << b.val << std::endl;
-            for (item_t c : b.params) {
-                std::cout << "--label = " << c.label << ", type = " << c.type << ", id = " << c.id << ", val = " << c.val << std::endl;
-            }
-        }
-    }    
+    
     return tmp_list;
 }
 
