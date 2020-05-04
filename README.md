@@ -25,6 +25,7 @@ There are some compilation warnings that pop up from other things that are being
 `-r <ir file>`: Read in an IR file as an argument  
 `-f <source file>`: Pass in a source file as an argument  
 `-o <ir file>`: Output the IR results to a file  
+`-z: Activates Constant Folding and Propagation optimization
 
 ## Design Decisions and Implementation
 ### Lexer
