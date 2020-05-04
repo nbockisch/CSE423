@@ -111,6 +111,8 @@ i = 5;`
 
 Return statements can handle complex expressions but only with binary options. return x + y works, but return x + y + z will fail.
 
+Variables cannot be set equal to function calls, such as int x = test(). Function calls have to be done alone such as test();
+
 Checklist of required features for the Parser:
 - [x] Identifiers, variables, functions
 - [x] Keywords
