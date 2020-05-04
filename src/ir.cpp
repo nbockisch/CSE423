@@ -13,6 +13,7 @@
 #include <iterator>
 #include "ir.h"
 #include "printvisitor.h"
+extern int p_opt;
 
 ir::ir(Symtable *table) {
     this->table = table;
@@ -377,7 +378,7 @@ std::vector<item_t> ir::buildIr()
             }
         }
     }*/
-    if (false) { //waiting on command line setting
+    if (p_opt == 1) { //waiting on command line setting
         optimization_1(tmp_list);
     }
     
