@@ -43,14 +43,15 @@ public:
     std::vector<item_t> items;
 
     std::string printIR(std::vector<item_t> items);
-    void writeIR(const char *fname, std::vector<item_t> items);
+    void writeIR(std::string fname, std::vector<item_t> items);
+    std::vector<item_t> readIR(std::string fname);
 private:
     
     std::stack<item_t> tv_decl;
     int v_num;
     Symtable *table;
 
-    std::string itemPrint(item_t *item);
+    std::string itemPrint(item_t *item, int level);
 };
 
 #endif

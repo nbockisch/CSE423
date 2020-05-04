@@ -11,8 +11,10 @@
 #include <stack>
 #include <algorithm>
 #include <iterator>
+#include <fstream>
 #include "ir.h"
 #include "printvisitor.h"
+extern int p_opt;
 
 ir::ir(Symtable *table) {
     this->table = table;
@@ -84,6 +86,7 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
         if ((item.label == "ASSIGNMENT") || (item.label == "VAR DECL")) {
             for (item_t item2 : item.params) {
                 if (item2.label == "BIN OP") {
+
                     std::vector<item_t> tvar_st;
                     convertBinOp(item2);
                     
@@ -99,6 +102,7 @@ std::vector<item_t> ir::convert3Var(std::vector<item_t> items)
                     tmp.type = item.type;
                     tmp.val = item.val;
                     tmp.params.push_back(tvar_st.front());
+                    tmp.tag = -100;
                     tvar_st.push_back(tmp);
                     std::reverse(tvar_st.begin(), tvar_st.end());
                     for (item_t i : tvar_st) {
@@ -182,9 +186,9 @@ void ir::convertSSA(std::vector<item_t> &in)
             for (int j = 0; j < vars.size(); j++) {
                 if (vars[j].orig == (&in[i])->id) {
                     // Change current variable name
-                    vars[j].prev = vars[j].cur;
+                    /*vars[j].prev = vars[j].cur;
                     vars[j].v_num++;
-                    vars[j].cur = vars[j].orig + std::to_string(vars[j].v_num);
+                    vars[j].cur = vars[j].orig + std::to_string(vars[j].v_num);*/
                     (&in[i])->id = vars[j].cur;
                 }
             }
@@ -301,10 +305,26 @@ bool const_fold(item_t* block)
 {
     bool val = false;
     for (item_t i: block->params) {
-        if (i.label == "ASSIGNMENT") {
-            if (i.params.size() == 3 && std::isdigit(i.params[1].val[0]) && std::isdigit(i.params[2].val[0])) {
+        if (i.label == "VAR DECL") {
+            if (i.params.size() == 3 && std::isdigit(i.params[0].val[0]) && std::isdigit(i.params[2].val[2])) {
                 val = true;
-                i.params[1].val = std::to_string(atoi(i.params[1].val.c_str()) + atoi(i.params[2].val.c_str()));
+                switch(i.params[0].val[0]) {
+                    case '+':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) + atoi(i.params[2].val.c_str()));
+                        break;
+                    case '-':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) - atoi(i.params[2].val.c_str()));
+                        break;
+                    case '*':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) * atoi(i.params[2].val.c_str()));
+                        break;
+                    case '/':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) / atoi(i.params[2].val.c_str()));
+                        break;
+                    case '%':
+                        i.params[0].val = std::to_string(atoi(i.params[0].val.c_str()) % atoi(i.params[2].val.c_str()));
+                        break;
+                }
                 i.params.pop_back();
             }
         }
@@ -318,14 +338,14 @@ bool const_prop(item_t* block)
     std::string tmp1 = "";
     bool val = false;
     for (item_t i: block->params) {
-        if (i.label == "ASSIGNMENT") {
-            if (i.params.size() == 2 && std::isdigit(i.params[1].val[0])) {
-                tmp = i.params[0].val;
-                tmp1 = i.params[1].val;
+        if (i.label == "VAR DECL") {
+            if (i.params.size() == 1 && std::isdigit(i.params[0].val[0])) {
+                tmp = i.id;
+                tmp1 = i.params[0].val;
             }
         }
-        for (int j = 1; j < i.params.size(); j++) {
-            if (i.params[j].val == tmp) {
+        for (int j = 0; j < i.params.size(); j++) {
+            if (i.params[j].id == tmp) {
                 val = true;
                 i.params[j].val = tmp1;
             }
@@ -368,58 +388,73 @@ std::vector<item_t> ir::buildIr()
 
     convertSSA(tmp_list);
 
-    /*for (item_t a : tmp_list) {
-        std::cout << "label = " << a.label << ", type = " << a.type << ", id = " << a.id << ", val = " << a.val << std::endl;
-        for (item_t b : a.params) {
-            std::cout << "- label = " << b.label << ", type = " << b.type << ", id = " << b.id << ", val = " << b.val << std::endl;
-            for (item_t c : b.params) {
-                std::cout << "-- label = " << c.label << ", type = " << c.type << ", id = " << c.id << ", val = " << c.val << std::endl;
-            }
-        }
-    }*/
-    if (false) { //waiting on command line setting
+    if (p_opt == 1) { //waiting on command line setting
         optimization_1(tmp_list);
     }
-    
+
+    for (item_t a : tmp_list)  {
+        std::cout << "label = " << a.label << ", type = " << a.type << ", id = " << a.id << ", val = " << a.val << std::endl;
+        for (item_t b : a.params) {
+            std::cout << "-label = " << b.label << ", type = " << b.type << ", id = " << b.id << ", val = " << b.val << std::endl;
+            for (item_t c : b.params) {
+                std::cout << "--label = " << c.label << ", type = " << c.type << ", id = " << c.id << ", val = " << c.val << std::endl;
+            }
+        }
+    }    
     return tmp_list;
 }
 
-std::string ir::itemPrint(item_t *item) {
+/**
+ * Helper function to print IR contents in the correct format
+ * @param item the item_t item to be printed
+ * @param level the level of the tree the item is to be printed at
+ * @return a string with the contents to be printed
+ **/
+std::string ir::itemPrint(item_t *item, int level) {
         std::string out;
 
-        out.append("Label: "+item->label+"\n");
-        out.append("Type: "+item->type+"\n");
-        out.append("ID: "+item->id+"\n");
-        out.append("Val: "+item->val+"\n");
-        out.append("Tag: "+std::to_string(item->tag)+"\n");
-
-        //Print the number of parameters to keep track
-        out.append("Params: "+std::to_string(item->params.size())+"\n");
-
-        if(item->params.size() > 0) {
-                for(uint i = 0; i < item->params.size(); i++) {
-                        out.append(itemPrint(&(item->params[i])));
-                }
+        out.append(std::to_string(level));
+        out.append(",");
+        out.append(item->label);
+        out.append(",");
+        out.append(item->type);
+        out.append(",");
+        out.append(item->id);
+        out.append(",");
+        out.append(item->val);
+        out.append(",");
+        out.append("\n");
+        for (item_t i : item->params) {
+            out.append(itemPrint(&i, level + 1));
         }
-        
         return out;
 }
 
+/**
+ * Print the IR
+ * @param items the list of ir items to print
+ * @return A string with the printable IR
+ **/
 std::string ir::printIR(std::vector<item_t> items) {
         std::string out;
         
         for(uint i = 0; i < items.size(); i++) {
                 item_t item = items[i];
                 
-                out.append(itemPrint(&item));
+                out.append(itemPrint(&item, 0));
         }
 
         return out;
         
 }
 
-void ir::writeIR(const char *fname, std::vector<item_t> items) {
-        FILE *fp = fopen(fname, "w");
+/**
+ * Write the IR to a file
+ * @param fname the name of the file to write the IR to
+ * @param items the list of item_t objects to be written to a file
+ **/
+void ir::writeIR(std::string fname, std::vector<item_t> items) {
+        FILE *fp = fopen(fname.c_str(), "w");
         if(fp == NULL) {
                 printf("Error: Cannot open file '%s' to write IR.\n", fname);
                 exit(-1);
@@ -427,9 +462,85 @@ void ir::writeIR(const char *fname, std::vector<item_t> items) {
         
         for(uint i = 0; i < items.size(); i++) {
                 item_t item = items[i];
-                fprintf(fp, "%s", itemPrint(&item).c_str());
+                fprintf(fp, "%s", itemPrint(&item, 0).c_str());
         }
 
         fprintf(fp, "\n");
         fclose(fp);
+}
+
+/**
+ * Recursive helper function to put IR file contents in a tree
+ * @param i the index of where in the IR file list processing is at
+ * @param ir the list of IR file contents
+ * @return an item_t vector with the IR elements on that level of the tree
+ **/
+std::vector<item_t> traverseIrFile(int i, std::vector<std::vector<std::string>> ir) {
+    int level = atoi(ir[i][0].c_str());
+    std::vector<item_t> write_out;
+    std::vector<item_t> tmp;
+
+
+    for (; i < ir.size() - 2; i++) {
+        if (atoi(ir[i][0].c_str()) < level) {
+            return write_out;
+        }
+
+        item_t tmp_i;
+        for (int j = 1; j < ir[i].size(); j++) {
+            switch (j)
+            {
+                case 1:
+                    tmp_i.label = ir[i][j];
+                    break;
+                case 2:
+                    tmp_i.type = ir[i][j];
+                    break;
+                case 3:
+                    tmp_i.id = ir[i][j];
+                    break;
+                case 4:
+                    tmp_i.val = ir[i][j];
+                    break;
+            };
+        }
+        if (atoi(ir[i + 1][0].c_str()) > level) {
+            tmp = traverseIrFile(i + 1, ir);   
+            i += tmp.size() + 1;
+        }
+        for (item_t i : tmp) {
+            tmp_i.params.push_back(i);
+        }
+        //std::cout << "Got i: " << i << std::endl;
+
+        write_out.push_back(tmp_i);
+        std::cout << "i: " << i << ", label: " << tmp_i.label << ", level: " << level << std::endl;
+    }
+
+    return write_out;
+}
+
+/**
+ * Reads in an IR file
+ * @param fname a string with the IR file name
+ * @return a vector of item_t structs with the IR
+ **/
+std::vector<item_t> ir::readIR(std::string fname) {
+        std::string line;
+        std::ifstream in(fname);
+        std::vector<std::vector<std::string>> ir;
+        std::vector<item_t> rep;
+
+        while (std::getline(in, line)) {
+            /* Split each line of IR file with comma */
+            std::vector<std::string> parts;
+            std::stringstream ss(line);
+            std::string part;
+            while(std::getline(ss, part, ',')) {
+                parts.push_back(part);
+            }
+            ir.push_back(parts);
+        }
+
+        return traverseIrFile(0, ir);
 }

@@ -14,7 +14,6 @@
 #include "nodevisitor.h"
 #include "ir.h"
 
-int tag = 0;
 
 class IrVisitor : public NodeVisitor {
 public:
@@ -25,8 +24,6 @@ public:
         void visit(const NExpression& node) {
                 item_t item;
                 item.label = "EXPRESSION";
-                item.tag = tag;
-                tag++;
                 while (!blocks.empty()) {
                     item.params.push_back(blocks.front());
                     blocks.pop_front();
@@ -39,8 +36,6 @@ public:
         void visit(const NStatement& node) {
                 item_t item;
                 item.label = "STATEMENT";
-                item.tag = tag;
-                tag++;
                 while (!blocks.empty()) {
                     item.params.push_back(blocks.front());
                     blocks.pop_front();
@@ -52,8 +47,6 @@ public:
         
         void visit(const NInteger &node) {
                 item_t item;
-                item.tag = tag;
-                tag++;
                 std::stringstream ss;
                 
                 ss << node.value;
@@ -69,16 +62,12 @@ public:
 	void visit(const NBreak &node) {
         item_t item;
         item.label = "BREAK";
-        item.tag = tag;
-        tag++;
         blocks.push_back(item);
 		return;
 	}
 
         void visit(const NDouble &node) {
                 item_t item;
-                item.tag = tag;
-                tag++;
                 std::stringstream ss;
                 
                 ss << node.value;
@@ -94,8 +83,6 @@ public:
                 
                 item.label = "IDENTIFIER";
                 item.id = node.name;
-                item.tag = tag;
-                tag++;
 
                 blocks.push_back(item);
                 //exp_comp.push_front(node.name);
@@ -107,8 +94,6 @@ public:
                 
                 item.label = "TYPE";
                 item.type = node.name;
-                item.tag = tag;
-                tag++;
 
                 blocks.push_back(item);
                 //exp_comp.push_front(node.name);
@@ -119,8 +104,6 @@ public:
                 item_t item;
                 item.label = "FUNCTION CALL";
                 item.id = node.id.name;
-                item.tag = tag;
-                tag++;
 
                 if (node.arguments.size() != 0) {
                     for (auto exp : node.arguments) {
@@ -140,11 +123,7 @@ public:
                 item_t item;
                 item_t op;
                 item.label = "BIN OP";
-                item.tag = tag;
-                tag++;
                 op.label = "OP";
-                op.tag = tag;
-                tag++;
                 
                 node.lhs.accept(*this);
                 
@@ -209,8 +188,6 @@ public:
                 node.expression.accept(*this);
                 item_t item;
                 item.label = "UNARY OP";
-                item.tag = tag;
-                tag++;
                 
                 switch (node.op) {
                     case 278:
@@ -263,8 +240,6 @@ public:
                 node.lhs.accept(*this);
                 item_t item;
                 item.label = "ASSIGNMENT";
-                item.tag = tag;
-                tag++;
                 //item.id = node.lhs.name;
                 while (!blocks.empty()) {
                     item.params.push_back(blocks.front());
@@ -291,8 +266,6 @@ public:
                 //*table->initializeScope();
                 item_t item;
                 item.label = "BLOCK";
-                item.tag = tag;
-                tag++;
 
                 for( auto statement : node.statements) {
                         statement->accept(*this);
@@ -312,8 +285,6 @@ public:
                 node.expression.accept(*this);
                 item_t item;
                 item.label = "EXPRESSION STATEMENT";
-                item.tag = tag;
-                tag++;
                 
                 while (!blocks.empty()) {
                     item.params.push_back(blocks.front());
@@ -326,8 +297,6 @@ public:
         void visit(const NReturnStatement& node) {
                 item_t item;
                 node.expression.accept(*this);
-                item.tag = tag;
-                tag++;
 
                 item.label = "RETURN";
                 while (!blocks.empty()) {
@@ -348,8 +317,6 @@ public:
         void visit(const NIfStatement& node) {
                 item_t item;
                 item.label = "IF STATEMENT";
-                item.tag = tag;
-                tag++;
                 node.expression.accept(*this);
                 while (!blocks.empty()) {
                     item.params.push_back(blocks.front());
@@ -367,8 +334,6 @@ public:
 	 void visit(const NElseIfStatement& node) {
                 item_t item;
                 item.label = "ELSE IF STATEMENT";
-                item.tag = tag;
-                tag++;
                 node.expression.accept(*this);
                 while (!blocks.empty()) {
                     item.params.push_back(blocks.front());
@@ -386,8 +351,6 @@ public:
         void visit(const NWhileStatement& node) {
                 item_t item;
                 item.label = "WHILE STATEMENT";
-                item.tag = tag;
-                tag++;
                 node.expression.accept(*this);
                 while (!blocks.empty()) {
                     item.params.push_back(blocks.front());
@@ -405,8 +368,6 @@ public:
 	void visit(const NForStatement& node) {
                 item_t item;
                 item.label = "FOR STATEMENT";
-                item.tag = tag;
-                tag++;
                 node.expression1.accept(*this);
                 while (!blocks.empty()) {
                     item.params.push_back(blocks.front());
@@ -435,8 +396,6 @@ public:
         void visit(const NElseStatement& node) {
                 item_t item;
                 item.label = "ELSE STATEMENT";
-                item.tag = tag;
-                tag++;
 
                 node.block.accept(*this);
                 while (!blocks.empty()) {
@@ -451,8 +410,6 @@ public:
             item.label = "VAR DECL";
             item.type = node.type.name;
             item.id = node.id.name;
-            item.tag = tag;
-            tag++;
             if (node.assignmentExpr != NULL)  {
                 node.assignmentExpr->accept(*this);
             }
@@ -467,8 +424,6 @@ public:
                 item_t item;
                 item.label = "GOTO";
                 item.val = node.id.name;
-                item.tag = tag;
-                tag++;
                 blocks.push_back(item); 
                 return;
         }
@@ -477,8 +432,6 @@ public:
             item_t item;
             item.label = "GOTO BLOCK";
             item.val = node.id.name;
-            item.tag = tag;
-            tag++;
             blocks.push_back(item); 
             return;
         }
@@ -488,8 +441,6 @@ public:
             item.label = "FUNC DECL";
             item.type = node.type.name;
             item.id = node.id.name;
-            item.tag = tag;
-            tag++;
            
             if (node.arguments.size() != 0) {
                 for (auto var : node.arguments) {

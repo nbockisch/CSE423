@@ -323,12 +323,14 @@ compare : TCEQ | TCNE | TCLT | TCLE | TCGT | TCGE;
 
 void usage(const char *name);
 
+int p_opt = 0;
 int main(int argc, char **argv)
 {
     int opt;
     p_tokens = 0;
     int p_tree = 0;
     int p_ir = 0;
+    int r_ir = 0;
     int p_sym = 0;
     int p_ass = 0;
     int ir_file = 0;
@@ -338,7 +340,7 @@ int main(int argc, char **argv)
     std::vector<item_t> generated_ir;
     ir *ir_gen = NULL;
     //Symtable *symtab = NULL;
-    FILE *ir_in;
+    std::string ir_in;
 
     #ifdef RUN_TESTS
     printf("Setting up catch\n");
@@ -362,11 +364,8 @@ int main(int argc, char **argv)
                 break;
             case 'r':
                 // get filename and open file
-                ir_in = fopen(optarg, "r");
-                if (!ir_in) {
-                    std::cout << "Failure: Couldn't open file '" << optarg << "'\n" << std::endl;
-                    return -1;
-                }
+                ir_in = optarg;
+                r_ir = 1;
                 break;
             case 'o':
                 // output ir to file
@@ -392,12 +391,16 @@ int main(int argc, char **argv)
 	    case 'a':
                 // create the assembly file
                 p_ass = 1;
+		
+	    case 'z':
+	    	//runs optimization code
+		p_opt = 1;
         }
     }
 
     // Throw an error if no input file was specified
-    if(!yyin) {
-            printf("Error: an input file must be specified with -f!\n");
+    if(!yyin && (r_ir == 0)) {
+            printf("Error: an input file must be specified with -f or -r!\n");
             return -1;
     }
 
@@ -419,7 +422,16 @@ int main(int argc, char **argv)
     IrVisitor irvis(ir_gen);
     root->accept(irvis);
 
-    generated_ir = ir_gen->buildIr();
+    if (r_ir) {
+        generated_ir = ir_gen->readIR(ir_in);
+    } else {
+        generated_ir = ir_gen->buildIr();
+    }
+
+    if (ir_file) {
+        ir_gen->writeIR(ir_out_file, generated_ir);
+    }
+
         
 
    /* for (item_t tmp : ir_gen->items) {
