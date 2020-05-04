@@ -90,7 +90,7 @@ In its current state, the IR supports most required features in SSA format. Ther
 
 It should also be noted that reading in an IR file produces an IR representation internally in the program which is significantly inaccurate. This is due to an issue in the recursive function traverseIrFile in ir.cpp. Outputting the IR to a file produces mostly accurate results however. The IR representation appears as a series of lines for each line of the IR, where each line is represented in the following format:
 
-<tree level>,<label>,<type>,<id>,<val>,
+[tree level],[label],[type],[id],[val],
 
 They are separated by commas for ease of processing when reading the IR files in.
 
